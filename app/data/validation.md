@@ -133,7 +133,6 @@ Every anchor year and every headline statistic reproduces. The 0.0001 gap in r i
 |---|---|
 | `app/data/frames.json` | 10.6 KB, 48 frames |
 | `app/data/frames/*.webp` | 48 files, 2.42 MB, 50.6-52.8 KB each |
-| `app/data/mock.json` | synthetic 12-frame placeholder for 02-AUDIO |
 
 ## Reproduce
 

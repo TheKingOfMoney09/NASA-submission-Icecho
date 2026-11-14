@@ -555,7 +555,6 @@ def cmd_validate(_args) -> int:
         % (len(webp), webp_bytes / 1048576.0,
            min(p.stat().st_size for p in webp) / 1024.0,
            max(p.stat().st_size for p in webp) / 1024.0))
-    add("| `app/data/mock.json` | synthetic 12-frame placeholder for 02-AUDIO |")
     add("")
     add("## Reproduce")
     add("")
