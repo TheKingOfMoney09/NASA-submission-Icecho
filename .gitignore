@@ -17,3 +17,7 @@
 !submission/**
 !video/
 !video/**
+
+# Never track build artefacts or caches anywhere in the tree.
+__pycache__/
+*.py[cod]
