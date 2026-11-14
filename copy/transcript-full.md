@@ -25,7 +25,7 @@ Extents come from the NSIDC Sea Ice Index v4 (G02135) daily file `N_seaice_exten
 
 - 2026 is **66%** of 1979 — about two-thirds, not one-sixth.
 - **2012 is the record low.** 2026 is not a record: it is within 0.05 million km² of 2008, 2010 and 2025, roughly tenth-lowest.
-- Voice sequence from the map pixels: **6 through 1998 → 5–6 in 1999–2006 → 4 from 2007 → 3 in 2012 → 5 in 2013–14 → 4 from 2015 to 2026.**
+- Voice sequence from the map pixels: **6 through 1998 → 5–6 in 1999–2006 → 4 from 2007 → 3 in 2012 → 5 in 2013–14 → 4–5 from 2015 to 2025 → 4 in 2026.**
 - 1979 is the instrument's ceiling, not the record maximum. Nine of the years from 1979 to 1998 held slightly more ice than 1979, so the chord is pinned at six rather than rising.
 - The pixel extraction behind the sonification correlates with the published daily minima at **r = 0.9935, n = 48** (reported by 01-DATA; not spoken in the acts).
 
@@ -67,7 +67,7 @@ The 1979 chord: six sustained voices, close together, with no rhythm and no melo
 
 **Transcript — what the audio is doing**
 
-Six voices hold at 1979. As the years run, the highest voice leaves, then another; by 2007 four remain. Two come back in 2013, and from 2015 the chord stays at four. The pitch drifts slowly, and the top voice sags out of tune in the years that lost the most ice.
+Six voices hold at 1979. As the years run, the highest voice leaves, then another; by 2007 four remain. Two come back in 2013, and from 2015 the chord moves between four and five, landing on four for 2026. The pitch drifts slowly, and the top voice sags out of tune in the years that lost the most ice.
 
 **Audio hint:** A six-voice chord thins to four over the record.
 
@@ -75,21 +75,21 @@ Six voices hold at 1979. As the years run, the highest voice leaves, then anothe
 
 ## Act II — How
 
-**On screen — 133 words**
+**On screen — 153 words**
 
 > Every September from 1979 to 2026 has a map. Each one is cut to the same rectangle, so the only thing that can change is the ice.
 
-> Six numbers shape the chord: how much of the sea is white ice, where it sits, and how widely it is spread. Then how broken its edge is, how bright the frame is, and how much ice was lost since the year before.
+> Seven numbers shape the chord. Six are measured from the maps: how much of the sea is white ice, where it sits, and how widely it is spread. Then how broken its edge is, how bright the frame is, and how much ice was lost since the year before.
 
-> Six numbers, six audible dimensions. Ice decides how many notes survive; position moves the pitch slowly; spread sets the chord's width. A broken edge adds a brittle noise; brightness opens or closes the sound; yearly loss pulls the top voice out of tune.
+> The first six are audible: ice decides how many notes survive, position moves the pitch, spread sets the chord's width. A broken edge adds noise; brightness opens or closes the sound; yearly loss pulls the top voice out of tune. The seventh is the deviation from the series mean: it flips the chord between major and minor.
 
 > Nothing about a year is entered by hand. The same year gives the same chord, every time you play it.
 
 **Transcript — what the audio is doing**
 
-The chord is built from six measurements. Voice count follows the amount of ice. Pitch follows where the ice sits. The chord widens and narrows with the spread of the ice. A noise layer rises as the edge breaks up. Brightness opens or closes the tone. Yearly loss detunes the top voice.
+The chord is built from seven measurements. Voice count follows the amount of ice. Pitch follows where the ice sits. The chord widens and narrows with the spread of the ice. A noise layer rises as the edge breaks up. Brightness opens or closes the tone. Yearly loss detunes the top voice. The seventh is the deviation from the series mean: it flips the chord between major and minor. When it drops far enough, a low pulse sounds beneath.
 
-**Audio hint:** The chord rebuilt from six measurements.
+**Audio hint:** The chord rebuilt from seven measurements.
 
 ---
 
@@ -157,7 +157,7 @@ Four voices hold, then stop. One voice continues alone and decays to silence. Th
 
 The complete screenplay for `?mode=listen`, in playback order. Timestamps are `EJ.state.t`, 0 to 1, not seconds. The listen-only timeline runs 120 seconds.
 
-**22 lines · 210 words · about 84 seconds at a normal speaking pace.**
+**22 lines · 218 words · about 87 seconds at a normal speaking pace.**
 
 | t | Narration |
 |---|---|
@@ -166,7 +166,7 @@ The complete screenplay for `?mode=listen`, in playback order. Timestamps are `E
 | 0.17 | The top note goes first. Then another. |
 | 0.24 | Nothing dramatic happens. That is the point. |
 | 0.29 | Two of the six are gone. In 2012 there were three. |
-| 0.34 | Rewind. One map becomes six numbers, and six audible dimensions. |
+| 0.34 | Rewind. One map becomes seven numbers. Six are audible; the seventh flips the chord between major and minor. |
 | 0.39 | The amount of white ice decides how many voices you hear. |
 | 0.44 | Where the ice sits drifts the pitch. How widely it spreads sets the chord's width. |
 | 0.49 | A ragged edge adds noise. Brightness opens or closes the sound. |

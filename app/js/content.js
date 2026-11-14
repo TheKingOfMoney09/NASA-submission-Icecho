@@ -31,11 +31,11 @@ window.EJ.content = {
       title: "Act II — How",
       lines: [
         "Every September from 1979 to 2026 has a map. Each one is cut to the same rectangle, so the only thing that can change is the ice.",
-        "Six numbers shape the chord: how much of the sea is white ice, where it sits, and how widely it is spread. Then how broken its edge is, how bright the frame is, and how much ice was lost since the year before.",
-        "Six numbers, six audible dimensions. Ice decides how many notes survive; position moves the pitch slowly; spread sets the chord's width. A broken edge adds a brittle noise; brightness opens or closes the sound; yearly loss pulls the top voice out of tune.",
+        "Seven numbers shape the chord. Six are measured from the maps: how much of the sea is white ice, where it sits, and how widely it is spread. Then how broken its edge is, how bright the frame is, and how much ice was lost since the year before.",
+        "The first six are audible: ice decides how many notes survive, position moves the pitch, spread sets the chord's width. A broken edge adds noise; brightness opens or closes the sound; yearly loss pulls the top voice out of tune. The seventh is the deviation from the series mean: it flips the chord between major and minor.",
         "Nothing about a year is entered by hand. The same year gives the same chord, every time you play it."
       ],
-      audioHint: "The chord rebuilt from six measurements."
+      audioHint: "The chord rebuilt from seven measurements."
     },
     {
       id: 3,
@@ -74,8 +74,8 @@ window.EJ.content = {
 
   transcript: {
     "0": "The 1979 chord: six sustained voices, close together, with no rhythm and no melody. Nothing else sounds. This is the fullest the instrument gets.",
-    "1": "Six voices hold at 1979. As the years run, the highest voice leaves, then another; by 2007 four remain. Two come back in 2013, and from 2015 the chord stays at four. The pitch drifts slowly, and the top voice sags out of tune in the years that lost the most ice.",
-    "2": "The chord is built from six measurements. Voice count follows the amount of ice. Pitch follows where the ice sits. The chord widens and narrows with the spread of the ice. A noise layer rises as the edge breaks up. Brightness opens or closes the tone. Yearly loss detunes the top voice.",
+    "1": "Six voices hold at 1979. As the years run, the highest voice leaves, then another; by 2007 four remain. Two come back in 2013, and from 2015 the chord moves between four and five, landing on four for 2026. The pitch drifts slowly, and the top voice sags out of tune in the years that lost the most ice.",
+    "2": "The chord is built from seven measurements. Voice count follows the amount of ice. Pitch follows where the ice sits. The chord widens and narrows with the spread of the ice. A noise layer rises as the edge breaks up. Brightness opens or closes the tone. Yearly loss detunes the top voice. The seventh is the deviation from the series mean: it flips the chord between major and minor. When it drops far enough, a low pulse sounds beneath.",
     "3": "The chord thins as the years run. The top voices go first. At 2012 there are three; by 2026 there are four. The sound stays calm, with no percussion, no melody, and no rise at the end.",
     "4": "Three chords sound in turn: 1995, 2012, 2026. The 2012 chord has three voices. The 2026 chord has four.",
     "5": "Four voices hold, then stop. One voice continues alone and decays to silence. That last voice is a composed coda, not a measurement: the data ends at four. The screen labels it CODA, COMPOSITION, NOT DATA, and credits NSIDC Sea Ice Index v4 (G02135) and NASA SVS 5677."
@@ -98,7 +98,7 @@ window.EJ.content = {
     { t: 0.17, text: "The top note goes first. Then another." },
     { t: 0.24, text: "Nothing dramatic happens. That is the point." },
     { t: 0.29, text: "Two of the six are gone. In 2012 there were three." },
-    { t: 0.34, text: "Rewind. One map becomes six numbers, and six audible dimensions." },
+    { t: 0.34, text: "Rewind. One map becomes seven numbers. Six are audible; the seventh flips the chord between major and minor." },
     { t: 0.39, text: "The amount of white ice decides how many voices you hear." },
     { t: 0.44, text: "Where the ice sits drifts the pitch. How widely it spreads sets the chord's width." },
     { t: 0.49, text: "A ragged edge adds noise. Brightness opens or closes the sound." },
