@@ -235,6 +235,9 @@
         lum: numberOr(f.lum, 0.5),
         dLoss: numberOr(f.dLoss, 0),
         sigma: numberOr(f.sigma, 0),
+        // Optional measured extent (M km^2). audio.js prefers it over the
+        // frozen iceFrac proxy; null means "use the proxy".
+        extentMkm2: numberOf(f.extentMkm2 != null ? f.extentMkm2 : f.extent),
         img: f.img || null
       };
       out.push(frame);
@@ -253,6 +256,12 @@
   function numberOr(v, d) {
     v = Number(v);
     return isFinite(v) ? v : d;
+  }
+
+  function numberOf(v) {
+    if (v == null || v === '') return null;
+    v = Number(v);
+    return isFinite(v) ? v : null;
   }
 
   function loadFrames() {
@@ -398,9 +407,12 @@
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
-  } else {
+  // Deferred scripts run while readyState is 'interactive', so waiting only on
+  // 'loading' would boot before audio/render/scroll/content have executed and
+  // init the fallbacks instead of the real modules.
+  if (document.readyState === 'complete') {
     boot();
+  } else {
+    document.addEventListener('DOMContentLoaded', boot);
   }
 })();

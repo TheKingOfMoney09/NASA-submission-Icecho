@@ -28,6 +28,7 @@
   var lastAnnounceAt = 0;
   var lastAnnounceText = '';
   var wasPlaying = false;
+  var primed = false;
   var reported = {};
 
   /* ------------------------------------------------------------------ */
@@ -82,12 +83,37 @@
         var title = (acts[index] && acts[index].title) || ('Act ' + index);
         btn.textContent = 'Play — ' + title;
         btn.addEventListener('click', function () {
-          seek(ACT_BOUNDARIES[index] + 0.001);
-          setPlaying(true);
+          // The gate is hidden in reduced mode, so this is the gesture that
+          // creates the AudioContext. init() is idempotent.
+          ensureAudio().then(function () {
+            seek(ACT_BOUNDARIES[index] + 0.001);
+            setPlaying(true);
+          });
         });
         section.appendChild(btn);
       })(i);
     }
+  }
+
+  var audioStarted = false;
+
+  function ensureAudio() {
+    if (audioStarted) return Promise.resolve();
+    audioStarted = true;
+
+    var started;
+    try {
+      started = (EJ.audio && EJ.audio.init) ? Promise.resolve(EJ.audio.init()) : Promise.resolve();
+    } catch (e) {
+      EJ.fail('audio', e);
+      started = Promise.resolve();
+    }
+
+    return started.then(function () {
+      try { if (EJ.audio && EJ.audio.setMode) EJ.audio.setMode(mode); } catch (e) { EJ.fail('audio', e); }
+    }).catch(function (e) {
+      EJ.fail('audio', e);
+    });
   }
 
   /* ------------------------------------------------------------------ */
@@ -327,6 +353,13 @@
     var frame = EJ.frameAt(t);
     EJ.state.frame = frame;
 
+    // Feed the engine once even if the first rendered year equals the boot
+    // year, so init() always has real features to build the first chord from.
+    if (!primed) {
+      primed = true;
+      safeAudioFrame(frame);
+    }
+
     var year = Math.round(frame.year);
     if (year !== EJ.state.year) {
       EJ.state.year = year;
@@ -372,25 +405,32 @@
   /* Init                                                               */
   /* ------------------------------------------------------------------ */
 
-  function init() {
-    mode = EJ.state.mode || 'guided';
-
+  function start() {
+    mode = EJ.state.mode || mode;
     document.body.classList.add('mode-' + mode);
     if (mode === 'reduced') document.body.classList.add('reduced');
     if (mode === 'listen') document.body.classList.add('listen');
 
+    syncPlayButton();
+    requestAnimationFrame(loop);
+  }
+
+  function init() {
+    mode = EJ.state.mode || 'guided';
+
+    // Inject before the loader attaches scroll/render: the scroll controller
+    // must see the full document height, not the empty shell.
     injectActs();
     addReducedPlayButtons();
+
     wireTransport();
     wireKeyboard();
     wireLifecycle();
-    syncPlayButton();
-    requestAnimationFrame(loop);
 
-    if (!injected) {
-      // Content arrived after init (shouldn't happen with defer order, but be safe).
-      EJ.on('ready', injectActs);
-    }
+    // Everything that touches the canvas or audio waits for the loader:
+    // frames are normalised and the real modules are init()ed before 'ready'.
+    if (EJ.ready) start();
+    else EJ.on('ready', start);
   }
 
   EJ.on('begin', function () {
@@ -399,9 +439,9 @@
     safeAudioFrame(EJ.frameAt(EJ.state.t));
   });
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
+  if (document.readyState === 'complete') {
     init();
+  } else {
+    document.addEventListener('DOMContentLoaded', init);
   }
 })();

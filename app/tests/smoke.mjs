@@ -14,6 +14,8 @@
  *  - reduced-motion emulation renders the static branch (6 headings visible)
  *  - keyboard: Tab reaches the begin-gate, Enter starts, Space toggles
  *  - scanDOM() finds exactly one of each contract ID (no duplicates)
+ *  - real engine: AudioContext running after the gate; 6/3/4 voices at
+ *    1979/2012/2026, asserted in the app and in the built dist file
  *  - dist/TheLastNote.html opens from file:// and reaches EJ.ready
  */
 
@@ -232,6 +234,67 @@ async function key(cdp, { keyName, code, vk, text }) {
   await cdp.send('Input.dispatchKeyEvent', { type: 'keyUp', ...base });
 }
 
+// Real-audio assertions. Runs in a mode with no scroll/timer writer (reduced),
+// so EJ.state.t stays where we put it while the engine settles.
+// The three anchors come from the verified NSIDC record: 1979 six voices,
+// 2012 (record low) three, 2026 four.
+async function audioAnchorSuite(cdp, label) {
+  const hasDiag = await evalJS(cdp, '!!(window.EJ && EJ.audio && typeof EJ.audio._diag === "function")');
+  if (!hasDiag) {
+    skip(`${label}: real audio diagnostics`, 'audio._diag unavailable (fallback module)');
+    return;
+  }
+
+  const gateUsable = await evalJS(cdp, `(function () {
+    var g = document.getElementById('begin-gate');
+    return !!(g && !g.hidden && g.getClientRects().length > 0);
+  })()`);
+
+  if (gateUsable) {
+    await key(cdp, { keyName: 'Tab', code: 'Tab', vk: 9 });
+    await key(cdp, { keyName: 'Enter', code: 'Enter', vk: 13, text: '\r' });
+    await waitExpr(cdp, 'document.getElementById("begin-gate").hidden === true', 2000);
+  } else {
+    // Reduced mode hides the gate; its per-act play buttons are the gesture.
+    const focusedPlay = await evalJS(cdp, `(function () {
+      var b = document.querySelector('.play-act');
+      if (!b) return false;
+      b.focus();
+      return document.activeElement === b;
+    })()`);
+    if (!focusedPlay) {
+      skip(`${label}: real audio diagnostics`, 'no gate or play control to start audio');
+      return;
+    }
+    await key(cdp, { keyName: 'Enter', code: 'Enter', vk: 13, text: '\r' });
+  }
+
+  const runningMs = await waitExpr(cdp, '!!(window.EJ && EJ.audio._diag().ctxState === "running")', 3000);
+  check(`${label}: starts a running AudioContext`, runningMs >= 0, runningMs >= 0 ? `${runningMs} ms` : 'not running');
+
+  const anchors = [[1979, 6], [2012, 3], [2026, 4]];
+  for (const [year, expected] of anchors) {
+    const t = (year - 1979) / 47;
+    const diag = await evalJS(cdp, `(function () {
+      var t = ${t};
+      EJ.state.t = t;
+      EJ.audio.setFrame(EJ.frameAt(t));
+      EJ.audio.setTimeline(t);
+      return EJ.audio._diag();
+    })()`);
+    check(
+      `${label}: ${year} plays ${expected} voices`,
+      !!diag && diag.voices === expected && diag.voicesSounding === expected,
+      diag
+        ? `voices=${diag.voices} sounding=${diag.voicesSounding} root=${Math.round(diag.rootHz)}Hz detune=${Math.round(diag.detuneCents)}c`
+        : 'no diagnostics'
+    );
+  }
+
+  const master = await evalJS(cdp, 'EJ.audio._diag().master');
+  check(`${label}: master output is open`, typeof master === 'number' && master > 0.01, String(master));
+}
+
 /* ------------------------------------------------------------------ */
 /* Tests                                                              */
 /* ------------------------------------------------------------------ */
@@ -332,6 +395,10 @@ async function main() {
   );
   check('reduced-motion renders the static branch: 6 headings visible', headings === 6, String(headings));
 
+  // Reduced mode has no scroll or timer writer, which makes it the honest
+  // place to assert the real engine's voice counts.
+  await audioAnchorSuite(reduced.cdp, 'app');
+
   /* ---- dist ---- */
   if (existsSync(join(ROOT, 'dist', 'TheLastNote.html'))) {
     const dist = await openTarget('about:blank');
@@ -351,6 +418,24 @@ async function main() {
       distErrors.slice(0, 6).map((e) => `${e.kind}: ${e.text.slice(0, 140)}`).join(' | ')
     );
     dist.cdp.close();
+
+    // The built file carries the real engine and the real 48 frames. Prove it
+    // with the same anchor test, in reduced mode so nothing rewrites t.
+    const distAudio = await openTarget('about:blank');
+    await navigate(distAudio.cdp, DIST_URL + '?mode=reduced');
+    const distAudioReady = await waitExpr(distAudio.cdp, '!!(window.EJ && EJ.ready === true)', 3000);
+    if (distAudioReady >= 0) {
+      await audioAnchorSuite(distAudio.cdp, 'dist');
+      const distAudioErrors = realErrors(distAudio.errors);
+      check(
+        'dist: zero console errors in reduced mode',
+        distAudioErrors.length === 0,
+        distAudioErrors.slice(0, 6).map((e) => `${e.kind}: ${e.text.slice(0, 140)}`).join(' | ')
+      );
+    } else {
+      skip('dist: real audio diagnostics', '?mode=reduced did not boot from file://');
+    }
+    distAudio.cdp.close();
   } else {
     skip('dist/TheLastNote.html opens from file:// and reaches EJ.ready', 'dist not built yet');
   }
