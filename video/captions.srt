@@ -1,0 +1,72 @@
+1
+00:00:02,000 --> 00:00:07,000
+In 1979, the Arctic was loud.
+
+2
+00:00:07,000 --> 00:00:10,000
+48 years of sea ice. 48 maps. One chord per year.
+
+3
+00:00:12,000 --> 00:00:17,000
+Every September since 1979, the National Snow and Ice Data Center has mapped the Arctic.
+
+4
+00:00:18,000 --> 00:00:24,000
+Each map becomes a chord. How much ice is left decides how many notes survive.
+
+5
+00:00:26,000 --> 00:00:30,000
+1979: six voices.
+
+6
+00:00:31,000 --> 00:00:36,000
+2012: three. The record low.
+
+7
+00:00:37,000 --> 00:00:40,000
+2026: four.
+
+8
+00:00:40,000 --> 00:00:44,000
+Not a fade. A stagger.
+
+9
+00:00:46,000 --> 00:00:50,000
+You have never seen a satellite image.
+
+10
+00:00:51,000 --> 00:00:55,000
+You just heard forty-eight years of looking at the ice.
+
+11
+00:00:56,000 --> 00:00:59,000
+The ice is still two-thirds of what it was in 1979.
+
+12
+00:01:02,000 --> 00:01:05,000
+Now play it yourself.
+
+13
+00:01:06,000 --> 00:01:10,000
+1995 — still six voices.
+
+14
+00:01:11,000 --> 00:01:15,000
+2012 — three.
+
+15
+00:01:16,000 --> 00:01:19,000
+2026 — four.
+
+16
+00:01:21,000 --> 00:01:24,000
+Icecho — The Last Note
+
+17
+00:01:24,000 --> 00:01:28,000
+Data: NSIDC Sea Ice Index v4 (G02135), 1979–2026.
+Hero still: NASA SVS 5677.
+
+18
+00:01:28,000 --> 00:01:30,000
+Built for the ear first.
