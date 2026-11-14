@@ -264,6 +264,10 @@
   }
 
   function announce(frame, act) {
+    // Listen mode: the narration is the audio channel. A 1 Hz live region
+    // would talk over it for screen-reader users, so it stays quiet there.
+    if (mode === 'listen') return;
+
     var now = Date.now();
     if (now - lastAnnounceAt < LIVE_REGION_MS) return;
 
