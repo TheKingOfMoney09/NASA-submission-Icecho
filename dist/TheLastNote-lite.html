@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Last Note — 47 years of Arctic sea ice, played as music</title>
+<meta name="description" content="An offline, audio-first sonification of the Arctic sea ice record, 1979–2026. NASA Space Apps Challenge 2026.">
+<style>
+
+
+:root {
+  color-scheme: dark;
+  --ink: #08090b;
+  --ice: #e8f1f5;
+  --accent: #5fb8d4;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--ink);
+  color: var(--ice);
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  line-height: 1.6;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  z-index: 100;
+}
+
+.skip:focus {
+  left: 1rem;
+  top: 1rem;
+  background: var(--ice);
+  color: var(--ink);
+  padding: 0.5rem 1rem;
+}
+
+header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  padding: 1rem 1.5rem;
+  pointer-events: none;
+}
+
+#year {
+  margin: 0;
+  font-family: ui-monospace, Consolas, monospace;
+  font-weight: 600;
+  font-size: clamp(2rem, 6vw, 4rem);
+  line-height: 1;
+}
+
+#readout {
+  margin: 0;
+  max-width: 44ch;
+  text-align: right;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+#stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+#canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+main { position: relative; z-index: 2; }
+
+main section {
+  min-height: 100vh;
+  max-width: 72ch;
+  padding: 18vh 8vw;
+}
+
+main section h2 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  font-weight: 600;
+}
+
+main section p { margin: 0 0 1rem; }
+
+#transport {
+  position: fixed;
+  left: 50%;
+  bottom: 1.25rem;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid rgba(232, 241, 245, 0.18);
+  border-radius: 999px;
+  background: rgba(8, 9, 11, 0.75);
+}
+
+#playpause {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
+  background: var(--accent);
+  color: var(--ink);
+  font-family: ui-monospace, Consolas, monospace;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+#scrub { width: min(40vw, 320px); }
+
+footer { position: relative; z-index: 2; }
+
+#credits {
+  margin: 0;
+  padding: 2rem 8vw 4rem;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+#begin-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: var(--ink);
+  color: var(--ice);
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+#begin-gate[hidden] { display: none; }
+
+#live-region {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+
+body.reduced #stage { display: none; }
+body.reduced main section { min-height: 0; padding: 2.5rem 8vw; }
+body.reduced #transport { position: sticky; bottom: 0; }
+body.listen main { display: none; }
+body.listen #stage { display: none; }
+
+</style>
+</head>
+<body>
+<button id="begin-gate" type="button">Begin</button>
+
+<a class="skip" href="#act-1">Skip to the story</a>
+
+<header>
+  <p id="year" aria-hidden="true">1979</p>
+  <p id="readout"></p>
+</header>
+
+<div id="stage">
+  <canvas id="canvas" role="img" aria-label="Arctic sea ice rendered as it is sonified. Every act carries a written transcript."></canvas>
+</div>
+
+<main>
+  <section id="act-0" aria-labelledby="act-0-title"></section>
+  <section id="act-1" aria-labelledby="act-1-title"></section>
+  <section id="act-2" aria-labelledby="act-2-title">
+    <div id="mapping"></div>
+  </section>
+  <section id="act-3" aria-labelledby="act-3-title"></section>
+  <section id="act-4" aria-labelledby="act-4-title"></section>
+  <section id="act-5" aria-labelledby="act-5-title"></section>
+</main>
+
+<div id="transport">
+  <button id="playpause" type="button" aria-pressed="false">Play</button>
+  <input id="scrub" type="range" min="0" max="1000" step="1" value="0" aria-label="Timeline: 1979 to 2026">
+</div>
+
+<footer>
+  <p id="credits"></p>
+</footer>
+
+<div id="live-region" role="status" aria-live="polite"></div>
+
+<script id="frames-data" type="application/json">{"dataset":null,"source":null,"unit":null,"frames":[]}</script>
+
+<script>
+
+
+
+(function () {
+  'use strict';
+
+  if (window.EJ) return;
+
+  var listeners = {};
+  var degraded = {};
+
+  var EJ = {
+    state: {
+      t: 0,              // 0..1 master timeline across 1979 -> 2026
+      year: 1979,        // float
+      frame: {},         // current feature vector
+      act: 0,            // 0..5
+      mode: 'guided',    // 'guided' | 'listen' | 'reduced'
+      playing: false
+    },
+    audio: null,         // 02 assigns
+    content: null,       // 03 assigns
+    render: null,        // 04 assigns
+    frames: [],          // 01's frames.json, normalised by loader.js
+    ready: false,
+    degraded: degraded,
+
+
+
+    on: function (evt, fn) {
+      if (typeof fn !== 'function') return function () {};
+      (listeners[evt] || (listeners[evt] = [])).push(fn);
+      return function off() {
+        var arr = listeners[evt] || [];
+        var i = arr.indexOf(fn);
+        if (i !== -1) arr.splice(i, 1);
+      };
+    },
+
+    emit: function (evt, payload) {
+      var arr = listeners[evt];
+      if (!arr || !arr.length) return;
+      for (var i = 0; i < arr.length; i++) {
+        try {
+          arr[i](payload);
+        } catch (err) {
+          EJ.fail('listener:' + evt, err);
+        }
+      }
+    },
+
+
+
+    fail: function (module, err) {
+      degraded[module] = (degraded[module] || 0) + 1;
+      try {
+        var msg = err && err.message ? err.message : String(err);
+        console.error('[EJ] ' + module + ' degraded: ' + msg);
+      } catch (e) {  }
+      try { EJ.emit('fail', { module: module, error: err }); } catch (e) {}
+    },
+
+
+
+    frameAt: function (t) {
+      t = Number(t);
+      if (!isFinite(t)) t = 0;
+      t = Math.min(1, Math.max(0, t));
+
+      var frames = EJ.frames || [];
+      if (!frames.length) return syntheticFrame(t);
+      if (frames.length === 1) return copyFrame(frames[0], t);
+
+      if (t <= frames[0].t) return copyFrame(frames[0], t);
+      var last = frames.length - 1;
+      if (t >= frames[last].t) return copyFrame(frames[last], t);
+
+      var lo = 0;
+      var hi = last;
+      while (hi - lo > 1) {
+        var mid = (lo + hi) >> 1;
+        if (frames[mid].t <= t) lo = mid;
+        else hi = mid;
+      }
+
+      var a = frames[lo];
+      var b = frames[hi];
+      var span = (b.t - a.t) || 1e-9;
+      var k = Math.min(1, Math.max(0, (t - a.t) / span));
+      return lerpFrame(a, b, k);
+    },
+
+    lerpFeatures: function (t) { return EJ.frameAt(t); },
+
+
+
+    checkContract: function () {
+      var issues = [];
+
+      function needMethods(name, mod, methods) {
+        if (!mod) { issues.push(name + ' missing'); return; }
+        for (var i = 0; i < methods.length; i++) {
+          if (typeof mod[methods[i]] !== 'function') {
+            issues.push(name + '.' + methods[i] + ' missing');
+          }
+        }
+      }
+
+      needMethods('audio', EJ.audio,
+        ['init', 'setFrame', 'setTimeline', 'setMode', 'play', 'pause', 'isPlaying', 'dispose']);
+      needMethods('render', EJ.render, ['init', 'draw', 'setReducedMotion', 'showAct']);
+
+      var c = EJ.content;
+      if (!c) {
+        issues.push('content missing');
+      } else {
+        if (!Array.isArray(c.acts) || c.acts.length !== 6) {
+          issues.push('content.acts must hold 6 acts');
+        } else {
+          for (var i = 0; i < c.acts.length; i++) {
+            var act = c.acts[i] || {};
+            if (!act.title) issues.push('content.acts[' + i + '].title missing');
+            if (!Array.isArray(act.lines)) issues.push('content.acts[' + i + '].lines missing');
+          }
+        }
+        if (!c.transcript || typeof c.transcript !== 'object') issues.push('content.transcript missing');
+        if (!c.altText || typeof c.altText !== 'object') issues.push('content.altText missing');
+        if (!Array.isArray(c.narration)) issues.push('content.narration missing');
+      }
+
+      if (issues.length) {
+        try { console.warn('[EJ] contract: ' + issues.join(', ')); } catch (e) {}
+      }
+      return issues;
+    }
+  };
+
+
+
+  function numericKeys(a, b) {
+    var keys = {};
+    var k;
+    for (k in a) {
+      if (typeof a[k] === 'number' && typeof b[k] === 'number') keys[k] = 1;
+    }
+    return keys;
+  }
+
+  function lerpFrame(a, b, k) {
+    var out = {};
+    var keys = numericKeys(a, b);
+    for (var key in a) {
+      if (key === 'img') continue;
+      out[key] = keys[key] ? a[key] + (b[key] - a[key]) * k : a[key];
+    }
+    for (var key2 in b) {
+      if (!(key2 in out) && key2 !== 'img') out[key2] = b[key2];
+    }
+    out.img = k < 0.5 ? (a.img || null) : (b.img || null);
+    out.t = a.t + (b.t - a.t) * k;
+    return out;
+  }
+
+  function copyFrame(f, t) {
+    var out = {};
+    for (var key in f) out[key] = f[key];
+    out.t = t;
+    return out;
+  }
+
+  function syntheticFrame(t) {
+    return {
+      year: 1979 + 47 * t,
+      t: t,
+      iceFrac: 0.1664 + (0.1147 - 0.1664) * t,
+      centroidY: 0.61,
+      spread: 0.14,
+      edge: 0.083,
+      lum: 0.47,
+      dLoss: 0,
+      sigma: 0,
+      img: null
+    };
+  }
+
+  window.EJ = EJ;
+})();
+</script>
+<script>
+
+
+
+(function () {
+  'use strict';
+
+  var EJ = window.EJ;
+  if (!EJ) return;
+
+
+
+
+
+
+  function makeFallbackAudio() {
+    var ctx = null;
+    var osc = null;
+    var gain = null;
+    var inited = false;
+    var playing = false;
+    var freq = 220;
+    var mode = 'guided';
+
+    function setFreq(t) {
+      t = Math.min(1, Math.max(0, t));
+      freq = 110 * Math.pow(2, t * 2); // 110 Hz (1979) -> 440 Hz (2026)
+      if (ctx && osc) {
+        try { osc.frequency.setTargetAtTime(freq, ctx.currentTime, 0.05); } catch (e) {}
+      }
+    }
+
+    return {
+      init: function () {
+        if (inited) return Promise.resolve();
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) throw new Error('Web Audio unavailable');
+        ctx = new AC();
+        gain = ctx.createGain();
+        gain.gain.value = 0.0001;
+        osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        gain.gain.setTargetAtTime(0.08, ctx.currentTime, 0.05);
+        inited = true;
+        return ctx.resume ? ctx.resume() : Promise.resolve();
+      },
+      setFrame: function (features) {  },
+      setTimeline: function (t) { setFreq(t); },
+      setMode: function (m) { mode = m; },
+      play: function () {
+        playing = true;
+        if (ctx) {
+          if (ctx.resume) { try { ctx.resume(); } catch (e) {} }
+          if (gain) gain.gain.setTargetAtTime(0.08, ctx.currentTime, 0.05);
+        }
+      },
+      pause: function () {
+        playing = false;
+        if (ctx && gain) gain.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.05);
+      },
+      isPlaying: function () { return playing; },
+      dispose: function () {
+        try { if (osc) osc.stop(); } catch (e) {}
+        try { if (ctx) ctx.close(); } catch (e) {}
+        ctx = null;
+        osc = null;
+        gain = null;
+        inited = false;
+        playing = false;
+      }
+    };
+  }
+
+  function makeFallbackContent() {
+    var titles = [
+      'Act 0 — Cold open',
+      'Act I — Why',
+      'Act II — How',
+      'Act III — The listener',
+      'Act IV — Handover',
+      'Act V — The last note'
+    ];
+    var acts = titles.map(function (title, i) {
+      return {
+        id: i,
+        title: title,
+        lines: ['(placeholder — content.js lands in the narrative slot)'],
+        audioHint: ''
+      };
+    });
+    return { acts: acts, transcript: {}, altText: {}, narration: [] };
+  }
+
+  function makeFallbackRender() {
+    var canvas = null;
+    var ctx2d = null;
+    var reduced = false;
+
+    function resize() {
+      if (!canvas) return;
+      canvas.width = canvas.clientWidth || window.innerWidth;
+      canvas.height = canvas.clientHeight || window.innerHeight;
+    }
+
+    return {
+      init: function (el) {
+        canvas = el;
+        if (!canvas) return;
+        ctx2d = canvas.getContext('2d');
+        resize();
+        window.addEventListener('resize', resize);
+      },
+      draw: function (frame, t, act) {
+        if (!ctx2d) return;
+        var w = canvas.width;
+        var h = canvas.height;
+        var l = Math.round(4 + 8 * (1 - t));
+        ctx2d.fillStyle = 'hsl(205, 30%, ' + l + '%)';
+        ctx2d.fillRect(0, 0, w, h);
+        ctx2d.fillStyle = 'rgba(232, 241, 245, 0.9)';
+        ctx2d.font = Math.round(h * 0.16) + 'px Georgia, serif';
+        ctx2d.textAlign = 'center';
+        ctx2d.textBaseline = 'middle';
+        ctx2d.fillText(String(Math.round(frame.year)), w / 2, h / 2);
+      },
+      setReducedMotion: function (b) { reduced = !!b; },
+      showAct: function (n) {}
+    };
+  }
+
+  function makeFallbackScroll() {
+    var attached = false;
+
+    function progress() {
+      var el = document.scrollingElement || document.documentElement;
+      var max = el.scrollHeight - el.clientHeight;
+      return max > 0 ? el.scrollTop / max : 0;
+    }
+
+    function onScroll() {
+      var t = Math.min(1, Math.max(0, progress()));
+      EJ.state.t = t;
+      try { EJ.audio.setTimeline(t); } catch (e) { EJ.fail('scroll', e); }
+    }
+
+    return {
+      attach: function () {
+        if (attached) return;
+        attached = true;
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
+        onScroll();
+      }
+    };
+  }
+
+  if (!EJ.audio) EJ.audio = makeFallbackAudio();
+  if (!EJ.content) EJ.content = makeFallbackContent();
+  if (!EJ.render) EJ.render = makeFallbackRender();
+  if (!EJ.scroll) EJ.scroll = makeFallbackScroll();
+
+
+
+
+
+  function fallbackCurve() {
+    var anchors = [
+      [1979, 0.1664], [1995, 0.1415], [2007, 0.1006], [2012, 0.0856], [2026, 0.1147]
+    ];
+    var out = [];
+    var n = 48; // 1979..2026 inclusive
+
+    for (var i = 0; i < n; i++) {
+      var year = 1979 + i;
+      var p = i / (n - 1);
+      var ice = 0.1664;
+      for (var a = 0; a < anchors.length - 1; a++) {
+        var y0 = anchors[a][0];
+        var y1 = anchors[a + 1][0];
+        if (year >= y0 && year <= y1) {
+          var k = (year - y0) / (y1 - y0);
+          ice = anchors[a][1] + (anchors[a + 1][1] - anchors[a][1]) * k;
+          break;
+        }
+      }
+      out.push({
+        year: year,
+        t: p,
+        iceFrac: ice,
+        centroidY: 0.61 - 0.02 * p,
+        spread: 0.14 + 0.02 * Math.sin(p * Math.PI),
+        edge: 0.083 + 0.02 * p,
+        lum: 0.47 - 0.04 * p,
+        dLoss: 0,
+        sigma: 0,
+        img: null
+      });
+    }
+
+    var mean = 0;
+    var i2;
+    for (i2 = 0; i2 < out.length; i2++) mean += out[i2].iceFrac;
+    mean /= out.length;
+    var variance = 0;
+    for (i2 = 0; i2 < out.length; i2++) {
+      variance += Math.pow(out[i2].iceFrac - mean, 2);
+    }
+    var sd = Math.sqrt(variance / out.length) || 1;
+    for (i2 = 0; i2 < out.length; i2++) {
+      out[i2].dLoss = i2 === 0 ? 0 : (out[i2 - 1].iceFrac - out[i2].iceFrac);
+      out[i2].sigma = (out[i2].iceFrac - mean) / sd;
+    }
+    return out;
+  }
+
+  function normaliseFrames(raw) {
+    var arr = raw && Array.isArray(raw.frames) ? raw.frames : (Array.isArray(raw) ? raw : []);
+    var out = [];
+    for (var i = 0; i < arr.length; i++) {
+      var f = arr[i] || {};
+      var frame = {
+        year: Number(f.year),
+        t: Number(f.t),
+        iceFrac: numberOr(f.iceFrac, 0),
+        centroidY: numberOr(f.centroidY, 0.5),
+        spread: numberOr(f.spread, 0.1),
+        edge: numberOr(f.edge, 0.05),
+        lum: numberOr(f.lum, 0.5),
+        dLoss: numberOr(f.dLoss, 0),
+        sigma: numberOr(f.sigma, 0),
+        img: f.img || null
+      };
+      out.push(frame);
+    }
+    out.sort(function (a, b) { return a.t - b.t; });
+    if (out.length) {
+      if (!isFinite(out[0].year)) out[0].year = 1979;
+      for (var j = 0; j < out.length; j++) {
+        if (!isFinite(out[j].year)) out[j].year = out[0].year + (out[0].year === 1979 ? j : j);
+        if (!isFinite(out[j].t)) out[j].t = out.length > 1 ? j / (out.length - 1) : 0;
+      }
+    }
+    return out;
+  }
+
+  function numberOr(v, d) {
+    v = Number(v);
+    return isFinite(v) ? v : d;
+  }
+
+  function loadFrames() {
+    if (location.protocol === 'file:') return Promise.resolve(readInlineFrames());
+
+    return fetch('data/frames.json').then(function (res) {
+      if (!res.ok) throw new Error('frames.json ' + res.status);
+      return res.json();
+    }).then(function (json) {
+      var frames = normaliseFrames(json);
+      if (!frames.length) throw new Error('frames.json empty');
+      return frames;
+    }).catch(function () {
+      return readInlineFrames();
+    });
+  }
+
+  function readInlineFrames() {
+    try {
+      var el = document.getElementById('frames-data');
+      var text = el && el.textContent ? el.textContent.trim() : '';
+      if (text) {
+        var json = JSON.parse(text);
+        var frames = normaliseFrames(json);
+        if (frames.length) return frames;
+      }
+    } catch (e) {
+      try { EJ.fail('loader', e); } catch (e2) {}
+    }
+    return null;
+  }
+
+
+
+
+
+  var booted = false;
+
+  function readMode() {
+    var mode = null;
+    try {
+      var params = new URLSearchParams(window.location.search);
+      mode = params.get('mode');
+    } catch (e) {}
+    if (mode !== 'listen' && mode !== 'guided' && mode !== 'reduced') {
+      mode = null;
+    }
+    if (mode) return mode;
+    try {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return 'reduced';
+      }
+    } catch (e) {}
+    return 'guided';
+  }
+
+  function initModules(mode) {
+    try {
+      if (EJ.render && EJ.render.init) EJ.render.init(document.getElementById('canvas'));
+    } catch (e) { EJ.fail('render', e); }
+
+    try {
+      if (EJ.render && EJ.render.setReducedMotion) EJ.render.setReducedMotion(mode === 'reduced');
+    } catch (e) { EJ.fail('render', e); }
+
+    try {
+      if (EJ.audio && EJ.audio.setMode) EJ.audio.setMode(mode);
+    } catch (e) { EJ.fail('audio', e); }
+
+    try {
+      if (EJ.scroll && EJ.scroll.attach && mode === 'guided') EJ.scroll.attach();
+    } catch (e) { EJ.fail('scroll', e); }
+
+    var issues = [];
+    try { issues = EJ.checkContract(); } catch (e) { EJ.fail('loader', e); }
+    return issues;
+  }
+
+  function wireGate(mode) {
+    var gate = document.getElementById('begin-gate');
+    if (!gate) return;
+    var armed = false;
+
+    function begin(ev) {
+      if (ev && ev.preventDefault) ev.preventDefault();
+      if (armed) return;
+      armed = true;
+
+      var started = Promise.resolve();
+      try {
+        started = (EJ.audio && EJ.audio.init) ? Promise.resolve(EJ.audio.init()) : Promise.resolve();
+      } catch (e) {
+        EJ.fail('audio', e);
+      }
+
+      started.catch(function (e) { EJ.fail('audio', e); }).then(function () {
+        try { if (EJ.audio && EJ.audio.setMode) EJ.audio.setMode(mode); } catch (e) { EJ.fail('audio', e); }
+        try { if (EJ.audio && EJ.audio.play) EJ.audio.play(); } catch (e) { EJ.fail('audio', e); }
+        EJ.state.playing = true;
+        gate.hidden = true;
+        gate.setAttribute('aria-hidden', 'true');
+        document.body.classList.add('began');
+        EJ.emit('begin', { mode: mode });
+      });
+    }
+
+    gate.addEventListener('click', begin);
+  }
+
+  function boot() {
+    if (booted) return;
+    booted = true;
+
+    var mode = readMode();
+    EJ.state.mode = mode;
+
+    loadFrames().then(function (frames) {
+      if (!frames || !frames.length) frames = fallbackCurve();
+      EJ.frames = frames;
+      EJ.state.frame = EJ.frameAt(0);
+      EJ.state.year = EJ.state.frame.year;
+
+      var issues = initModules(mode);
+      wireGate(mode);
+
+      document.body.classList.add('mode-' + mode);
+      if (mode === 'reduced') document.body.classList.add('reduced');
+      if (mode === 'listen') document.body.classList.add('listen');
+
+      EJ.ready = true;
+      EJ.emit('ready', { mode: mode, frames: frames.length, contractIssues: issues });
+      EJ.emit('mode', mode);
+    }).catch(function (err) {
+      EJ.fail('loader', err);
+      var issues2 = initModules(mode);
+      wireGate(mode);
+      EJ.ready = true;
+      EJ.emit('ready', { mode: mode, frames: 0, contractIssues: issues2 });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})();
+</script>
+
+
+
+
+
+<script>
+
+
+
+(function () {
+  'use strict';
+
+  var EJ = window.EJ;
+  if (!EJ) return;
+
+  var CONTRACT_IDS = [
+    'stage', 'canvas', 'year', 'readout',
+    'act-0', 'act-1', 'act-2', 'act-3', 'act-4', 'act-5',
+    'transport', 'playpause', 'scrub', 'begin-gate', 'mapping', 'credits', 'live-region'
+  ];
+
+  var ACT_BOUNDARIES = [0, 0.0926, 0.3241, 0.5556, 0.8333, 0.9259, 1];
+  var LISTEN_SECONDS = 120;   // whole story in listen mode
+  var LIVE_REGION_MS = 1000;  // 1 Hz debounce
+  var YEAR_STEP = 1 / 47;
+
+  var mode = 'guided';
+  var injected = false;
+  var scrubbing = false;
+  var lastNow = 0;
+  var lastAnnounceAt = 0;
+  var lastAnnounceText = '';
+  var wasPlaying = false;
+  var reported = {};
+
+
+
+
+
+  function injectActs() {
+    var content = EJ.content;
+    if (injected || !content || !Array.isArray(content.acts)) return;
+    injected = true;
+
+    content.acts.forEach(function (act, i) {
+      var section = document.getElementById('act-' + i);
+      if (!section) return;
+
+      var h2 = document.createElement('h2');
+      h2.id = 'act-' + i + '-title';
+      h2.textContent = act.title || ('Act ' + i);
+      section.insertBefore(h2, section.firstChild);
+
+      var lines = Array.isArray(act.lines) ? act.lines : [];
+      lines.forEach(function (line) {
+        var p = document.createElement('p');
+        p.textContent = line;
+        section.appendChild(p);
+      });
+
+      var transcript = content.transcript && content.transcript[String(i)];
+      if (transcript) {
+        var details = document.createElement('details');
+        var summary = document.createElement('summary');
+        summary.textContent = 'Transcript';
+        var body = document.createElement('p');
+        body.textContent = transcript;
+        details.appendChild(summary);
+        details.appendChild(body);
+        section.appendChild(details);
+      }
+    });
+  }
+
+  function addReducedPlayButtons() {
+    if (mode !== 'reduced') return;
+    for (var i = 0; i < 6; i++) {
+      (function (index) {
+        var section = document.getElementById('act-' + index);
+        if (!section) return;
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'play-act';
+        var acts = (EJ.content && EJ.content.acts) || [];
+        var title = (acts[index] && acts[index].title) || ('Act ' + index);
+        btn.textContent = 'Play — ' + title;
+        btn.addEventListener('click', function () {
+          seek(ACT_BOUNDARIES[index] + 0.001);
+          setPlaying(true);
+        });
+        section.appendChild(btn);
+      })(i);
+    }
+  }
+
+
+
+
+
+
+  function clamp01(t) {
+    t = Number(t);
+    if (!isFinite(t)) return 0;
+    return Math.min(1, Math.max(0, t));
+  }
+
+  function actAt(t) {
+    for (var i = 1; i < ACT_BOUNDARIES.length; i++) {
+      if (t < ACT_BOUNDARIES[i]) return i - 1;
+    }
+    return 5;
+  }
+
+  function safeAudioTimeline(t) {
+    try {
+      if (EJ.audio && EJ.audio.setTimeline) EJ.audio.setTimeline(t);
+    } catch (e) {
+      if (!reported.audio) { reported.audio = true; EJ.fail('audio', e); }
+    }
+  }
+
+  function safeDraw(frame, t, act) {
+    try {
+      if (EJ.render && EJ.render.draw) EJ.render.draw(frame, t, act);
+    } catch (e) {
+      if (!reported.render) { reported.render = true; EJ.fail('render', e); }
+    }
+  }
+
+
+
+
+
+  function syncPlayButton() {
+    var btn = document.getElementById('playpause');
+    if (!btn) return;
+    btn.textContent = EJ.state.playing ? 'Pause' : 'Play';
+    btn.setAttribute('aria-pressed', EJ.state.playing ? 'true' : 'false');
+  }
+
+  function setPlaying(on) {
+    on = !!on;
+    try {
+      if (on) {
+        if (EJ.audio && EJ.audio.play) EJ.audio.play();
+      } else if (EJ.audio && EJ.audio.pause) {
+        EJ.audio.pause();
+      }
+    } catch (e) {
+      if (!reported.audio) { reported.audio = true; EJ.fail('audio', e); }
+    }
+    EJ.state.playing = on;
+    syncPlayButton();
+  }
+
+  function seek(t) {
+    t = clamp01(t);
+    EJ.state.t = t;
+    safeAudioTimeline(t);
+    if (mode === 'guided') {
+      var el = document.scrollingElement || document.documentElement;
+      var max = el.scrollHeight - el.clientHeight;
+      if (max > 0) el.scrollTop = Math.round(t * max);
+    }
+  }
+
+  function wireTransport() {
+    var btn = document.getElementById('playpause');
+    if (btn) {
+      btn.addEventListener('click', function () { setPlaying(!EJ.state.playing); });
+    }
+
+    var scrub = document.getElementById('scrub');
+    if (scrub) {
+      scrub.addEventListener('input', function () {
+        scrubbing = true;
+        seek(Number(scrub.value) / 1000);
+      });
+      scrub.addEventListener('change', function () {
+        scrubbing = false;
+      });
+    }
+  }
+
+
+
+
+
+  function isFormTarget(el) {
+    if (!el || !el.tagName) return false;
+    var tag = el.tagName.toUpperCase();
+    return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' ||
+      tag === 'BUTTON' || el.isContentEditable === true;
+  }
+
+  function wireKeyboard() {
+    document.addEventListener('keydown', function (e) {
+      if (isFormTarget(e.target) || e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        setPlaying(!EJ.state.playing);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        seek(EJ.state.t + YEAR_STEP);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        seek(EJ.state.t - YEAR_STEP);
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        seek(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        seek(1);
+      }
+    });
+  }
+
+
+
+
+
+  function wireLifecycle() {
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        wasPlaying = EJ.state.playing;
+        if (EJ.state.playing) setPlaying(false);
+      } else if (wasPlaying) {
+        wasPlaying = false;
+        setPlaying(true);
+      }
+    });
+
+    window.addEventListener('pagehide', function () {
+      try {
+        if (EJ.audio && EJ.audio.dispose) EJ.audio.dispose();
+      } catch (e) { EJ.fail('audio', e); }
+    });
+  }
+
+
+
+
+
+  function readoutText(act) {
+    var content = EJ.content || {};
+    var title = (content.acts && content.acts[act] && content.acts[act].title) || ('Act ' + act);
+
+    if (mode === 'listen' && Array.isArray(content.narration) && content.narration.length) {
+      var line = null;
+      for (var i = 0; i < content.narration.length; i++) {
+        var n = content.narration[i];
+        if (n && typeof n.t === 'number' && n.t <= EJ.state.t) line = n.text || line;
+      }
+      if (!line) line = (content.narration[0] && content.narration[0].text) || null;
+      if (line) return line;
+    }
+    return title;
+  }
+
+  function announce(frame, act) {
+    var now = Date.now();
+    if (now - lastAnnounceAt < LIVE_REGION_MS) return;
+
+    var content = EJ.content || {};
+    var title = (content.acts && content.acts[act] && content.acts[act].title) || ('Act ' + act);
+    var pct = Math.round((frame.iceFrac || 0) * 1000) / 10;
+    var text = 'Year ' + Math.round(frame.year) + '. ' + title +
+      '. Ice covers ' + pct + ' percent of the mapped area.';
+
+    if (text === lastAnnounceText) return;
+    lastAnnounceAt = now;
+    lastAnnounceText = text;
+
+    var live = document.getElementById('live-region');
+    if (live) live.textContent = text;
+  }
+
+  function updateHud(frame, act) {
+    var yearEl = document.getElementById('year');
+    var year = String(Math.round(frame.year));
+    if (yearEl && yearEl.textContent !== year) yearEl.textContent = year;
+
+    var readout = document.getElementById('readout');
+    var text = readoutText(act);
+    if (readout && readout.textContent !== text) readout.textContent = text;
+
+    announce(frame, act);
+  }
+
+  function syncScrub(t) {
+    var scrub = document.getElementById('scrub');
+    if (!scrub || scrubbing) return;
+    var v = String(Math.round(t * 1000));
+    if (scrub.value !== v) scrub.value = v;
+  }
+
+
+
+
+
+  function loop(now) {
+    requestAnimationFrame(loop);
+
+    if (!lastNow) lastNow = now;
+    var dt = Math.min(0.1, (now - lastNow) / 1000);
+    lastNow = now;
+
+    var t = clamp01(EJ.state.t);
+
+    if (mode === 'listen' && EJ.state.playing) {
+      t = clamp01(t + dt / LISTEN_SECONDS);
+      EJ.state.t = t;
+      safeAudioTimeline(t);
+      if (t >= 1) setPlaying(false);
+    }
+
+    var frame = EJ.frameAt(t);
+    EJ.state.frame = frame;
+
+    var year = Math.round(frame.year);
+    if (year !== EJ.state.year) {
+      EJ.state.year = year;
+      EJ.emit('year', year);
+      EJ.emit('frame', frame);
+    }
+
+    var act = actAt(t);
+    EJ.state.act = act;
+
+    safeDraw(frame, t, act);
+    updateHud(frame, act);
+    syncScrub(t);
+  }
+
+
+
+
+
+  window.scanDOM = function () {
+    var missing = [];
+    var duplicates = {};
+    var counts = {};
+
+    CONTRACT_IDS.forEach(function (id) {
+      var n = document.querySelectorAll('[id="' + id + '"]').length;
+      counts[id] = n;
+      if (n === 0) missing.push(id);
+      if (n > 1) duplicates[id] = n;
+    });
+
+    return {
+      ids: CONTRACT_IDS.slice(),
+      counts: counts,
+      missing: missing,
+      duplicates: duplicates,
+      ok: missing.length === 0 && Object.keys(duplicates).length === 0
+    };
+  };
+
+
+
+
+
+  function init() {
+    mode = EJ.state.mode || 'guided';
+
+    document.body.classList.add('mode-' + mode);
+    if (mode === 'reduced') document.body.classList.add('reduced');
+    if (mode === 'listen') document.body.classList.add('listen');
+
+    injectActs();
+    addReducedPlayButtons();
+    wireTransport();
+    wireKeyboard();
+    wireLifecycle();
+    syncPlayButton();
+    requestAnimationFrame(loop);
+
+    if (!injected) {
+      EJ.on('ready', injectActs);
+    }
+  }
+
+  EJ.on('begin', function () {
+    EJ.state.playing = true;
+    syncPlayButton();
+  });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Last Note — 47 years of Arctic sea ice, played as music</title>
+<meta name="description" content="An offline, audio-first sonification of the Arctic sea ice record, 1979–2026. NASA Space Apps Challenge 2026.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<button id="begin-gate" type="button">Begin</button>
+
+<a class="skip" href="#act-1">Skip to the story</a>
+
+<header>
+  <p id="year" aria-hidden="true">1979</p>
+  <p id="readout"></p>
+</header>
+
+<div id="stage">
+  <canvas id="canvas" role="img" aria-label="Arctic sea ice rendered as it is sonified. Every act carries a written transcript."></canvas>
+</div>
+
+<main>
+  <section id="act-0" aria-labelledby="act-0-title"></section>
+  <section id="act-1" aria-labelledby="act-1-title"></section>
+  <section id="act-2" aria-labelledby="act-2-title">
+    <div id="mapping"></div>
+  </section>
+  <section id="act-3" aria-labelledby="act-3-title"></section>
+  <section id="act-4" aria-labelledby="act-4-title"></section>
+  <section id="act-5" aria-labelledby="act-5-title"></section>
+</main>
+
+<div id="transport">
+  <button id="playpause" type="button" aria-pressed="false">Play</button>
+  <input id="scrub" type="range" min="0" max="1000" step="1" value="0" aria-label="Timeline: 1979 to 2026">
+</div>
+
+<footer>
+  <p id="credits"></p>
+</footer>
+
+<div id="live-region" role="status" aria-live="polite"></div>
+
+<script id="frames-data" type="application/json"></script>
+
+<script defer src="js/core.js"></script>
+<script defer src="js/loader.js"></script>
+<script defer src="js/content.js"></script>
+<script defer src="js/audio.js"></script>
+<script defer src="js/engine.js"></script>
+<script defer src="js/render.js"></script>
+<script defer src="js/scroll.js"></script>
+<script defer src="js/main.js"></script>
+</body>
+</html>

@@ -1,77 +1,19 @@
-# ---- OS / editor ----
-Thumbs.db
-desktop.ini
-.DS_Store
-*.swp
-.vscode/
-.idea/
-*.code-workspace
-
-# ---- Python ----
-__pycache__/
-*.py[cod]
-.venv/
-venv/
-env/
-.pytest_cache/
-.mypy_cache/
-.ipynb_checkpoints/
-*.egg-info/
-build/
-dist/
-
-# ---- Node / web ----
-node_modules/
-.next/
-.cache/
-dist/
-*.log
-npm-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# ---- Secrets / config ----
-.env
-.env.*
-!.env.example
-secrets.json
-credentials.json
-*.pem
-
-# ---- Data / heavy assets ----
-# Keep small demo data in repo; ignore the big stuff.
-data/raw/
-data/cache/
-*.sqlite
-*.db
-*.h5
-*.hdf5
-*.nc
-*.tif
-*.tiff
-*.geojson.tmp
-models/
-weights/
-checkpoints/
-
-# ---- Blender / DCC ----
-*.blend1
-*.blend2
-
-# ---- Unreal / Unity ----
-Binaries/
-DerivedDataCache/
-Intermediate/
-Saved/
-*.sln
-*.suo
-Library/
-Temp/
-Obj/
-Build/
-Builds/
-
-# ---- Archives ----
-*.zip
-*.7z
-*.rar
+# Allowlist .gitignore (AGENT-06 §2.1) — everything is ignored except the
+# project's own paths, so a careless `git add .` can never stage anything else.
+*
+!.gitignore
+!.gitattributes
+!README.md
+!LICENSE
+!app/
+!app/**
+!copy/
+!copy/**
+!build/
+!build/**
+!dist/
+!dist/**
+!submission/
+!submission/**
+!video/
+!video/**

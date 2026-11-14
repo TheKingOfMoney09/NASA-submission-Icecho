@@ -1,0 +1,165 @@
+/* 06-INTEGRATION placeholder stylesheet.
+   Owned by 04-VISUAL — 04 replaces this file entirely with the real design.
+   This exists only so the shell has valid, working layout before styling lands. */
+
+:root {
+  color-scheme: dark;
+  --ink: #08090b;
+  --ice: #e8f1f5;
+  --accent: #5fb8d4;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--ink);
+  color: var(--ice);
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  line-height: 1.6;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  z-index: 100;
+}
+
+.skip:focus {
+  left: 1rem;
+  top: 1rem;
+  background: var(--ice);
+  color: var(--ink);
+  padding: 0.5rem 1rem;
+}
+
+header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  padding: 1rem 1.5rem;
+  pointer-events: none;
+}
+
+#year {
+  margin: 0;
+  font-family: ui-monospace, Consolas, monospace;
+  font-weight: 600;
+  font-size: clamp(2rem, 6vw, 4rem);
+  line-height: 1;
+}
+
+#readout {
+  margin: 0;
+  max-width: 44ch;
+  text-align: right;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+#stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+#canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+main { position: relative; z-index: 2; }
+
+main section {
+  min-height: 100vh;
+  max-width: 72ch;
+  padding: 18vh 8vw;
+}
+
+main section h2 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  font-weight: 600;
+}
+
+main section p { margin: 0 0 1rem; }
+
+#transport {
+  position: fixed;
+  left: 50%;
+  bottom: 1.25rem;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid rgba(232, 241, 245, 0.18);
+  border-radius: 999px;
+  background: rgba(8, 9, 11, 0.75);
+}
+
+#playpause {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
+  background: var(--accent);
+  color: var(--ink);
+  font-family: ui-monospace, Consolas, monospace;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+#scrub { width: min(40vw, 320px); }
+
+footer { position: relative; z-index: 2; }
+
+#credits {
+  margin: 0;
+  padding: 2rem 8vw 4rem;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+#begin-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: var(--ink);
+  color: var(--ice);
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+#begin-gate[hidden] { display: none; }
+
+#live-region {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Reduced-motion / listen fallbacks — 04 owns the real design of both. */
+body.reduced #stage { display: none; }
+body.reduced main section { min-height: 0; padding: 2.5rem 8vw; }
+body.reduced #transport { position: sticky; bottom: 0; }
+body.listen main { display: none; }
+body.listen #stage { display: none; }
