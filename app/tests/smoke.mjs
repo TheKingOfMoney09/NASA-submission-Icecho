@@ -382,6 +382,21 @@ async function main() {
   const toggled = await waitExpr(guided.cdp, `EJ.state.playing !== ${before}`, 1500);
   check('keyboard: Space toggles play/pause', toggled >= 0, `${before} -> ${await evalJS(guided.cdp, 'EJ.state.playing')}`);
 
+  /* ---- scroll drives the story (the guided spine) ---- */
+  await evalJS(guided.cdp, 'window.scrollTo(0, (document.scrollingElement || document.documentElement).scrollHeight)');
+  const scrolled = await waitExpr(
+    guided.cdp,
+    'EJ.state.t > 0.99 && document.getElementById("year").textContent === "2026"',
+    4000
+  );
+  const endT = await evalJS(guided.cdp, 'Number(EJ.state.t).toFixed(3)');
+  const endYear = await evalJS(guided.cdp, 'document.getElementById("year").textContent');
+  check(
+    'scroll drives the timeline and the displayed year',
+    scrolled >= 0,
+    `t=${endT} year=${endYear}`
+  );
+
   /* ---- listen mode ---- */
   const listen = await openTarget('about:blank');
   await navigate(listen.cdp, APP_URL + '?mode=listen');
