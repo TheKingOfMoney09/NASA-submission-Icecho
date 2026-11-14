@@ -234,11 +234,34 @@ async function key(cdp, { keyName, code, vk, text }) {
   await cdp.send('Input.dispatchKeyEvent', { type: 'keyUp', ...base });
 }
 
+// Reads the live canvas back and counts distinct coarse colours. A stub that
+// only fills one flat colour (or never draws) cannot pass this.
+async function canvasColors(cdp) {
+  try { await cdp.send('Page.bringToFront'); } catch {}
+  await sleep(900);
+  return evalJS(cdp, `(function () {
+    var c = document.getElementById('canvas');
+    if (!c || !c.getContext) return null;
+    var g = c.getContext('2d');
+    var w = c.width, h = c.height;
+    if (!w || !h) return { w: 0, h: 0, colors: 0 };
+    var d;
+    try { d = g.getImageData(0, 0, w, h).data; } catch (e) { return { w: w, h: h, colors: -1 }; }
+    var seen = {}, count = 0;
+    for (var i = 0; i < d.length; i += 4 * 97) {
+      var key = (d[i] >> 4) + ',' + (d[i + 1] >> 4) + ',' + (d[i + 2] >> 4) + ',' + (d[i + 3] >> 7);
+      if (!seen[key]) { seen[key] = 1; count++; }
+    }
+    return { w: w, h: h, colors: count };
+  })()`);
+}
+
 // Real-audio assertions. Runs in a mode with no scroll/timer writer (reduced),
 // so EJ.state.t stays where we put it while the engine settles.
 // The three anchors come from the verified NSIDC record: 1979 six voices,
 // 2012 (record low) three, 2026 four.
 async function audioAnchorSuite(cdp, label) {
+  try { await cdp.send('Page.bringToFront'); } catch {}
   const hasDiag = await evalJS(cdp, '!!(window.EJ && EJ.audio && typeof EJ.audio._diag === "function")');
   if (!hasDiag) {
     skip(`${label}: real audio diagnostics`, 'audio._diag unavailable (fallback module)');
@@ -331,6 +354,9 @@ async function main() {
   const mode = await evalJS(guided.cdp, 'EJ.state.mode');
   check('default mode is guided', mode === 'guided', String(mode));
 
+  const canvasState = await canvasColors(guided.cdp);
+  check('guided: canvas paints a non-blank plate', canvasState && canvasState.colors > 3, JSON.stringify(canvasState));
+
   const errorsGuided = realErrors(guided.errors);
   check(
     'zero console errors / uncaught exceptions (app)',
@@ -407,6 +433,9 @@ async function main() {
     check('dist/TheLastNote.html opens from file:// and reaches EJ.ready', distReady >= 0, distReady >= 0 ? `${distReady} ms` : 'timeout');
 
     if (distReady >= 0) {
+      const distCanvas = await canvasColors(dist.cdp);
+      check('dist: canvas paints the real map plate', distCanvas && distCanvas.colors > 3, JSON.stringify(distCanvas));
+
       const distScan = await evalJS(dist.cdp, 'window.scanDOM ? scanDOM() : null');
       check('dist: no duplicate contract ids', distScan && distScan.ok, distScan && !distScan.ok ? JSON.stringify({ missing: distScan.missing, duplicates: distScan.duplicates }) : '');
     }
