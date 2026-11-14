@@ -247,6 +247,15 @@ def cmd_extract(_args) -> int:
     FRAME_DIR.mkdir(parents=True, exist_ok=True)
     log("extract: %d maps -> %s" % (N_YEARS, FRAME_DIR))
 
+    # The published annual minimum (Aug-Oct), the same series `validate` uses. It is
+    # embedded on every frame so the audio engine can count voices from the real
+    # extent instead of the iceFrac proxy, which is non-monotonic against extent.
+    minima = read_daily_minima(DAILY_CSV)
+    no_extent = [y for y in YEARS if y not in minima]
+    if no_extent:
+        die("no daily minimum for %s - run `py app/prep.py fetch` first"
+            % ", ".join(str(y) for y in no_extent))
+
     rows = []
     for year in YEARS:
         src = RAW / ("N_%d09_extn_hires_v4.0.png" % year)
@@ -254,10 +263,11 @@ def cmd_extract(_args) -> int:
         feats = measure(crop)
         img_name = "f%d.webp" % year
         size = export_webp(crop, FRAME_DIR / img_name)
-        log("  %d  iceFrac %.4f  centroid %.3f  spread %.3f  edge %.4f  lum %.3f  %5.1f KB"
-            % (year, feats["iceFrac"], feats["centroidY"], feats["spread"],
+        extent = minima[year]["extent"]
+        log("  %d  iceFrac %.4f  ext %.3f  centroid %.3f  spread %.3f  edge %.4f  lum %.3f  %5.1f KB"
+            % (year, feats["iceFrac"], extent, feats["centroidY"], feats["spread"],
                feats["edge"], feats["lum"], size / 1024.0))
-        rows.append({"year": year, "img": img_name, **feats})
+        rows.append({"year": year, "img": img_name, "extentMkm2": extent, **feats})
 
     if len(rows) != N_YEARS:
         die("expected %d frames, measured %d" % (N_YEARS, len(rows)))
@@ -279,6 +289,7 @@ def cmd_extract(_args) -> int:
             "year": row["year"],
             "t": round(i / float(N_YEARS - 1), 6),
             "iceFrac": rounded_ice[i],
+            "extentMkm2": round(row["extentMkm2"], 4),
             "centroidY": round(row["centroidY"], 4),
             "spread": round(row["spread"], 4),
             "edge": round(row["edge"], 4),
@@ -420,6 +431,13 @@ def cmd_validate(_args) -> int:
     ice = np.array([by_year[y]["iceFrac"] for y in years], dtype=np.float64)
     ext = np.array([minima[y]["extent"] for y in years], dtype=np.float64)
 
+    # frames.json must carry exactly the extents this table is built from.
+    ext_mismatch = [y for y in years
+                    if abs(float(by_year[y].get("extentMkm2", -1.0)) - minima[y]["extent"]) > 1e-6]
+    if ext_mismatch:
+        die("frames.json extentMkm2 disagrees with the daily CSV for %s"
+            % ", ".join(str(y) for y in ext_mismatch))
+
     r = pearson(ice, ext)
     slope, intercept = np.polyfit(ice, ext, 1)
     fitted = intercept + slope * ice
@@ -440,6 +458,16 @@ def cmd_validate(_args) -> int:
     # Voice count per year, derived from the published extent: 1979's minimum pins
     # the six-voice ceiling, the 2012 minimum is the floor. Never above 6.
     voices = [min(6, int(math.ceil(6.0 * ext[i] / 6.90 - 1e-9))) for i in range(len(years))]
+    # Same formula, but read back from the field that actually ships.
+    voices_field = [min(6, int(math.ceil(6.0 * by_year[y]["extentMkm2"] / 6.90 - 1e-9)))
+                    for y in years]
+    voice_mismatch = [y for y, a, b in zip(years, voices, voices_field) if a != b]
+    log("validate: extentMkm2 matches the daily CSV on %d/%d frames; voices from embedded "
+        "extent reproduce the table on %d/%d"
+        % (len(years) - len(ext_mismatch), N_YEARS,
+           len(years) - len(voice_mismatch), N_YEARS))
+    if voice_mismatch:
+        log("validate: voice mismatch in %s" % ", ".join(str(y) for y in voice_mismatch))
 
     # ---- validation.md ----------------------------------------------------
     today = dt.date.today().isoformat()
@@ -480,6 +508,9 @@ def cmd_validate(_args) -> int:
         "in M km2. Negative means the map shows less ice than the fit predicts.")
     add("- **Voices** - `min(6, ceil(6 * extent / 6.90))`, the 1979 extent anchoring six "
         "voices and clamping at the instrument's ceiling.")
+    add("- **`extentMkm2`** - not a comparison: the same published minimum, embedded on "
+        "every frame of `frames.json` so the audio engine can use the real number. "
+        "See the section after the table.")
     add("")
     add("## Per-year table")
     add("")
@@ -489,12 +520,36 @@ def cmd_validate(_args) -> int:
         add("| %d | %.4f | %s | %s | %d | %+.2f |"
             % (y, ice[i], fmt2(ext[i]), minima[y]["date"], voices[i], resid[i]))
     add("")
+    add("## `extentMkm2` (embedded field)")
+    add("")
+    add("Every frame in `frames.json` carries `extentMkm2` - the annual Aug-Oct daily "
+        "minimum in millions of km2, straight from `N_seaice_extent_daily_v4.0.csv` "
+        "(NSIDC Sea Ice Index v4), at the file's full three decimals. It is the same "
+        "series as the `Published min` column above; it is embedded so the audio engine "
+        "can count voices from the published number instead of the `iceFrac` proxy, "
+        "which is not monotonic against extent at 1999, 2004, 2017 and 2018.")
+    add("")
+    add("For alt text, the four years 03-NARRATIVE asked for:")
+    add("")
+    add("| Year | `extentMkm2` | Minimum date | Voices |")
+    add("|---|---|---|---|")
+    for y in (1988, 1995, 2016, 2020):
+        i = years.index(y)
+        add("| %d | %.3f | %s | %d |" % (y, ext[i], minima[y]["date"], voices[i]))
+    add("")
     add("## Voice counts (derived, for the audio mapping)")
     add("")
     add("`voices = min(6, ceil(6 * extent / 6.90))` - 1979's %.3f M km2 pins the "
         "six-voice ceiling, 2012's %.2f M km2 is the floor." % (ext[0], min(ext)))
     add("")
     add("Runs: %s" % voice_runs(years, voices))
+    add("")
+    if voice_mismatch:
+        add("**Mismatch between the table and the embedded `extentMkm2` in %s.**"
+            % ", ".join(str(y) for y in voice_mismatch))
+    else:
+        add("Recomputed from the embedded `extentMkm2` in `frames.json`, this table "
+            "reproduces for all %d years." % N_YEARS)
     add("")
     add("This is a stagger, not a fade: the chord loses a voice, gets one back, loses two. "
         "Several post-2007 years (2017, 2018, 2021, 2022) recover to five, so do not "

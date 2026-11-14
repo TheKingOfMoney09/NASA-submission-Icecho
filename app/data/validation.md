@@ -23,6 +23,7 @@ The map is drawn in a polar stereographic projection, which stretches area away 
 - **Published minimum** - lowest daily extent in Aug-Oct of each year, from `N_seaice_extent_daily_v4.0.csv`. This is the annual Arctic minimum the app prints.
 - **Residual** - published minus the least-squares fit of extent on `iceFrac`, in M km2. Negative means the map shows less ice than the fit predicts.
 - **Voices** - `min(6, ceil(6 * extent / 6.90))`, the 1979 extent anchoring six voices and clamping at the instrument's ceiling.
+- **`extentMkm2`** - not a comparison: the same published minimum, embedded on every frame of `frames.json` so the audio engine can use the real number. See the section after the table.
 
 ## Per-year table
 
@@ -77,11 +78,26 @@ The map is drawn in a polar stereographic projection, which stretches area away 
 | 2025 | 0.1124 | 4.54 | 8 Sep | 4 | -0.01 |
 | 2026 | 0.1147 | 4.57 | 12 Sep | 4 | -0.08 |
 
+## `extentMkm2` (embedded field)
+
+Every frame in `frames.json` carries `extentMkm2` - the annual Aug-Oct daily minimum in millions of km2, straight from `N_seaice_extent_daily_v4.0.csv` (NSIDC Sea Ice Index v4), at the file's full three decimals. It is the same series as the `Published min` column above; it is embedded so the audio engine can count voices from the published number instead of the `iceFrac` proxy, which is not monotonic against extent at 1999, 2004, 2017 and 2018.
+
+For alt text, the four years 03-NARRATIVE asked for:
+
+| Year | `extentMkm2` | Minimum date | Voices |
+|---|---|---|---|
+| 1988 | 7.048 | 11 Sep | 6 |
+| 1995 | 6.012 | 4 Sep | 6 |
+| 2016 | 4.145 | 7 Sep | 4 |
+| 2020 | 3.793 | 13 Sep | 4 |
+
 ## Voice counts (derived, for the audio mapping)
 
 `voices = min(6, ceil(6 * extent / 6.90))` - 1979's 6.895 M km2 pins the six-voice ceiling, 2012's 3.34 M km2 is the floor.
 
 Runs: 1979-1998: 6 | 1999: 5 | 2000-2001: 6 | 2002: 5 | 2003-2004: 6 | 2005-2006: 5 | 2007-2008: 4 | 2009: 5 | 2010-2011: 4 | 2012: 3 | 2013-2014: 5 | 2015-2016: 4 | 2017-2018: 5 | 2019-2020: 4 | 2021-2022: 5 | 2023-2026: 4
+
+Recomputed from the embedded `extentMkm2` in `frames.json`, this table reproduces for all 48 years.
 
 This is a stagger, not a fade: the chord loses a voice, gets one back, loses two. Several post-2007 years (2017, 2018, 2021, 2022) recover to five, so do not describe 2007-2026 as a flat four.
 
@@ -131,7 +147,7 @@ Every anchor year and every headline statistic reproduces. The 0.0001 gap in r i
 
 | Item | Value |
 |---|---|
-| `app/data/frames.json` | 10.6 KB, 48 frames |
+| `app/data/frames.json` | 11.8 KB, 48 frames |
 | `app/data/frames/*.webp` | 48 files, 2.42 MB, 50.6-52.8 KB each |
 
 ## Reproduce
