@@ -243,7 +243,7 @@
     if (out.length) {
       if (!isFinite(out[0].year)) out[0].year = 1979;
       for (var j = 0; j < out.length; j++) {
-        if (!isFinite(out[j].year)) out[j].year = out[0].year + (out[0].year === 1979 ? j : j);
+        if (!isFinite(out[j].year)) out[j].year = out[0].year + j;
         if (!isFinite(out[j].t)) out[j].t = out.length > 1 ? j / (out.length - 1) : 0;
       }
     }

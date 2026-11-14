@@ -124,6 +124,14 @@
     }
   }
 
+  function safeAudioFrame(frame) {
+    try {
+      if (EJ.audio && EJ.audio.setFrame) EJ.audio.setFrame(frame);
+    } catch (e) {
+      if (!reported.audio) { reported.audio = true; EJ.fail('audio', e); }
+    }
+  }
+
   /* ------------------------------------------------------------------ */
   /* Transport                                                          */
   /* ------------------------------------------------------------------ */
@@ -320,6 +328,7 @@
       EJ.state.year = year;
       EJ.emit('year', year);
       EJ.emit('frame', frame);
+      safeAudioFrame(frame);
     }
 
     var act = actAt(t);
@@ -383,6 +392,7 @@
   EJ.on('begin', function () {
     EJ.state.playing = true;
     syncPlayButton();
+    safeAudioFrame(EJ.frameAt(EJ.state.t));
   });
 
   if (document.readyState === 'loading') {
