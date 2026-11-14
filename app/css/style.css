@@ -1,165 +1,1056 @@
-/* 06-INTEGRATION placeholder stylesheet.
-   Owned by 04-VISUAL — 04 replaces this file entirely with the real design.
-   This exists only so the shell has valid, working layout before styling lands. */
+/* The Last Note — stylesheet.
+   Owner: 04-VISUAL. One serif, one mono, near-black, ice, one cold accent.
+   Amber appears only on anomaly years. Nothing bounces. No webfonts. */
 
 :root {
   color-scheme: dark;
   --ink: #08090b;
+  --ink-2: #0c0e11;
   --ice: #e8f1f5;
   --accent: #5fb8d4;
+  --amber: #d99a3a;
+  --line: rgba(232, 241, 245, 0.14);
+  --line-soft: rgba(232, 241, 245, 0.07);
+  --dim: rgba(232, 241, 245, 0.62);
+  --serif: Georgia, "Iowan Old Style", "Times New Roman", Times, serif;
+  --mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --gutter: clamp(1.5rem, 7vw, 7rem);
+  --col: min(30rem, 34vw);
 }
 
-* { box-sizing: border-box; }
+*,
+*::before,
+*::after { box-sizing: border-box; }
 
-html, body { margin: 0; padding: 0; }
+html {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  background: var(--ink);
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: auto;
+}
 
 body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  overflow-x: hidden;
   background: var(--ink);
   color: var(--ice);
-  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* The film grain that makes a flat map read as a printed plate. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  background-repeat: repeat;
+}
+
+::selection {
+  background: rgba(95, 184, 212, 0.32);
+  color: var(--ice);
+}
+
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb {
+  background: rgba(232, 241, 245, 0.16);
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+}
+
+a { color: var(--accent); }
+
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 .skip {
-  position: absolute;
-  left: -9999px;
-  z-index: 100;
-}
-
-.skip:focus {
-  left: 1rem;
+  position: fixed;
+  left: var(--gutter);
   top: 1rem;
+  z-index: 60;
+  transform: translateY(-240%);
+  padding: 0.7rem 1.1rem;
   background: var(--ice);
   color: var(--ink);
-  padding: 0.5rem 1rem;
-}
-
-header {
-  position: fixed;
-  inset: 0 0 auto 0;
-  z-index: 5;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 2rem;
-  padding: 1rem 1.5rem;
-  pointer-events: none;
-}
-
-#year {
-  margin: 0;
-  font-family: ui-monospace, Consolas, monospace;
+  font-family: var(--mono);
+  font-size: 0.7rem;
   font-weight: 600;
-  font-size: clamp(2rem, 6vw, 4rem);
-  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 220ms var(--ease);
 }
 
-#readout {
-  margin: 0;
-  max-width: 44ch;
-  text-align: right;
-  font-size: 0.9rem;
-  opacity: 0.8;
+.skip:focus,
+.skip:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
-#stage {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-}
-
-#canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-main { position: relative; z-index: 2; }
-
-main section {
-  min-height: 100vh;
-  max-width: 72ch;
-  padding: 18vh 8vw;
-}
-
-main section h2 {
-  margin: 0 0 1rem;
-  font-size: clamp(1.5rem, 3vw, 2.4rem);
-  font-weight: 600;
-}
-
-main section p { margin: 0 0 1rem; }
-
-#transport {
-  position: fixed;
-  left: 50%;
-  bottom: 1.25rem;
-  transform: translateX(-50%);
-  z-index: 6;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.5rem 0.9rem;
-  border: 1px solid rgba(232, 241, 245, 0.18);
-  border-radius: 999px;
-  background: rgba(8, 9, 11, 0.75);
-}
-
-#playpause {
-  border: 0;
-  border-radius: 999px;
-  padding: 0.45rem 1rem;
-  background: var(--accent);
-  color: var(--ink);
-  font-family: ui-monospace, Consolas, monospace;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
-#scrub { width: min(40vw, 320px); }
-
-footer { position: relative; z-index: 2; }
-
-#credits {
-  margin: 0;
-  padding: 2rem 8vw 4rem;
-  font-size: 0.8rem;
-  opacity: 0.7;
-}
+/* ------------------------------------------------------------------ */
+/* Begin gate — a real full-screen button, the only way sound starts.  */
+/* ------------------------------------------------------------------ */
 
 #begin-gate {
   position: fixed;
   inset: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
   border: 0;
+  border-radius: 0;
   background: var(--ink);
   color: var(--ice);
-  font-family: Georgia, "Iowan Old Style", serif;
-  font-size: 1.15rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.34em;
   text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 1000ms var(--ease), color 420ms var(--ease);
+}
+
+#begin-gate::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 158px;
+  height: 158px;
+  margin: -79px 0 0 -79px;
+  border: 1px solid rgba(232, 241, 245, 0.13);
+  border-radius: 50%;
+  transition: border-color 520ms var(--ease), transform 1200ms var(--ease);
+}
+
+/* Cover wordmark. The markup is a single button, so the title is decorative
+   generated content; scroll.js pins aria-label="Begin" to keep the button's
+   accessible name to its verb. */
+#begin-gate::after {
+  content: "The Last Note";
+  position: absolute;
+  left: 50%;
+  top: clamp(4.2rem, 17vh, 10rem);
+  width: min(92vw, 36rem);
+  transform: translateX(-50%);
+  font-family: var(--serif);
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: 0.002em;
+  text-align: center;
+  text-transform: none;
+  color: var(--ice);
+  pointer-events: none;
+}
+
+#begin-gate:hover,
+#begin-gate:focus-visible { color: var(--accent); }
+
+#begin-gate:hover::before,
+#begin-gate:focus-visible::before {
+  border-color: rgba(95, 184, 212, 0.5);
+  transform: scale(1.05);
+}
+
+#begin-gate[hidden] {
+  display: grid;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 900ms var(--ease), visibility 0s 900ms;
+}
+
+/* ------------------------------------------------------------------ */
+/* Header: the year is the clock, the readout is the chapter.          */
+/* ------------------------------------------------------------------ */
+
+header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 20;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  padding: clamp(1rem, 3.4vh, 2rem) var(--gutter);
+  pointer-events: none;
+}
+
+header::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: min(46vw, 38rem);
+  height: calc(100% + 1rem);
+  background: linear-gradient(
+    to bottom,
+    var(--ink) 0,
+    var(--ink) calc(100% - 1rem),
+    rgba(8, 9, 11, 0) 100%
+  );
+  z-index: -1;
+}
+
+#year {
+  margin: 0;
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: clamp(1.8rem, 3.2vw, 3rem);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ice);
+  transition: color 900ms var(--ease), opacity 900ms var(--ease);
+}
+
+#year::after {
+  content: "";
+  display: block;
+  width: 2.2rem;
+  height: 1px;
+  margin-top: 0.85rem;
+  background: rgba(232, 241, 245, 0.26);
+}
+
+#readout {
+  margin: 0.3rem 0 0;
+  max-width: min(28ch, 30vw);
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  line-height: 1.7;
+  text-transform: uppercase;
+  color: var(--dim);
+  transition: color 900ms var(--ease), opacity 900ms var(--ease);
+}
+
+/* Act names are short: hold them on one line so a chapter never breaks
+   across a syllable. Listen mode keeps the narration's natural wrapping. */
+@media (min-width: 900px) {
+  body:not(.listen) #readout {
+    max-width: none;
+    white-space: nowrap;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Stage: a portrait plate, fixed, printed, never tinted.              */
+/* ------------------------------------------------------------------ */
+
+#stage {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+#canvas {
+  position: absolute;
+  display: block;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ------------------------------------------------------------------ */
+/* Main: six acts sized to the timeline, so scroll == t exactly.       */
+/* ------------------------------------------------------------------ */
+
+main {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+}
+
+main > section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  padding: 6vh var(--gutter);
+  opacity: 0.7;
+  transition: opacity 950ms var(--ease);
+}
+
+main > section.is-active { opacity: 1; }
+
+/* Heights are act durations from main.js (10/25/25/30/10/8 of 108 s)
+   scaled to 700vh of scroll. Section top / 700vh == act boundary t. */
+#act-0 { height: 64.82vh; }
+#act-1 { height: 162.05vh; }
+#act-2 { height: 162.05vh; }
+#act-3 { height: 194.39vh; }
+#act-4 { height: 64.82vh; }
+#act-5 { height: 51.87vh; }
+
+main > section > * { max-width: var(--col); }
+
+main > section h2 {
+  margin: 0 0 1.9rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(232, 241, 245, 0.78);
+}
+
+main > section h2::before {
+  content: "";
+  display: block;
+  width: 2rem;
+  height: 1px;
+  margin-bottom: 1.15rem;
+  background: rgba(232, 241, 245, 0.3);
+  transition: width 950ms var(--ease), background-color 950ms var(--ease);
+}
+
+main > section.is-active h2::before {
+  width: 2.9rem;
+  background: var(--accent);
+}
+
+main > section > p {
+  margin: 0 0 1.05rem;
+  font-size: 1.0625rem;
+  line-height: 1.72;
+  color: rgba(232, 241, 245, 0.9);
+  text-wrap: pretty;
+}
+
+main > section > p:first-of-type {
+  margin-bottom: 1.55rem;
+  font-size: clamp(1.3rem, 2.05vw, 1.62rem);
+  line-height: 1.4;
+  letter-spacing: -0.004em;
+  color: var(--ice);
+}
+
+main > section > p:last-of-type { margin-bottom: 0; }
+
+#act-3 > p:first-of-type {
+  font-size: clamp(1.45rem, 2.5vw, 1.95rem);
+  line-height: 1.34;
+}
+
+#act-5 > p:first-of-type { font-size: clamp(1.2rem, 1.8vw, 1.4rem); }
+
+/* Transcript: a quiet aside, floating so opening it never moves the page. */
+main > section details {
+  position: relative;
+  margin-top: 1.9rem;
+  max-width: var(--col);
+}
+
+main > section summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  padding: 0.35rem 0;
+  list-style: none;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  cursor: pointer;
+  transition: color 320ms var(--ease);
+}
+
+main > section summary::-webkit-details-marker { display: none; }
+main > section summary::before { content: "+"; font-size: 0.9rem; line-height: 1; }
+main > section details[open] summary::before { content: "\2212"; }
+main > section summary:hover { color: var(--ice); }
+
+main > section details p {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 0.55rem);
+  z-index: 6;
+  width: var(--col);
+  max-height: 46vh;
+  overflow: auto;
+  overscroll-behavior: contain;
+  margin: 0;
+  padding: 1rem 1.15rem;
+  background: var(--ink-2);
+  border: 1px solid var(--line);
+  border-left-color: rgba(95, 184, 212, 0.5);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: rgba(232, 241, 245, 0.82);
+}
+
+/* The mapping note is a figure, not prose: mono, ruled, and only when
+   somebody has actually put something in it. */
+#mapping { margin: 0 0 1.5rem; }
+#mapping:empty { display: none; }
+#mapping:not(:empty) {
+  padding-left: 1rem;
+  border-left: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  line-height: 1.9;
+  letter-spacing: 0.05em;
+  color: rgba(232, 241, 245, 0.74);
+}
+#mapping:not(:empty) h3,
+#mapping:not(:empty) h4 {
+  margin: 0 0 0.6rem;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+#mapping:not(:empty) table {
+  width: 100%;
+  border-collapse: collapse;
+}
+#mapping:not(:empty) th,
+#mapping:not(:empty) td {
+  padding: 0.24rem 0.6rem 0.24rem 0;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line-soft);
+  font-weight: 400;
+}
+
+/* ------------------------------------------------------------------ */
+/* Anomaly: amber appears for the 2012 years, and nowhere else.       */
+/* ------------------------------------------------------------------ */
+
+body[data-anomaly] #year { color: var(--amber); }
+body[data-anomaly] #year::after { background: rgba(217, 154, 58, 0.62); }
+
+/* The handover act quietly invites the controls forward. */
+body[data-act="4"] #transport { border-color: rgba(95, 184, 212, 0.4); }
+body[data-act="4"] #playpause {
+  color: var(--accent);
+  border-color: rgba(95, 184, 212, 0.4);
+}
+
+body[data-anomaly] #transport { border-color: rgba(217, 154, 58, 0.3); }
+
+/* ------------------------------------------------------------------ */
+/* Transport: a printed control strip in the empty left margin.        */
+/* ------------------------------------------------------------------ */
+
+#transport {
+  position: fixed;
+  left: var(--gutter);
+  bottom: clamp(1rem, 3.2vh, 1.9rem);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: var(--col);
+  margin: 0;
+  padding: 0.45rem;
+  background: rgba(8, 9, 11, 0.9);
+  border: 1px solid var(--line-soft);
+  transition: border-color 600ms var(--ease);
+}
+
+/* Words that scroll past the controls fade into ink, never ghost through. */
+#transport::before {
+  content: "";
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: calc(var(--gutter) + var(--col) + 2.5rem);
+  height: 9rem;
+  pointer-events: none;
+  background: linear-gradient(to top, var(--ink) 0, var(--ink) 55%, rgba(8, 9, 11, 0) 100%);
+  z-index: -1;
+}
+
+#playpause {
+  flex: 0 0 auto;
+  min-width: 5.4rem;
+  min-height: 44px;
+  padding: 0 0.9rem;
+  border: 1px solid rgba(232, 241, 245, 0.22);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ice);
+  font-family: var(--mono);
+  font-size: 0.61rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 600ms var(--ease), border-color 600ms var(--ease),
+    background-color 600ms var(--ease);
+}
+
+#playpause:hover {
+  color: var(--ink);
+  background: var(--ice);
+  border-color: var(--ice);
+}
+
+#playpause[aria-pressed="true"]::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 0.5rem;
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: 0.1em;
+  transition: background-color 600ms var(--ease);
+}
+
+#scrub {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
   cursor: pointer;
 }
 
-#begin-gate[hidden] { display: none; }
+#scrub::-webkit-slider-runnable-track {
+  height: 1px;
+  border: 0;
+  background: rgba(232, 241, 245, 0.22);
+}
+
+#scrub::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 11px;
+  height: 11px;
+  margin-top: -5px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ice);
+  transition: background-color 600ms var(--ease), box-shadow 600ms var(--ease);
+}
+
+#scrub:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 0 6px rgba(232, 241, 245, 0.08);
+}
+
+#scrub::-moz-range-track {
+  height: 1px;
+  border: 0;
+  background: rgba(232, 241, 245, 0.22);
+}
+
+#scrub::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ice);
+}
+
+#scrub:focus { outline: none; }
+#scrub:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+body[data-anomaly] #scrub::-webkit-slider-thumb { background: var(--amber); }
+body[data-anomaly] #scrub::-moz-range-thumb { background: var(--amber); }
+body[data-anomaly] #playpause[aria-pressed="true"]::before { background: var(--amber); }
+
+/* ------------------------------------------------------------------ */
+/* Footer: the last screen of the scroll is the record's back matter.  */
+/* ------------------------------------------------------------------ */
+
+footer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100vh;
+  margin: 0;
+  padding: 0 var(--gutter) clamp(10rem, 16vh, 12rem);
+}
+
+#credits {
+  max-width: 30rem;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  line-height: 1.95;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(232, 241, 245, 0.56);
+}
+
+#credits::before {
+  content: "";
+  display: block;
+  width: 2.2rem;
+  height: 1px;
+  margin-bottom: 1.5rem;
+  background: rgba(95, 184, 212, 0.55);
+}
+
+/* ------------------------------------------------------------------ */
+/* Live region: present for screen readers, invisible on the plate.    */
+/* ------------------------------------------------------------------ */
 
 #live-region {
-  position: absolute;
+  position: absolute !important;
   width: 1px;
   height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
   overflow: hidden;
   clip: rect(0 0 0 0);
+  clip-path: inset(50%);
   white-space: nowrap;
 }
 
-/* Reduced-motion / listen fallbacks — 04 owns the real design of both. */
-body.reduced #stage { display: none; }
-body.reduced main section { min-height: 0; padding: 2.5rem 8vw; }
-body.reduced #transport { position: sticky; bottom: 0; }
-body.listen main { display: none; }
-body.listen #stage { display: none; }
+/* ------------------------------------------------------------------ */
+/* Listen mode: one record label, one clock, one control strip.        */
+/* ------------------------------------------------------------------ */
+
+body.listen { overflow: hidden; }
+
+body.listen #stage,
+body.listen main,
+body.listen footer,
+body.listen .skip { display: none; }
+
+body.listen header {
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 6vh var(--gutter);
+  text-align: center;
+  background: radial-gradient(circle at 50% 45%, rgba(95, 184, 212, 0.06), rgba(8, 9, 11, 0) 58%);
+}
+
+body.listen header::before { display: none; }
+
+body.listen #year {
+  position: relative;
+  font-size: clamp(4.4rem, 17vw, 11rem);
+  line-height: 0.9;
+}
+
+body.listen #year::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 64vmin;
+  height: 64vmin;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(232, 241, 245, 0.07);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+body.listen #year::after {
+  width: 3rem;
+  margin: 1.5rem auto 0;
+  background: rgba(232, 241, 245, 0.2);
+}
+
+body.listen #readout {
+  max-width: min(42ch, 78vw);
+  margin: 0;
+  text-align: center;
+  font-size: 0.76rem;
+  line-height: 1.8;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: rgba(232, 241, 245, 0.74);
+}
+
+body.listen #transport {
+  left: 50%;
+  bottom: 8vh;
+  transform: translateX(-50%);
+  width: min(32rem, 82vw);
+}
+
+body.listen #transport {
+  background: rgba(8, 9, 11, 0.94);
+}
+
+body.listen #transport::before { display: none; }
+
+/* ------------------------------------------------------------------ */
+/* Reduced motion: the piece becomes a document, not a performance.    */
+/* ------------------------------------------------------------------ */
+
+body.reduced { overflow-x: hidden; }
+
+body.reduced #stage,
+body.reduced #begin-gate,
+body.reduced #transport,
+body.reduced .skip {
+  display: none !important;
+}
+
+body.reduced header { display: none; }
+
+body.reduced main { padding: 0; }
+
+body.reduced main > section {
+  display: block;
+  height: auto;
+  padding: clamp(2.4rem, 6vh, 3.8rem) var(--gutter);
+  opacity: 1;
+}
+
+body.reduced #act-0,
+body.reduced #act-1,
+body.reduced #act-2,
+body.reduced #act-3,
+body.reduced #act-4,
+body.reduced #act-5 { height: auto; }
+
+body.reduced main > section + main > section { border-top: 1px solid var(--line-soft); }
+
+body.reduced main > section > * { max-width: min(38rem, 100%); }
+
+body.reduced main > section h2 {
+  margin-bottom: 1.5rem;
+  font-size: 0.7rem;
+  color: rgba(232, 241, 245, 0.7);
+}
+
+body.reduced main > section h2::before {
+  width: 2rem;
+  background: rgba(232, 241, 245, 0.28);
+}
+
+body.reduced main > section > p {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: rgba(232, 241, 245, 0.88);
+}
+
+body.reduced main > section > p:first-of-type {
+  font-size: clamp(1.32rem, 2.4vw, 1.7rem);
+  line-height: 1.42;
+}
+
+body.reduced #act-3 > p:first-of-type { font-size: clamp(1.32rem, 2.4vw, 1.7rem); }
+body.reduced #act-5 > p:first-of-type { font-size: clamp(1.2rem, 2vw, 1.45rem); }
+
+body.reduced main > section details {
+  margin-top: 1.4rem;
+  max-width: min(38rem, 100%);
+}
+
+body.reduced main > section details p {
+  position: static;
+  width: auto;
+  max-height: none;
+  margin-top: 0.7rem;
+  padding: 0 0 0 1rem;
+  background: none;
+  border: 0;
+  border-left: 1px solid var(--line);
+  font-size: 0.98rem;
+  line-height: 1.75;
+}
+
+body.reduced #mapping { max-width: min(38rem, 100%); }
+
+body.reduced footer {
+  display: block;
+  height: auto;
+  min-height: 0;
+  padding: clamp(2.4rem, 6vh, 3.8rem) var(--gutter) 6vh;
+  border-top: 1px solid var(--line-soft);
+}
+
+body.reduced #credits { max-width: min(38rem, 100%); }
+
+/* Only reduced mode grows these; nothing else in the piece has a button
+   that starts one act at a time. */
+.play-act {
+  display: block;
+  margin: 1.6rem 0 0;
+  min-height: 44px;
+  padding: 0.8rem 1.05rem;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-align: left;
+  cursor: pointer;
+  transition: color 600ms var(--ease), border-color 600ms var(--ease),
+    background-color 600ms var(--ease);
+}
+
+.play-act:hover {
+  color: var(--ink);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Narrow screens: plate top-right, words below it, no overlay tricks. */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 899px) {
+  :root {
+    --col: 100%;
+    --gutter: clamp(1.15rem, 5vw, 2rem);
+  }
+
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+    padding: 1rem var(--gutter) 0;
+  }
+
+  header::before {
+    width: 100%;
+    height: 8rem;
+    background: linear-gradient(to bottom, var(--ink) 0, var(--ink) 5rem, rgba(8, 9, 11, 0) 8rem);
+  }
+
+  #year { font-size: 1.55rem; }
+  #year::after { width: 1.6rem; margin-top: 0.5rem; }
+
+  #readout {
+    max-width: 66vw;
+    text-align: left;
+    font-size: 0.56rem;
+    line-height: 1.65;
+    letter-spacing: 0.14em;
+  }
+
+  main > section {
+    display: block;
+    padding: 0 var(--gutter) 16vh;
+    padding-top: calc(140px + 33vh + 10vh);
+  }
+
+  main > section > * { max-width: 100%; }
+
+  main > section > p {
+    font-size: 1rem;
+    line-height: 1.66;
+  }
+
+  main > section > p:first-of-type { font-size: clamp(1.2rem, 5.4vw, 1.5rem); }
+
+  #act-3 > p:first-of-type { font-size: clamp(1.3rem, 6vw, 1.6rem); }
+  #act-5 > p:first-of-type { font-size: clamp(1.14rem, 4.6vw, 1.35rem); }
+
+  main > section details p {
+    position: static;
+    width: auto;
+    max-height: none;
+    margin-top: 0.65rem;
+    padding: 0.8rem 0 0.8rem 1rem;
+    border: 0;
+    border-left: 1px solid var(--line);
+    background: none;
+  }
+
+  #transport {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    gap: 0.6rem;
+    padding: 0.55rem var(--gutter) calc(0.55rem + env(safe-area-inset-bottom));
+    background: rgba(8, 9, 11, 0.94);
+    border: 0;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  #playpause { min-width: 4.9rem; }
+
+  #transport::before {
+    width: 100vw;
+    height: 10rem;
+  }
+
+  footer {
+    align-items: flex-start;
+    padding: 0 var(--gutter) 24vh;
+  }
+
+  #credits { font-size: 0.58rem; }
+}
+
+/* Compact screens keep the plate clear: a scrim sits above the words and
+   below the canvas, so type passes behind the plate instead of over it. */
+@media (max-width: 899px) and (min-height: 521px) {
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 3;
+    height: calc(140px + 33vh + 8vh);
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      var(--ink) 0,
+      var(--ink) calc(140px + 33vh + 2vh),
+      rgba(8, 9, 11, 0) 100%
+    );
+  }
+}
+
+/* Short landscape: the margin layout still fits, it just gets tighter. */
+@media (max-width: 899px) and (max-height: 520px) {
+  header {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1.2rem;
+    padding: 0.9rem var(--gutter);
+  }
+
+  header::before {
+    width: min(52vw, 26rem);
+    height: calc(100% + 1.5rem);
+    background: linear-gradient(to bottom, var(--ink), rgba(8, 9, 11, 0));
+  }
+
+  #readout { max-width: 36vw; text-align: right; }
+
+  main > section {
+    display: flex;
+    justify-content: flex-start;
+    padding: 15vh var(--gutter) 12vh;
+  }
+
+  main > section > * { max-width: min(26rem, 40vw); }
+
+  main > section h2 { margin-bottom: 1rem; }
+
+  main > section > p {
+    margin-bottom: 0.7rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  main > section > p:first-of-type { font-size: 1.15rem; }
+  #act-3 > p:first-of-type { font-size: 1.22rem; }
+
+  main > section details { margin-top: 0.8rem; }
+
+  main > section details p {
+    position: absolute;
+    width: min(26rem, 44vw);
+    margin-top: 0.5rem;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--line);
+    background: var(--ink-2);
+  }
+
+  #transport {
+    left: var(--gutter);
+    right: auto;
+    bottom: clamp(0.7rem, 2.5vh, 1rem);
+    width: min(26rem, 46vw);
+    padding: 0.4rem;
+    border: 1px solid var(--line-soft);
+  }
+
+  #playpause { min-width: 4.4rem; }
+
+  #transport::before {
+    width: min(28rem, 48vw);
+    height: 8rem;
+  }
+
+  footer { padding-bottom: 18vh; }
+}
+
+@media (max-width: 520px) {
+  main > section > p { font-size: 0.97rem; }
+  #credits { font-size: 0.56rem; letter-spacing: 0.08em; }
+}
+
+/* Very short desktops: keep the whole act inside one screen where it can. */
+@media (max-height: 780px) and (min-width: 900px) {
+  main > section { padding-top: 4vh; padding-bottom: 4vh; }
+
+  main > section h2 { margin-bottom: 1.1rem; font-size: 0.62rem; }
+
+  main > section > p {
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  main > section > p:first-of-type {
+    margin-bottom: 1rem;
+    font-size: clamp(1.15rem, 1.7vw, 1.35rem);
+  }
+
+  #act-3 > p:first-of-type { font-size: clamp(1.25rem, 2vw, 1.5rem); }
+
+  main > section details { margin-top: 1rem; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Respect the system setting even before the module router catches up.*/
+/* ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
