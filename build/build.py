@@ -1,13 +1,14 @@
 ﻿#!/usr/bin/env python3
-"""Build dist/TheLastNote.html â€” one offline file.
+"""Build dist/TheLastNote.html - one offline file.
 
 Owner: 06-INTEGRATION.
 
-    python build/build.py
+    python build/build.py                  # strict: every module must exist
+    python build/build.py --allow-missing  # dev build while modules land
 
 Produces:
     dist/TheLastNote.html        inline CSS + JS + frames.json + base64 WebP frames
-    dist/TheLastNote-lite.html   inline CSS + JS + frames.json, no images (~150 KB)
+    dist/TheLastNote-lite.html   inline CSS + JS + frames.json, no images
 
 Deterministic: same inputs -> same bytes. The report is printed, not embedded.
 """
@@ -88,12 +89,12 @@ def inline_script(code: str) -> str:
 def load_frames(report: dict) -> dict:
     path = APP / "data" / "frames.json"
     if not path.exists():
-        report["warnings"].append("app/data/frames.json missing â€” runtime fallback curve will be used")
+        report["warnings"].append("app/data/frames.json missing - runtime fallback curve will be used")
         return {"frames": []}
     try:
         return json.loads(read(path))
     except json.JSONDecodeError as exc:
-        report["warnings"].append(f"frames.json invalid ({exc}) â€” runtime fallback curve will be used")
+        report["warnings"].append(f"frames.json invalid ({exc}) - runtime fallback curve will be used")
         return {"frames": []}
 
 
@@ -107,10 +108,10 @@ def load_images() -> dict:
     return images
 
 
-def build(lite: bool) -> dict:
+def build(lite: bool, allow_missing: bool = False) -> dict:
     index_path = APP / "index.html"
     if not index_path.exists():
-        raise SystemExit("app/index.html missing â€” nothing to build")
+        raise SystemExit("app/index.html missing - nothing to build")
 
     report = {"warnings": [], "modules": [], "images": 0, "image_bytes": 0}
     html = read(index_path)
@@ -124,7 +125,7 @@ def build(lite: bool) -> dict:
             "<style>\n" + css + "\n</style>",
         )
     else:
-        report["warnings"].append("css/style.css missing â€” shell ships unstyled")
+        report["warnings"].append("css/style.css missing - shell ships unstyled")
 
     # ---- JS, in dependency order ----
     for name in JS_ORDER:
@@ -140,7 +141,13 @@ def build(lite: bool) -> dict:
             })
         else:
             html = html.replace(tag, "")
-            report["warnings"].append(f"js/{name} missing â€” build continues without it")
+            if allow_missing:
+                report["warnings"].append(f"js/{name} missing - build continues without it")
+            else:
+                raise SystemExit(
+                    f"js/{name} missing - refusing to ship a stub build "
+                    "(pass --allow-missing for a dev build)"
+                )
 
     # ---- frames.json ----
     frames = load_frames(report)
@@ -208,8 +215,9 @@ def print_report(report: dict) -> None:
 
 
 def main() -> int:
-    full = build(lite=False)
-    lite = build(lite=True)
+    allow_missing = "--allow-missing" in sys.argv[1:]
+    full = build(lite=False, allow_missing=allow_missing)
+    lite = build(lite=True, allow_missing=allow_missing)
     print_report(full)
     print("")
     print_report(lite)
@@ -220,4 +228,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-
