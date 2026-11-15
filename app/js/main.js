@@ -45,16 +45,21 @@
       var section = document.getElementById('act-' + i);
       if (!section) return;
 
+      // One wrapper per act: on tall screens the whole block can stick under
+      // the header while the section scrolls, so the words never leave early.
+      var wrap = document.createElement('div');
+      wrap.className = 'act-body';
+
       var h2 = document.createElement('h2');
       h2.id = 'act-' + i + '-title';
       h2.textContent = act.title || ('Act ' + i);
-      section.insertBefore(h2, section.firstChild);
+      wrap.appendChild(h2);
 
       var lines = Array.isArray(act.lines) ? act.lines : [];
       lines.forEach(function (line) {
         var p = document.createElement('p');
         p.textContent = line;
-        section.appendChild(p);
+        wrap.appendChild(p);
       });
 
       var transcript = content.transcript && content.transcript[String(i)];
@@ -66,8 +71,10 @@
         body.textContent = transcript;
         details.appendChild(summary);
         details.appendChild(body);
-        section.appendChild(details);
+        wrap.appendChild(details);
       }
+
+      section.appendChild(wrap);
     });
   }
 
@@ -445,11 +452,44 @@
   /* Init                                                               */
   /* ------------------------------------------------------------------ */
 
+  /* Long acts pin their copy under the header on wide, tall screens. If a
+     block is taller than the space below the header, pinning would hide its
+     last lines, so fall back to the centred flow. Measured, not guessed:
+     the height of the block depends on where the lines break. */
+  var fitQueued = false;
+
+  function fitActCopy() {
+    fitQueued = false;
+    if (!document.body) return;
+    document.body.classList.remove('copy-tall');
+    if (mode === 'reduced' || window.innerWidth < 900) return;
+
+    var ids = [1, 2, 3];
+    for (var i = 0; i < ids.length; i++) {
+      var wrap = document.querySelector('#act-' + ids[i] + ' > .act-body');
+      if (!wrap) continue;
+      var top = parseFloat(getComputedStyle(wrap).top) || 0;
+      if (wrap.offsetHeight + top > window.innerHeight + 8) {
+        document.body.classList.add('copy-tall');
+        return;
+      }
+    }
+  }
+
+  function queueFit() {
+    if (fitQueued) return;
+    fitQueued = true;
+    requestAnimationFrame(fitActCopy);
+  }
+
   function start() {
     mode = EJ.state.mode || mode;
     document.body.classList.add('mode-' + mode);
     if (mode === 'reduced') document.body.classList.add('reduced');
     if (mode === 'listen') document.body.classList.add('listen');
+
+    fitActCopy();
+    window.addEventListener('resize', queueFit);
 
     syncPlayButton();
     requestAnimationFrame(loop);

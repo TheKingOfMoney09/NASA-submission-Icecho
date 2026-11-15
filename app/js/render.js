@@ -82,7 +82,14 @@
   function computeLayout(w, h) {
     var compact = w < 900 && h > 520;
     var short = h <= 520;
-    var gutter = clamp(w * 0.07, 20, 112);
+    // Same margin as the stylesheet: clamp(1.5rem, 7vw, 7rem), then pushed
+    // inward to keep the whole spread at most 1728 px wide (see --gutter).
+    var root = 16;
+    try {
+      root = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    } catch (e) {}
+    var gutter = clamp(w * 0.07, 1.5 * root, 7 * root);
+    if (w > 1728) gutter = Math.max(gutter, (w - 1728) / 2);
     var plateH, plateW, px, py, railGap = 0;
 
     if (compact) {

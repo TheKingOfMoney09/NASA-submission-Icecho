@@ -22,8 +22,9 @@
   --serif: Georgia, "Iowan Old Style", "Times New Roman", Times, serif;
   --mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --gutter: clamp(1.5rem, 7vw, 7rem);
-  --col: min(30rem, 34vw);
+  
+  --gutter: max(clamp(1.5rem, 7vw, 7rem), calc((100vw - 1728px) / 2));
+  --col: min(38rem, 36vw);
 }
 
 *,
@@ -33,7 +34,8 @@
 html {
   margin: 0;
   padding: 0;
-  font-size: 16px;
+  
+  font-size: clamp(16px, 0.15625vw + 14px, 20px);
   background: var(--ink);
   -webkit-text-size-adjust: 100%;
   scroll-behavior: auto;
@@ -325,7 +327,54 @@ main > section.is-active { opacity: 1; }
 #act-4 { height: 64.82vh; }
 #act-5 { height: 51.87vh; }
 
-main > section > * { max-width: var(--col); }
+main > section > *,
+main > section > .act-body > * { max-width: var(--col); }
+
+
+.act-body { display: contents; }
+
+
+@media (min-width: 900px) {
+  body:not(.reduced) #act-1,
+  body:not(.reduced) #act-2,
+  body:not(.reduced) #act-3 { justify-content: flex-start; }
+
+  body:not(.reduced) #act-1 > .act-body,
+  body:not(.reduced) #act-2 > .act-body,
+  body:not(.reduced) #act-3 > .act-body {
+    display: block;
+    position: sticky;
+    top: max(6vh, 10.5rem);
+    width: 100%;
+  }
+
+  
+  body.copy-tall #act-1,
+  body.copy-tall #act-2,
+  body.copy-tall #act-3 { justify-content: center; }
+
+  body.copy-tall #act-1 > .act-body,
+  body.copy-tall #act-2 > .act-body,
+  body.copy-tall #act-3 > .act-body { display: contents; }
+
+  
+  body.mode-guided main::before {
+    content: "";
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: calc(var(--gutter) + var(--col) + 2.5rem);
+    height: 11rem;
+    z-index: 3;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      var(--ink) 0,
+      var(--ink) 58%,
+      rgba(8, 9, 11, 0) 100%
+    );
+  }
+}
 
 main > section h2 {
   margin: 0 0 1.7rem;
@@ -355,7 +404,7 @@ main > section.is-active h2::before {
   background: var(--accent);
 }
 
-main > section > p {
+main > section > .act-body > p {
   margin: 0 0 1.05rem;
   font-size: 1.0625rem;
   line-height: 1.72;
@@ -363,7 +412,7 @@ main > section > p {
   text-wrap: pretty;
 }
 
-main > section > p:first-of-type {
+main > section > .act-body > p:first-of-type {
   margin-bottom: 1.55rem;
   font-size: clamp(1.3rem, 2.05vw, 1.62rem);
   line-height: 1.4;
@@ -371,14 +420,14 @@ main > section > p:first-of-type {
   color: var(--ice);
 }
 
-main > section > p:last-of-type { margin-bottom: 0; }
+main > section > .act-body > p:last-of-type { margin-bottom: 0; }
 
-#act-3 > p:first-of-type {
+#act-3 > .act-body > p:first-of-type {
   font-size: clamp(1.45rem, 2.5vw, 1.95rem);
   line-height: 1.34;
 }
 
-#act-5 > p:first-of-type { font-size: clamp(1.2rem, 1.8vw, 1.4rem); }
+#act-5 > .act-body > p:first-of-type { font-size: clamp(1.2rem, 1.8vw, 1.4rem); }
 
 
 main > section details {
@@ -770,7 +819,8 @@ body.reduced #act-5 { height: auto; }
 
 body.reduced main > section + main > section { border-top: 1px solid var(--line-soft); }
 
-body.reduced main > section > * { max-width: min(38rem, 100%); }
+body.reduced main > section > *,
+body.reduced main > section > .act-body > * { max-width: min(38rem, 100%); }
 
 body.reduced main > section h2 {
   margin-bottom: 1.5rem;
@@ -784,19 +834,19 @@ body.reduced main > section h2::before {
   background: rgba(232, 241, 245, 0.3);
 }
 
-body.reduced main > section > p {
+body.reduced main > section > .act-body > p {
   font-size: 1.0625rem;
   line-height: 1.75;
   color: rgba(232, 241, 245, 0.88);
 }
 
-body.reduced main > section > p:first-of-type {
+body.reduced main > section > .act-body > p:first-of-type {
   font-size: clamp(1.32rem, 2.4vw, 1.7rem);
   line-height: 1.42;
 }
 
-body.reduced #act-3 > p:first-of-type { font-size: clamp(1.32rem, 2.4vw, 1.7rem); }
-body.reduced #act-5 > p:first-of-type { font-size: clamp(1.2rem, 2vw, 1.45rem); }
+body.reduced #act-3 > .act-body > p:first-of-type { font-size: clamp(1.32rem, 2.4vw, 1.7rem); }
+body.reduced #act-5 > .act-body > p:first-of-type { font-size: clamp(1.2rem, 2vw, 1.45rem); }
 
 body.reduced main > section details {
   margin-top: 1.4rem;
@@ -902,17 +952,18 @@ body.reduced #credits { max-width: min(38rem, 100%); }
     padding-top: calc(140px + 33vh + 10vh);
   }
 
-  main > section > * { max-width: 100%; }
+  main > section > *,
+  main > section > .act-body > * { max-width: 100%; }
 
-  main > section > p {
+  main > section > .act-body > p {
     font-size: 1rem;
     line-height: 1.66;
   }
 
-  main > section > p:first-of-type { font-size: clamp(1.2rem, 5.4vw, 1.5rem); }
+  main > section > .act-body > p:first-of-type { font-size: clamp(1.2rem, 5.4vw, 1.5rem); }
 
-  #act-3 > p:first-of-type { font-size: clamp(1.3rem, 6vw, 1.6rem); }
-  #act-5 > p:first-of-type { font-size: clamp(1.14rem, 4.6vw, 1.35rem); }
+  #act-3 > .act-body > p:first-of-type { font-size: clamp(1.3rem, 6vw, 1.6rem); }
+  #act-5 > .act-body > p:first-of-type { font-size: clamp(1.14rem, 4.6vw, 1.35rem); }
 
   main > section details p {
     position: static;
@@ -993,18 +1044,19 @@ body.reduced #credits { max-width: min(38rem, 100%); }
     padding: 15vh var(--gutter) 12vh;
   }
 
-  main > section > * { max-width: min(26rem, 40vw); }
+  main > section > *,
+  main > section > .act-body > * { max-width: min(26rem, 40vw); }
 
   main > section h2 { margin-bottom: 1rem; }
 
-  main > section > p {
+  main > section > .act-body > p {
     margin-bottom: 0.7rem;
     font-size: 0.95rem;
     line-height: 1.6;
   }
 
-  main > section > p:first-of-type { font-size: 1.15rem; }
-  #act-3 > p:first-of-type { font-size: 1.22rem; }
+  main > section > .act-body > p:first-of-type { font-size: 1.15rem; }
+  #act-3 > .act-body > p:first-of-type { font-size: 1.22rem; }
 
   main > section details { margin-top: 0.8rem; }
 
@@ -1037,7 +1089,7 @@ body.reduced #credits { max-width: min(38rem, 100%); }
 }
 
 @media (max-width: 520px) {
-  main > section > p { font-size: 0.97rem; }
+  main > section > .act-body > p { font-size: 0.97rem; }
   #credits { font-size: 0.66rem; letter-spacing: 0.04em; }
 }
 
@@ -1045,20 +1097,24 @@ body.reduced #credits { max-width: min(38rem, 100%); }
 @media (max-height: 780px) and (min-width: 900px) {
   main > section { padding-top: max(4vh, 9.5rem); padding-bottom: 4vh; }
 
+  body:not(.reduced) #act-1 > .act-body,
+  body:not(.reduced) #act-2 > .act-body,
+  body:not(.reduced) #act-3 > .act-body { top: max(4vh, 9.5rem); }
+
   main > section h2 { margin-bottom: 1.1rem; font-size: clamp(1.5rem, 2.6vw, 2.1rem); }
 
-  main > section > p {
+  main > section > .act-body > p {
     margin-bottom: 0.75rem;
     font-size: 1rem;
     line-height: 1.6;
   }
 
-  main > section > p:first-of-type {
+  main > section > .act-body > p:first-of-type {
     margin-bottom: 1rem;
     font-size: clamp(1.15rem, 1.7vw, 1.35rem);
   }
 
-  #act-3 > p:first-of-type { font-size: clamp(1.25rem, 2vw, 1.5rem); }
+  #act-3 > .act-body > p:first-of-type { font-size: clamp(1.25rem, 2vw, 1.5rem); }
 
   main > section details { margin-top: 1rem; }
 }
@@ -2990,7 +3046,12 @@ window.EJ.content = {
   function computeLayout(w, h) {
     var compact = w < 900 && h > 520;
     var short = h <= 520;
-    var gutter = clamp(w * 0.07, 20, 112);
+    var root = 16;
+    try {
+      root = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    } catch (e) {}
+    var gutter = clamp(w * 0.07, 1.5 * root, 7 * root);
+    if (w > 1728) gutter = Math.max(gutter, (w - 1728) / 2);
     var plateH, plateW, px, py, railGap = 0;
 
     if (compact) {
@@ -3932,16 +3993,19 @@ window.EJ.content = {
       var section = document.getElementById('act-' + i);
       if (!section) return;
 
+      var wrap = document.createElement('div');
+      wrap.className = 'act-body';
+
       var h2 = document.createElement('h2');
       h2.id = 'act-' + i + '-title';
       h2.textContent = act.title || ('Act ' + i);
-      section.insertBefore(h2, section.firstChild);
+      wrap.appendChild(h2);
 
       var lines = Array.isArray(act.lines) ? act.lines : [];
       lines.forEach(function (line) {
         var p = document.createElement('p');
         p.textContent = line;
-        section.appendChild(p);
+        wrap.appendChild(p);
       });
 
       var transcript = content.transcript && content.transcript[String(i)];
@@ -3953,8 +4017,10 @@ window.EJ.content = {
         body.textContent = transcript;
         details.appendChild(summary);
         details.appendChild(body);
-        section.appendChild(details);
+        wrap.appendChild(details);
       }
+
+      section.appendChild(wrap);
     });
   }
 
@@ -4316,11 +4382,42 @@ window.EJ.content = {
 
 
 
+
+
+  var fitQueued = false;
+
+  function fitActCopy() {
+    fitQueued = false;
+    if (!document.body) return;
+    document.body.classList.remove('copy-tall');
+    if (mode === 'reduced' || window.innerWidth < 900) return;
+
+    var ids = [1, 2, 3];
+    for (var i = 0; i < ids.length; i++) {
+      var wrap = document.querySelector('#act-' + ids[i] + ' > .act-body');
+      if (!wrap) continue;
+      var top = parseFloat(getComputedStyle(wrap).top) || 0;
+      if (wrap.offsetHeight + top > window.innerHeight + 8) {
+        document.body.classList.add('copy-tall');
+        return;
+      }
+    }
+  }
+
+  function queueFit() {
+    if (fitQueued) return;
+    fitQueued = true;
+    requestAnimationFrame(fitActCopy);
+  }
+
   function start() {
     mode = EJ.state.mode || mode;
     document.body.classList.add('mode-' + mode);
     if (mode === 'reduced') document.body.classList.add('reduced');
     if (mode === 'listen') document.body.classList.add('listen');
+
+    fitActCopy();
+    window.addEventListener('resize', queueFit);
 
     syncPlayButton();
     requestAnimationFrame(loop);
