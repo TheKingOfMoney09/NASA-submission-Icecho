@@ -1087,7 +1087,7 @@ body.reduced #credits { max-width: min(38rem, 100%); }
 </div>
 
 <footer>
-  <p id="credits">Maps: NSIDC Sea Ice Index v4 (G02135), National Snow and Ice Data Center, University of Colorado Boulder (Fetterer et al.). Hero still: NASA Scientific Visualization Studio, SVS 5677 (Trent L. Schindler).</p>
+  <p id="credits">Maps: NSIDC Sea Ice Index v4 (G02135), National Snow and Ice Data Center, University of Colorado Boulder (Fetterer et al.). Visual reference: NASA Scientific Visualization Studio, SVS 5677 (Trent L. Schindler).</p>
 </footer>
 
 <div id="live-region" role="status" aria-live="polite"></div>
@@ -1759,7 +1759,7 @@ window.EJ.content = {
       lines: [
         "Four notes are playing. That is the ice in 2026.",
         "What follows is a coda: one voice, left alone, fading. It is not data.",
-        "CODA · COMPOSITION, NOT DATA. Maps: NSIDC Sea Ice Index v4 (G02135). Still: NASA SVS 5677."
+        "CODA · COMPOSITION, NOT DATA. Maps: NSIDC Sea Ice Index v4 (G02135). Visual reference: NASA SVS 5677."
       ],
       audioHint: "Four notes, then one voice decaying alone."
     }
@@ -1865,6 +1865,11 @@ window.EJ.content = {
   var TIMELINE_TAU = 0.14;               // internal setTimeline smoothing
   var TICK_MS = 35;                      // control rate, 28 Hz
 
+  var CODA_ENTER = 0.997;                // t at which the coda may begin
+  var CODA_HOLD_S = 2.2;                 // the 2026 chord holds before thinning
+  var CODA_SOLO_S = 6.0;                 // the last voice fades to silence
+  var CODA_VOICE = 0;                    // the root, left alone
+
   var MAJOR_DEGREES = [0, 4, 7, 10, 14, 21];  // D F# A C E B  = D13
   var MINOR_DEGREES = [0, 3, 5, 7, 10, 14];   // D F  G A C E  = Dm11
   var MICRO_CENTS = [0, 3, -4, 5, -6, 7];     // fixed, deterministic widening
@@ -1892,6 +1897,8 @@ window.EJ.content = {
   var pulseHoldUntil = 0;
   var crackArmed = true;
   var crackCooldownUntil = 0;
+  var codaPhase = 0;                     // 0 off · 1 hold · 2 solo · 3 silent
+  var codaAt = 0;
 
   var lastApplied = {
     year: 1979,
@@ -1992,8 +1999,37 @@ window.EJ.content = {
     return lastFeatures;
   }
 
+  function resetCoda(restoreMaster) {
+    if (!codaPhase) return;
+    codaPhase = 0;
+    codaAt = 0;
+    voiceTarget = -1;
+    if (restoreMaster && engine && ctx && playing) {
+      engine.setMaster(MASTER_LEVEL, 0.25);
+    }
+  }
+
   function applyWith(f, now) {
     if (!engine || !ctx || !f) return;
+
+    if (codaPhase && tl < CODA_ENTER - 0.02) {
+      resetCoda(true);
+    } else if (!codaPhase && playing && tl >= CODA_ENTER) {
+      codaPhase = 1;
+      codaAt = now;
+    }
+    if (codaPhase === 1 && now - codaAt >= CODA_HOLD_S) {
+      codaPhase = 2;
+      codaAt = now;
+      for (var s = 0; s < MAX_VOICES; s++) engine.setVoiceActive(s, s === CODA_VOICE);
+      engine.setNoise(0.0001);
+      engine.setMaster(0.0001, CODA_SOLO_S);
+    } else if (codaPhase === 2 && now - codaAt >= CODA_SOLO_S) {
+      codaPhase = 3;
+      engine.setVoiceActive(CODA_VOICE, false);
+      engine.setMaster(0.0001, 0.05);
+    }
+    var codaSolo = codaPhase >= 2;
 
     var count = voiceCountFor(f);
     if (count !== voiceTarget) {
@@ -2016,12 +2052,16 @@ window.EJ.content = {
     }
 
     engine.setCutoff(cutoffFor(f));
-    engine.setNoise(noiseFor(f));
-    engine.setSubRoot(root / 2);
+    if (codaSolo) {
+      engine.setNoise(0.0001);           // the texture belongs to the chord
+    } else {
+      engine.setNoise(noiseFor(f));
+      engine.setSubRoot(root / 2);
+    }
 
     var sigma = num(f.sigma, 0);
     if (sigma < -2) pulseHoldUntil = now + PULSE_HOLD;
-    engine.setPulse(playing && now < pulseHoldUntil);
+    engine.setPulse(playing && !codaSolo && now < pulseHoldUntil);
 
     var dLoss = num(f.dLoss, 0);
     if (dLoss < CRACK_REARM) {
@@ -2206,6 +2246,7 @@ window.EJ.content = {
   function play() {
     try {
       playing = true;
+      resetCoda(false);                  // Play at the end replays the coda
       if (!ctx || !engine || disposed) return;   // init() will pick it up after the gate
       if (ctx.state === 'suspended' && typeof ctx.resume === 'function') {
         var p = ctx.resume();
@@ -2268,6 +2309,7 @@ window.EJ.content = {
       t: tl,
       tTarget: tlTarget,
       playing: playing,
+      coda: codaPhase,
       mode: mode
     };
     if (engine) {
@@ -3444,7 +3486,7 @@ window.EJ.content = {
     try {
       var el = document.getElementById('credits');
       if (!el || (el.textContent && el.textContent.trim())) return;
-      el.textContent = 'Maps: NSIDC Sea Ice Index v4 (G02135), National Snow and Ice Data Center, University of Colorado Boulder. Still: NASA SVS 5677, NASA Scientific Visualization Studio.';
+      el.textContent = 'Maps: NSIDC Sea Ice Index v4 (G02135), National Snow and Ice Data Center, University of Colorado Boulder. Visual reference: NASA SVS 5677, NASA Scientific Visualization Studio.';
     } catch (e) {}
   }
 
@@ -3797,6 +3839,7 @@ window.EJ.content = {
   var lastAnnounceText = '';
   var wasPlaying = false;
   var primed = false;
+  var listenEndAt = 0;
   var reported = {};
 
 
@@ -3852,7 +3895,7 @@ window.EJ.content = {
         btn.textContent = 'Play — ' + title;
         btn.addEventListener('click', function () {
           ensureAudio().then(function () {
-            seek(ACT_BOUNDARIES[index] + 0.001);
+            seek(index === 5 ? 1 : ACT_BOUNDARIES[index] + 0.001);
             setPlaying(true);
           });
         });
@@ -4111,7 +4154,14 @@ window.EJ.content = {
       t = clamp01(t + dt / LISTEN_SECONDS);
       EJ.state.t = t;
       safeAudioTimeline(t);
-      if (t >= 1) setPlaying(false);
+      if (t >= 1) {
+        t = 1;
+        EJ.state.t = 1;
+        if (!listenEndAt) listenEndAt = now;
+        if (now - listenEndAt > 9200) setPlaying(false);
+      }
+    } else {
+      listenEndAt = 0;
     }
 
     var frame = EJ.frameAt(t);

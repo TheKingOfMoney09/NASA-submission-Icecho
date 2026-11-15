@@ -657,7 +657,7 @@
     try {
       var el = document.getElementById('credits');
       if (!el || (el.textContent && el.textContent.trim())) return;
-      el.textContent = 'Maps: NSIDC Sea Ice Index v4 (G02135), National Snow and Ice Data Center, University of Colorado Boulder. Still: NASA SVS 5677, NASA Scientific Visualization Studio.';
+      el.textContent = 'Maps: NSIDC Sea Ice Index v4 (G02135), National Snow and Ice Data Center, University of Colorado Boulder. Visual reference: NASA SVS 5677, NASA Scientific Visualization Studio.';
     } catch (e) {}
   }
 

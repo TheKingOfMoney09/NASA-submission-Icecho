@@ -8,12 +8,12 @@
 
    ── The mapping, all constants measured from 01's 48-frame frames.json ──────
 
-   iceFrac 0.0856..0.1801 → voice count. Extent proxy from PLAN §5.4:
-              extent = 6.90 + 45.07 * (iceFrac - 0.1664)   [M km²]
-              voices = clamp(ceil(6 * extent / 6.90), 1, 6)
-            The highest active voice always releases first. If a frame carries
-            a real `extent` / `extentMkm2` field (requested from 01), that is
-            used instead of the linear proxy.
+   extentMkm2 3.34..7.53 M km² → voice count.
+              voices = clamp(ceil(6 * extentMkm2 / 6.90), 1, 6)
+            This is the measured NSIDC annual daily minimum, carried on every
+            frame. The highest active voice always releases first. A legacy
+            iceFrac→extent proxy remains only as a fallback for a frame with
+            no extent field; no shipped frame takes that path.
 
    centroidY 0.4982..0.5460 → root, inverted (north/smaller y = higher):
               A2 110 Hz at 0.5460 → D3 146.83 Hz at 0.4982 (a perfect fourth).
@@ -42,15 +42,21 @@
 
    The arc: 1979 opens on a six-note D13, thins to three notes at 2012 with
    the sub pulse, and ends on four notes in the dark Dm11 colour at 2026.
-   The stagger of the ice is never smoothed away.
+   The stagger of the ice is never smoothed away; the one-voice coda after
+   the last frame is the only thing in the piece that is not data.
 
-   ── Known data limitation ────────────────────────────────────────────────
-   The linear iceFrac→extent proxy reproduces the verified voice table for
-   44/48 years. It differs at 1999 (6 here, 5 in the NSIDC table), 2004 (5/6),
-   2017 (4/5) and 2018 (4/5): iceFrac is not monotonic in extent at that
-   resolution (polar-stereographic stretch, PLAN §5.4). The three principle
-   checks — 1979=6, 2012=3, 2026=4 — all pass. The fix is a real `extent`
-   field on each frame; this module already prefers it when present. */
+   ── The coda ──────────────────────────────────────────────────────────────
+   At the very end the measured chord holds for 2.2 s, then thins to one
+   voice and decays over 6 s. This is a compositional gesture, labelled on
+   screen as CODA · COMPOSITION, NOT DATA; the data ends at four voices.
+   Scrolling back above t = 0.977 cancels it and restores the measured chord.
+
+   ── Legacy fallback ───────────────────────────────────────────────────────
+   If a frame carries no extent field, the old linear iceFrac proxy is used:
+   extent = 6.90 + 45.07 * (iceFrac - 0.1664). It reproduces the verified
+   voice table for 44/48 years, differing at 1999, 2004, 2017 and 2018 because
+   iceFrac is not monotonic in extent at that resolution. Every shipped frame
+   carries extentMkm2, so no delivered year takes this path. */
 
 (function () {
   'use strict';
@@ -102,6 +108,14 @@
   var TIMELINE_TAU = 0.14;               // internal setTimeline smoothing
   var TICK_MS = 35;                      // control rate, 28 Hz
 
+  // Labelled coda (PLAN §5.3): the measured chord stops at four voices, then
+  // a compositional gesture holds it briefly and lets one voice decay. This
+  // is not in the data and is labelled as composition on screen.
+  var CODA_ENTER = 0.997;                // t at which the coda may begin
+  var CODA_HOLD_S = 2.2;                 // the 2026 chord holds before thinning
+  var CODA_SOLO_S = 6.0;                 // the last voice fades to silence
+  var CODA_VOICE = 0;                    // the root, left alone
+
   // Bright (sigma ≥ 0) and dark (sigma < 0) voicings. Both are consonant
   // subsets of D E F F# G A B C; the third and the 6th voice change colour.
   var MAJOR_DEGREES = [0, 4, 7, 10, 14, 21];  // D F# A C E B  = D13
@@ -131,6 +145,8 @@
   var pulseHoldUntil = 0;
   var crackArmed = true;
   var crackCooldownUntil = 0;
+  var codaPhase = 0;                     // 0 off · 1 hold · 2 solo · 3 silent
+  var codaAt = 0;
 
   var lastApplied = {
     year: 1979,
@@ -235,8 +251,41 @@
     return lastFeatures;
   }
 
+  // Cancel the coda and let the measured chord speak again. voiceTarget = -1
+  // forces the next applyWith() to re-assert every active voice.
+  function resetCoda(restoreMaster) {
+    if (!codaPhase) return;
+    codaPhase = 0;
+    codaAt = 0;
+    voiceTarget = -1;
+    if (restoreMaster && engine && ctx && playing) {
+      engine.setMaster(MASTER_LEVEL, 0.25);
+    }
+  }
+
   function applyWith(f, now) {
     if (!engine || !ctx || !f) return;
+
+    // The coda is driven here, not by a timer, so pause freezes it and a
+    // scroll back up cancels it. Four voices hold, then one decays.
+    if (codaPhase && tl < CODA_ENTER - 0.02) {
+      resetCoda(true);
+    } else if (!codaPhase && playing && tl >= CODA_ENTER) {
+      codaPhase = 1;
+      codaAt = now;
+    }
+    if (codaPhase === 1 && now - codaAt >= CODA_HOLD_S) {
+      codaPhase = 2;
+      codaAt = now;
+      for (var s = 0; s < MAX_VOICES; s++) engine.setVoiceActive(s, s === CODA_VOICE);
+      engine.setNoise(0.0001);
+      engine.setMaster(0.0001, CODA_SOLO_S);
+    } else if (codaPhase === 2 && now - codaAt >= CODA_SOLO_S) {
+      codaPhase = 3;
+      engine.setVoiceActive(CODA_VOICE, false);
+      engine.setMaster(0.0001, 0.05);
+    }
+    var codaSolo = codaPhase >= 2;
 
     var count = voiceCountFor(f);
     if (count !== voiceTarget) {
@@ -261,12 +310,16 @@
     }
 
     engine.setCutoff(cutoffFor(f));
-    engine.setNoise(noiseFor(f));
-    engine.setSubRoot(root / 2);
+    if (codaSolo) {
+      engine.setNoise(0.0001);           // the texture belongs to the chord
+    } else {
+      engine.setNoise(noiseFor(f));
+      engine.setSubRoot(root / 2);
+    }
 
     var sigma = num(f.sigma, 0);
     if (sigma < -2) pulseHoldUntil = now + PULSE_HOLD;
-    engine.setPulse(playing && now < pulseHoldUntil);
+    engine.setPulse(playing && !codaSolo && now < pulseHoldUntil);
 
     // Crack layer: a real transient event, gated by dLoss with hysteresis.
     var dLoss = num(f.dLoss, 0);
@@ -455,6 +508,7 @@
   function play() {
     try {
       playing = true;
+      resetCoda(false);                  // Play at the end replays the coda
       if (!ctx || !engine || disposed) return;   // init() will pick it up after the gate
       if (ctx.state === 'suspended' && typeof ctx.resume === 'function') {
         var p = ctx.resume();
@@ -517,6 +571,7 @@
       t: tl,
       tTarget: tlTarget,
       playing: playing,
+      coda: codaPhase,
       mode: mode
     };
     if (engine) {

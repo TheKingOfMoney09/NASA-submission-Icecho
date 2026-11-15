@@ -66,7 +66,7 @@ window.EJ.content = {
       lines: [
         "Four notes are playing. That is the ice in 2026.",
         "What follows is a coda: one voice, left alone, fading. It is not data.",
-        "CODA · COMPOSITION, NOT DATA. Maps: NSIDC Sea Ice Index v4 (G02135). Still: NASA SVS 5677."
+        "CODA · COMPOSITION, NOT DATA. Maps: NSIDC Sea Ice Index v4 (G02135). Visual reference: NASA SVS 5677."
       ],
       audioHint: "Four notes, then one voice decaying alone."
     }

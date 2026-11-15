@@ -29,6 +29,7 @@
   var lastAnnounceText = '';
   var wasPlaying = false;
   var primed = false;
+  var listenEndAt = 0;
   var reported = {};
 
   /* ------------------------------------------------------------------ */
@@ -86,7 +87,9 @@
           // The gate is hidden in reduced mode, so this is the gesture that
           // creates the AudioContext. init() is idempotent.
           ensureAudio().then(function () {
-            seek(ACT_BOUNDARIES[index] + 0.001);
+            // Act V opens at its boundary; the last act is the coda, so it
+            // starts at the end of the measured timeline and lets it play.
+            seek(index === 5 ? 1 : ACT_BOUNDARIES[index] + 0.001);
             setPlaying(true);
           });
         });
@@ -347,7 +350,16 @@
       t = clamp01(t + dt / LISTEN_SECONDS);
       EJ.state.t = t;
       safeAudioTimeline(t);
-      if (t >= 1) setPlaying(false);
+      if (t >= 1) {
+        t = 1;
+        EJ.state.t = 1;
+        // The measured story ends at 2026; the app then plays its labelled
+        // coda (2.2 s hold + 6 s decay). Stop only once that is over.
+        if (!listenEndAt) listenEndAt = now;
+        if (now - listenEndAt > 9200) setPlaying(false);
+      }
+    } else {
+      listenEndAt = 0;
     }
 
     var frame = EJ.frameAt(t);

@@ -318,6 +318,48 @@ async function audioAnchorSuite(cdp, label) {
   check(`${label}: master output is open`, typeof master === 'number' && master > 0.01, String(master));
 }
 
+// The labelled coda is a composition, not data: the four-voice 2026 chord
+// holds, then one voice is left alone and decays. The data count (voices)
+// must stay at four while the sounding count drops to one.
+async function codaSuite(cdp, label) {
+  await evalJS(cdp, `(function () {
+    EJ.state.t = 1;
+    EJ.audio.setFrame(EJ.frameAt(1));
+    EJ.audio.setTimeline(1);
+  })()`);
+
+  const soloMs = await waitExpr(cdp, 'EJ.audio._diag().coda >= 2', 7000);
+  const solo = await evalJS(cdp, 'EJ.audio._diag()');
+  check(
+    `${label}: coda thins 2026 to one sounding voice`,
+    soloMs >= 0 && solo && solo.voices === 4 && solo.voicesSounding === 1,
+    solo ? `data=${solo.voices} sounding=${solo.voicesSounding} coda=${solo.coda}` : 'no diagnostics'
+  );
+
+  const doneMs = await waitExpr(cdp, 'EJ.audio._diag().coda === 3', 9000);
+  const done = await evalJS(cdp, 'EJ.audio._diag()');
+  check(
+    `${label}: coda decays to silence`,
+    doneMs >= 0 && done && done.master < 0.01,
+    done ? `coda=${done.coda} master=${done.master}` : 'no diagnostics'
+  );
+
+  // Scrolling back up must cancel the coda and restore the measured chord.
+  await evalJS(cdp, `(function () {
+    var t = 0.5;
+    EJ.state.t = t;
+    EJ.audio.setFrame(EJ.frameAt(t));
+    EJ.audio.setTimeline(t);
+  })()`);
+  const restoreMs = await waitExpr(cdp, 'EJ.audio._diag().coda === 0 && EJ.audio._diag().master > 0.5', 3000);
+  const restored = await evalJS(cdp, 'EJ.audio._diag()');
+  check(
+    `${label}: scrolling back restores the chord`,
+    restoreMs >= 0 && restored && restored.voicesSounding === restored.voices,
+    restored ? `data=${restored.voices} sounding=${restored.voicesSounding} master=${restored.master}` : 'no diagnostics'
+  );
+}
+
 /* ------------------------------------------------------------------ */
 /* Tests                                                              */
 /* ------------------------------------------------------------------ */
@@ -439,6 +481,7 @@ async function main() {
   // Reduced mode has no scroll or timer writer, which makes it the honest
   // place to assert the real engine's voice counts.
   await audioAnchorSuite(reduced.cdp, 'app');
+  await codaSuite(reduced.cdp, 'app');
 
   /* ---- dist ---- */
   if (existsSync(join(ROOT, 'dist', 'TheLastNote.html'))) {
@@ -470,6 +513,7 @@ async function main() {
     const distAudioReady = await waitExpr(distAudio.cdp, '!!(window.EJ && EJ.ready === true)', 3000);
     if (distAudioReady >= 0) {
       await audioAnchorSuite(distAudio.cdp, 'dist');
+      await codaSuite(distAudio.cdp, 'dist');
       const distAudioErrors = realErrors(distAudio.errors);
       check(
         'dist: zero console errors in reduced mode',
