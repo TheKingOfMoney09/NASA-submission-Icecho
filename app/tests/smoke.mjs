@@ -439,6 +439,17 @@ async function main() {
     `t=${endT} year=${endYear}`
   );
 
+  /* ---- a reload starts the piece; it must not resume the scroll ---- */
+  await guided.cdp.send('Page.reload');
+  const reloadReady = await waitExpr(guided.cdp, '!!(window.EJ && EJ.ready === true)', 5000);
+  await sleep(400);
+  const afterReload = await evalJS(guided.cdp, '({ y: window.scrollY, t: Number(EJ.state.t) })');
+  check(
+    'reload starts at 1979, not at the restored scroll position',
+    reloadReady >= 0 && afterReload && afterReload.y === 0 && afterReload.t < 0.02,
+    afterReload ? `y=${afterReload.y} t=${afterReload.t.toFixed(3)}` : 'no state'
+  );
+
   /* ---- listen mode ---- */
   const listen = await openTarget('about:blank');
   await navigate(listen.cdp, APP_URL + '?mode=listen');

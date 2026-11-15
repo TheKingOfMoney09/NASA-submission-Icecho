@@ -3569,6 +3569,12 @@ window.EJ.content = {
   var EJ = window.EJ;
   if (!EJ) return;
 
+  try {
+    if (window.history && 'scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+  } catch (e) {}
+
   var SMOOTH = 0.08;        // per frame, as specified in PLAN 6.4
   var MAX_STEP = 0.035;     // hard cap: ~1.6 years per frame, never a snap
   var SEND_EPS = 0.0004;    // don't spam the audio engine for nothing
@@ -3824,6 +3830,8 @@ window.EJ.content = {
 
     reduced = EJ.state.mode === 'reduced' ||
       (document.body ? document.body.classList.contains('reduced') : false);
+
+    try { window.scrollTo(0, 0); } catch (e) {}
 
     measure();
 

@@ -9,6 +9,15 @@
   var EJ = window.EJ;
   if (!EJ) return;
 
+  // A reload must start the piece, not resume the browser's scroll offset.
+  // Restored to the end, the plate is already black and the coda has already
+  // decayed: it reads as a broken page. Opt out before the restore happens.
+  try {
+    if (window.history && 'scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+  } catch (e) {}
+
   var SMOOTH = 0.08;        // per frame, as specified in PLAN 6.4
   var MAX_STEP = 0.035;     // hard cap: ~1.6 years per frame, never a snap
   var SEND_EPS = 0.0004;    // don't spam the audio engine for nothing
@@ -269,6 +278,9 @@
     // mode is the reliable signal here; the class catches a late switch.
     reduced = EJ.state.mode === 'reduced' ||
       (document.body ? document.body.classList.contains('reduced') : false);
+
+    // Belt and braces for a browser that restored before this module ran.
+    try { window.scrollTo(0, 0); } catch (e) {}
 
     measure();
 
