@@ -391,13 +391,14 @@ main > section summary {
   text-transform: uppercase;
   color: var(--accent);
   cursor: pointer;
-  transition: color 320ms var(--ease);
+  transition: color 320ms var(--ease), opacity 120ms var(--ease);
 }
 
 main > section summary::-webkit-details-marker { display: none; }
 main > section summary::before { content: "+"; font-size: 0.9rem; line-height: 1; }
 main > section details[open] summary::before { content: "\2212"; }
 main > section summary:hover { color: var(--ice); }
+main > section summary:active { opacity: 0.55; }
 
 main > section details p {
   position: absolute;
@@ -526,6 +527,14 @@ body[data-anomaly] #transport { border-color: rgba(217, 154, 58, 0.3); }
   border-color: var(--ice);
 }
 
+
+#playpause:active {
+  color: var(--ink);
+  background: rgba(232, 241, 245, 0.78);
+  border-color: rgba(232, 241, 245, 0.78);
+  transition-duration: 60ms;
+}
+
 #playpause[aria-pressed="true"]::before {
   content: "";
   display: inline-block;
@@ -611,14 +620,14 @@ footer {
 }
 
 #credits {
-  max-width: 30rem;
+  max-width: 34rem;
   margin: 0;
   font-family: var(--mono);
-  font-size: 0.6rem;
-  line-height: 1.95;
-  letter-spacing: 0.1em;
+  font-size: 0.7rem;
+  line-height: 1.8;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: rgba(232, 241, 245, 0.56);
+  color: rgba(232, 241, 245, 0.62);
 }
 
 #credits::before {
@@ -713,9 +722,6 @@ body.listen #transport {
   bottom: 8vh;
   transform: translateX(-50%);
   width: min(32rem, 82vw);
-}
-
-body.listen #transport {
   background: rgba(8, 9, 11, 0.94);
 }
 
@@ -838,6 +844,13 @@ body.reduced #credits { max-width: min(38rem, 100%); }
   border-color: var(--accent);
 }
 
+.play-act:active {
+  color: var(--ink);
+  background: rgba(95, 184, 212, 0.82);
+  border-color: rgba(95, 184, 212, 0.82);
+  transition-duration: 60ms;
+}
+
 
 
 
@@ -925,7 +938,7 @@ body.reduced #credits { max-width: min(38rem, 100%); }
     padding: 0 var(--gutter) 24vh;
   }
 
-  #credits { font-size: 0.58rem; }
+  #credits { font-size: 0.68rem; }
 }
 
 
@@ -1014,7 +1027,7 @@ body.reduced #credits { max-width: min(38rem, 100%); }
 
 @media (max-width: 520px) {
   main > section > p { font-size: 0.97rem; }
-  #credits { font-size: 0.56rem; letter-spacing: 0.08em; }
+  #credits { font-size: 0.66rem; letter-spacing: 0.04em; }
 }
 
 
