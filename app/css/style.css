@@ -1145,10 +1145,12 @@ body.reduced #credits { max-width: min(38rem, 100%); }
     padding-top: calc(140px + 33vh + 10vh);
   }
 
-  /* Pacing is a wide-screen device; on a phone the last two acts keep their
-     old one-screen lengths instead of becoming empty scroll. */
-  #act-4 { height: 64.82vh; }
-  #act-5 { height: 51.87vh; }
+  /* On a phone the act is a stack: status block over the plate, then the copy.
+     The three short acts have less padding than a fixed 65vh box, so their
+     copy used to spill into the next act; let them grow to their content. */
+  #act-0,
+  #act-4,
+  #act-5 { height: auto; }
 
   main > section > *,
   main > section > .act-body > * { max-width: 100%; }
