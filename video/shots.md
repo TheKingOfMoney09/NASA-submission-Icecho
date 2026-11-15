@@ -2,7 +2,7 @@
 
 **Status: SHOT LIST READY — NOT RECORDED.** `video/demo.mp4` does not exist yet.
 
-> **Record the freeze build.** Tag **`freeze-build`**, code commit **`90037a5`**. `dist/TheLastNote.html` is **3,508,760 B (3.51 MB)**, SHA-256 `77281634A140FB07306F7F9FA262C0CC758D641C30772E775984122829B3338B`. If the hash differs, stop and re-download the repo; do not film a rebuilt dist.
+> **Record the freeze build.** Tag **`freeze-build`**, code commit **`358d4a5`**. `dist/TheLastNote.html` is **3,510,084 B (3.51 MB)**, SHA-256 `926376ED596AD6EB8C1B7D748D111A5DC0468557B773C6249FF2FFC10516F1B3`. If the hash differs, stop and re-download the repo; do not film a rebuilt dist.
 
 **Spec:** 90.0 s hard cap · 1920×1080 · 30 fps · H.264 + AAC · ≤ 40 MB · captions burned in · unlisted YouTube.
 
@@ -25,7 +25,7 @@
 
 ## Before the camera rolls
 
-- [ ] `dist/TheLastNote.html` is the freeze build (`freeze-build` / `90037a5`), SHA-256 starts `77281634`. No TODO or placeholder text.
+- [ ] `dist/TheLastNote.html` is the freeze build (`freeze-build` / `358d4a5`), SHA-256 starts `926376ED`. No TODO or placeholder text.
 - [ ] All 48 years load; the year readout moves from 1979 to 2026.
 - [ ] Audio starts on **Begin** in Edge and Chrome.
 - [ ] 1979 is six voices, 2012 three, 2026 four.

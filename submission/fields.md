@@ -11,14 +11,14 @@ Project: **Icecho** · Piece: ***The Last Note*** · Challenge: **The Earth Info
 | 1 | Summary | **READY** | — |
 | 2 | Project Demonstration | **BLOCKED** | Video not recorded. Replace the TBD with the unlisted YouTube URL. |
 | 3 | Project | **READY** | Repo is public (checked logged out, 14 Nov 2026). |
-| 4 | Project Details | **READY — verified against freeze-build** | Checked against code commit `90037a5`, tag `freeze-build`. |
+| 4 | Project Details | **READY — verified against freeze-build** | Checked against code commit `358d4a5`, tag `freeze-build`. |
 | 5 | Use of Artificial Intelligence (AI) | **READY** | — |
 | 6 | NASA Data | **READY** | All links checked 14 Nov 2026. |
 | 7 | Space Agency Partner & Other Data | **READY** | "None beyond the NASA Data sources" is the answer. |
 
 All links in this file were checked on **14 November 2026** with `Invoke-WebRequest -Method Head`. Re-check in an incognito window before submitting.
 
-> **Artifact gate — PASSED, 15 Nov 2026.** Freeze artifact built from code commit **`90037a5`**, tag **`freeze-build`**. `dist/TheLastNote.html` is **3,508,760 B** with all eight modules inlined, **6** `createOscillator`, **4** `createBiquadFilter`, **3** `drawImage`, 48 base64 WebP maps, SHA-256 `77281634A140FB07306F7F9FA262C0CC758D641C30772E775984122829B3338B`. The build is strict: `build/build.py` refuses to emit `dist/` if a module is missing. Headless suite: **37 checks, 37 passed, 0 failed, 0 skipped** — including the coda (four data voices hold, thin to one sounding voice, decay to silence, and restore when the timeline is moved back). The earlier stub is gone. Pressing **Begin** now swells the chord from silence over **1.4 s** on a smoothstep master curve instead of a 150 ms step; resume after pause keeps the short 150 ms fade.
+> **Artifact gate — PASSED, 15 Nov 2026.** Freeze artifact built from code commit **`358d4a5`**, tag **`freeze-build`**. `dist/TheLastNote.html` is **3,510,084 B** with all eight modules inlined, **6** `createOscillator`, **4** `createBiquadFilter`, **3** `drawImage`, 48 base64 WebP maps, SHA-256 `926376ED596AD6EB8C1B7D748D111A5DC0468557B773C6249FF2FFC10516F1B3`. The build is strict: `build/build.py` refuses to emit `dist/` if a module is missing. Headless suite: **37 checks, 37 passed, 0 failed, 0 skipped** — including the coda (four data voices hold, thin to one sounding voice, decay to silence, and restore when the timeline is moved back). The earlier stub is gone. Pressing **Begin** now swells the chord from silence over **1.4 s** on a smoothstep master curve instead of a 150 ms step; resume after pause keeps the short 150 ms fade.
 
 > **Coda — resolved 15 Nov 2026.** `audio.js` now implements the gesture the copy promises: at the end of the measured timeline the 2026 chord holds for 2.2 s, thins to one voice, and decays over 6 s. The data count stays at four; the sounding count drops to one. The screen labels it **CODA · COMPOSITION, NOT DATA**, and scrolling back cancels it and restores the measured chord. Verified in the app and in the built file by the smoke suite.
 >
@@ -122,11 +122,11 @@ Accessibility is structural, not a mode added at the end.
 
 **One file, offline**
 
-`dist/TheLastNote.html` is the submission: **3.51 MB** (3,508,760 B), with CSS, JavaScript, `frames.json` and all 48 map crops inlined. There are no libraries, no web fonts and no external requests. Opened from disk — the intended use — the file makes no network request at all. `dist/TheLastNote-lite.html` is the same story without the inlined maps (**120 KB**) as a fallback.
+`dist/TheLastNote.html` is the submission: **3.51 MB** (3,510,084 B), with CSS, JavaScript, `frames.json` and all 48 map crops inlined. There are no libraries, no web fonts and no external requests. Opened from disk — the intended use — the file makes no network request at all. `dist/TheLastNote-lite.html` is the same story without the inlined maps (**121 KB**) as a fallback.
 
 It boots on `DOMContentLoaded`; the copy is injected before the scroll controller attaches, so the timeline measures the finished document. The audio context is created only from a user gesture — **Begin**, or a Play button in reduced mode — which is what browser autoplay rules require.
 
-The build is strict: `build/build.py` refuses to write `dist/` if any module in `JS_ORDER` is missing. This is code commit `90037a5`, tag `freeze-build`; two rebuilds are byte-identical (SHA-256 `77281634A140FB07306F7F9FA262C0CC758D641C30772E775984122829B3338B`).
+The build is strict: `build/build.py` refuses to write `dist/` if any module in `JS_ORDER` is missing. This is code commit `358d4a5`, tag `freeze-build`; two rebuilds are byte-identical (SHA-256 `926376ED596AD6EB8C1B7D748D111A5DC0468557B773C6249FF2FFC10516F1B3`).
 
 **How to run**
 
@@ -265,7 +265,7 @@ foreach ($u in $urls) {
 
 ## 3. The app — clean-machine test
 
-> **Artifact gate — PASSED, 15 Nov 2026.** Code commit **`90037a5`**, tag **`freeze-build`**. `dist/TheLastNote.html` is **3,508,760 B** with all eight modules inlined, **3** `drawImage`, **6** `createOscillator`, **4** `createBiquadFilter` and **48** base64 WebP maps; SHA-256 `77281634A140FB07306F7F9FA262C0CC758D641C30772E775984122829B3338B`.
+> **Artifact gate — PASSED, 15 Nov 2026.** Code commit **`358d4a5`**, tag **`freeze-build`**. `dist/TheLastNote.html` is **3,510,084 B** with all eight modules inlined, **3** `drawImage`, **6** `createOscillator`, **4** `createBiquadFilter` and **48** base64 WebP maps; SHA-256 `926376ED596AD6EB8C1B7D748D111A5DC0468557B773C6249FF2FFC10516F1B3`.
 >
 > ```powershell
 > $h = Get-Content dist/TheLastNote.html -Raw
@@ -280,7 +280,7 @@ foreach ($u in $urls) {
 
 - [ ] Download the repo as a **ZIP** (not a folder you already have).
 - [ ] Extract it to an empty folder.
-- [ ] Confirm the freeze build: `freeze-build` / `90037a5`; `dist/TheLastNote.html` is **3,508,760 B** and its SHA-256 starts `77281634`.
+- [ ] Confirm the freeze build: `freeze-build` / `358d4a5`; `dist/TheLastNote.html` is **3,510,084 B** and its SHA-256 starts `926376ED`.
 - [ ] Turn off Wi-Fi.
 - [ ] Open `dist/TheLastNote.html` in Edge. Click **Begin**. Audio starts.
 - [ ] Open it in Chrome. Same result.
@@ -295,7 +295,7 @@ foreach ($u in $urls) {
 - [ ] `?mode=listen`: one tap starts it, it runs hands-free, narration is visible.
 - [ ] Reduced motion: enable the OS "reduce motion" setting (or `?mode=reduced`); the story becomes a linear document with a play button per act.
 - [ ] Screen reader spot-check: headings per act, a transcript for each act, the live region announces year and ice value.
-- [ ] `dist/TheLastNote-lite.html` also opens and plays; it is **122,997 B (120 KB)**.
+- [ ] `dist/TheLastNote-lite.html` also opens and plays; it is **124,321 B (121 KB)**.
 - [ ] `dist/TheLastNote.html` is **3.51 MB** — well under 6 MB.
 
 ## 4. Claims and numbers — the honesty pass
@@ -318,7 +318,7 @@ foreach ($u in $urls) {
 - [ ] Duration ≤ **90.0 s** (`ffprobe`).
 - [ ] File ≤ **40 MB**.
 - [ ] 1920×1080, H.264, AAC.
-- [ ] Recorded from the freeze build (`freeze-build` / `90037a5`), not from a stale dist.
+- [ ] Recorded from the freeze build (`freeze-build` / `358d4a5`), not from a stale dist.
 - [ ] On screen: **six** voices at 1979, **three** at 2012, **four** at 2026, then one voice decaying in the labelled coda; the **CODA · COMPOSITION, NOT DATA** label is legible.
 - [ ] Audio is the **real app**, captured live; no music bed, no whooshes, no dubbing.
 - [ ] Captions are burned in; play it muted and read every line.
