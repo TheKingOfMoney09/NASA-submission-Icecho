@@ -130,9 +130,9 @@ It boots on `DOMContentLoaded`; the copy is injected before the scroll controlle
 
 ### Build and provenance
 
-- The freeze artifact is built from code commit **`3634d8d`**; tag **`freeze-build`** marks the final repository commit.
+- The freeze artifact is built from code commit **`ea4ff85`**; tag **`freeze-build`** marks the final repository commit.
 - `build/build.py` is strict: it refuses to write `dist/` if any module in `JS_ORDER` is missing. `--allow-missing` exists for development only and is not used for the deliverable.
-- Two rebuilds produce identical bytes: `dist/TheLastNote.html` SHA-256 `1B7136D9D34D952C6467F9262AFBEF6DEBA0B49E18CAC2A194ECF10B99396EC9`.
+- Two rebuilds produce identical bytes: `dist/TheLastNote.html` SHA-256 `248F2CF30114E584B7AB813333B8AF9A96317EC2166684551EFBD103A980C969`.
 - `node app/tests/smoke.mjs` runs 37 headless checks against the source page and the built file: a running `AudioContext` after a gesture, 6/3/4 voices at 1979/2012/2026, the labelled coda thinning to one voice and decaying to silence (then restoring on scroll-back), a non-blank map plate, a reload that starts at 1979 instead of resuming the browser's scroll position, listen and reduced modes, keyboard, duplicate ids, and zero console errors.
 
 ### How to run
