@@ -276,7 +276,19 @@
   /* HUD + live region (1 Hz)                                           */
   /* ------------------------------------------------------------------ */
 
-  function readoutText(act) {
+  // The header prints the two numbers the chord is built from: the measured
+  // September extent and the voice count it buys. Mirrors audio.js
+  // voiceCountFor(); the audio decides, this only shows it.
+  function extentOf(frame) {
+    var f = frame || {};
+    var e = Number(f.extentMkm2 != null ? f.extentMkm2 : f.extent);
+    if (isFinite(e) && e > 0) return e;
+    var ice = Number(f.iceFrac);
+    if (!isFinite(ice)) return null;
+    return 6.90 + 45.07 * (ice - 0.1664);
+  }
+
+  function readoutText(act, frame) {
     var content = EJ.content || {};
     var title = (content.acts && content.acts[act] && content.acts[act].title) || ('Act ' + act);
 
@@ -289,7 +301,16 @@
       if (!line) line = (content.narration[0] && content.narration[0].text) || null;
       if (line) return line;
     }
-    return title;
+
+    var e = extentOf(frame);
+    if (e == null) return title;
+
+    var voices = Math.max(1, Math.min(6, Math.ceil(6 * e / 6.90 - 1e-7)));
+    // 1979 measures 6.895 in the CSV; the published figure is 6.90, so round
+    // half-up rather than letting binary floats print 6.89.
+    var shown = Math.round(e * 100 + 1e-6) / 100;
+    return shown.toFixed(2) + ' M km\u00B2 \u00B7 ' + voices +
+      (voices === 1 ? ' voice' : ' voices');
   }
 
   function announce(frame, act) {
@@ -302,9 +323,16 @@
 
     var content = EJ.content || {};
     var title = (content.acts && content.acts[act] && content.acts[act].title) || ('Act ' + act);
-    var pct = Math.round((frame.iceFrac || 0) * 1000) / 10;
-    var text = 'Year ' + Math.round(frame.year) + '. ' + title +
-      '. Ice covers ' + pct + ' percent of the mapped area.';
+    var text = 'Year ' + Math.round(frame.year) + '. ' + title + '.';
+
+    var e = extentOf(frame);
+    if (e != null) {
+      // Same numbers the header prints, spoken at 1 Hz.
+      var shown = Math.round(e * 100 + 1e-6) / 100;
+      var voices = Math.max(1, Math.min(6, Math.ceil(6 * e / 6.90 - 1e-7)));
+      text += ' September ice ' + shown.toFixed(2) + ' million square kilometres, ' +
+        (voices === 1 ? 'one voice.' : voices + ' voices.');
+    }
 
     if (text === lastAnnounceText) return;
     lastAnnounceAt = now;
@@ -320,7 +348,7 @@
     if (yearEl && yearEl.textContent !== year) yearEl.textContent = year;
 
     var readout = document.getElementById('readout');
-    var text = readoutText(act);
+    var text = readoutText(act, frame);
     if (readout && readout.textContent !== text) readout.textContent = text;
 
     announce(frame, act);

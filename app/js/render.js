@@ -393,6 +393,13 @@
   }
 
   function voiceCount(frame) {
+    // Same rule as audio.js voiceCountFor(): the measured extent buys the
+    // voices, so the staff on the rail never disagrees with the chord.
+    var e = Number(frame && (frame.extentMkm2 != null ? frame.extentMkm2 : frame.extent));
+    if (isFinite(e) && e > 0) {
+      return Math.max(1, Math.min(6, Math.ceil(6 * e / 6.90 - 1e-7)));
+    }
+    // Legacy fallback for a frame with no measured extent.
     var f = clamp((Number(frame && frame.iceFrac) || 0) / maxIce, 0, 1);
     var n = Math.ceil(f * 6);
     return Math.max(1, Math.min(6, n));
@@ -420,15 +427,17 @@
     ctx.stroke();
 
     var tx = x0 + (x1 - x0) * clamp(t, 0, 1);
-    ctx.strokeStyle = 'rgba(95,184,212,' + (0.6 * a).toFixed(3) + ')';
+    ctx.strokeStyle = 'rgba(127,212,242,' + (0.6 * a).toFixed(3) + ')';
     ctx.beginPath();
     ctx.moveTo(x0, y + 0.5);
     ctx.lineTo(tx, y + 0.5);
     ctx.stroke();
 
+    // The tick turns pink on the years that cross below the median edge: the
+    // same colour as the map's fixed 1981-2010 line and the year readout.
     var amp = Number(frame && frame.sigma) < -1.9;
     ctx.fillStyle = amp
-      ? 'rgba(217,154,58,' + (0.95 * a).toFixed(3) + ')'
+      ? 'rgba(255,111,174,' + (0.95 * a).toFixed(3) + ')'
       : 'rgba(232,241,245,' + (0.92 * a).toFixed(3) + ')';
     ctx.fillRect(Math.round(tx) - 1, y - 3, 2, 7);
 
