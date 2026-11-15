@@ -1,8 +1,8 @@
 # The Last Note — 90-second demo shot list
 
-**Status: DRAFT — NOT RECORDED.** `video/demo.mp4` does not exist yet.
+**Status: SHOT LIST READY — NOT RECORDED.** `video/demo.mp4` does not exist yet.
 
-> **Do not record before the app is frozen.** A half-built app makes a dishonest video, and you only get one capture window. Record against the freeze build (or the latest green build after 13:00 Sunday); if the build changes materially after capture, re-record only the shots that show the change.
+> **Record the freeze build.** Tag **`freeze-build`**, code commit **`d3fda63`**. `dist/TheLastNote.html` is **3,506,707 B (3.51 MB)**, SHA-256 `A2EEA0B19D481BB6869166469BCCD562D275F0718333D4213EE9CB90AFDCF1DD`. If the hash differs, stop and re-download the repo; do not film a rebuilt dist.
 
 **Spec:** 90.0 s hard cap · 1920×1080 · 30 fps · H.264 + AAC · ≤ 40 MB · captions burned in · unlisted YouTube.
 
@@ -12,7 +12,7 @@
 2. The audio is generated from the data and changes when the year changes.
 3. The chord thins: 1979 six voices, 2012 three, 2026 four.
 4. It is built for the ear first: every line is captioned, so it works muted.
-5. It is honest: no EIC claim, no "one note" claim, no invented user story.
+5. It is honest: no EIC claim, no "one note" claim about the data — the one-voice ending is the labelled coda — and no invented user story.
 
 ## Hard rules
 
@@ -25,10 +25,11 @@
 
 ## Before the camera rolls
 
-- [ ] `dist/TheLastNote.html` is the freeze build / latest green build. No TODO or placeholder text.
+- [ ] `dist/TheLastNote.html` is the freeze build (`freeze-build` / `d3fda63`), SHA-256 starts `A2EEA0B1`. No TODO or placeholder text.
 - [ ] All 48 years load; the year readout moves from 1979 to 2026.
 - [ ] Audio starts on **Begin** in Edge and Chrome.
-- [ ] 2012 shows three voices; 1979 six; 2026 four.
+- [ ] 1979 is six voices, 2012 three, 2026 four.
+- [ ] At the end, the 2026 chord holds, then **one voice** alone decays; the label **CODA · COMPOSITION, NOT DATA** is visible. Rehearse the coda so the take catches it.
 - [ ] Display set to 1920×1080 if possible; 100% zoom; F11 fullscreen; bookmarks bar hidden.
 - [ ] Focus assist / Do Not Disturb on; Discord, Steam, Slack and notifications off.
 - [ ] Clean desktop; no personal files visible.
@@ -57,9 +58,9 @@
 
 ## 0:10–0:45 · Act I — the loss (35 s)
 
-**Picture:** the scroll story from 1979 to 2026. The map fills the frame; the magenta 1981–2010 median line stays fixed; the white ice pulls inside it. The year readout moves. If the build follows the plan, Act I carries no numbers.
+**Picture:** the scroll story from 1979 to 2026. The map fills the frame; the magenta 1981–2010 median line stays fixed; the white ice pulls inside it. The year readout moves. Act I carries the year but no extent figures.
 
-**Action:** scroll at a steady rate. Rehearse twice. Target: 1979 at 0:10, 2012 around 0:31, 2026 at 0:43. Hold 2026 for the last 2 s.
+**Action:** hold at 1979 through 0:25 — the first two captions play over the full six-voice chord. Then scroll so **2012 lands at 0:31** and **2026 at 0:37**. Hold 2026 to 0:45. Rehearse twice; the hold is what makes the later captions true.
 
 **Captions:**
 - 0:12–0:17 — "Every September since 1979, the National Snow and Ice Data Center has mapped the Arctic."
@@ -73,7 +74,7 @@
 
 **Why this shot:** this is the whole argument. The visual and the audio must be the same take.
 
-**If Act I auto-advances:** use that instead of manual scrolling; still one take.
+**Guided mode does not auto-advance.** The scroll is the clock; the hold at 1979 is a real hold, not a pause.
 
 **Do not:** scroll past the end, scroll backward, or park the cursor over the text.
 
@@ -92,42 +93,55 @@
 
 **Audio:** the app's Act III audio, live.
 
-**If Act III is not built:** use Act II (the mechanism) and change the captions to the mapping. Do not fake the blind-listener line.
+**Act III is built:** the screen is the listener's typography and its transcript describes the chord honestly (four to six voices, never a single tone). Do not substitute Act II, and do not fake the blind-listener line.
 
 **Careful:** if the chord under Act III is not the thinnest, do not caption it as "the thinnest". The captions above don't claim that.
 
 ---
 
-## 1:00–1:20 · Act IV — handover (20 s)
+## 1:00–1:08 · Act IV — handover (8 s)
 
 **Picture:** the instrument. The scrubber, the year readout, the map. The user drags from 1995 to 2012 to 2026.
 
-**Action:** drag the scrubber; hold each year about 3 s. Keep the year readable.
+**Action:** drag the scrubber; hold each year about 2 s. Keep the year readable. Then scroll to the very end at 1:08 so the coda starts on time.
 
 **Captions:**
-- 1:02–1:05 — "Now play it yourself."
-- 1:06–1:10 — "1995 — still six voices."
-- 1:11–1:15 — "2012 — three."
-- 1:16–1:19 — "2026 — four."
+- 1:00–1:02 — "Now play it yourself."
+- 1:02–1:04 — "1995 — still six voices."
+- 1:04–1:06 — "2012 — three."
+- 1:06–1:08 — "2026 — four."
 
 **Audio:** live. The chord changes as the year changes. This is the proof that it is real-time.
 
-**If Act IV is cut:** use Act V instead:
-- **Picture:** the coda. Hold.
-- **Captions:** 1:02 "Four notes, held." / 1:08 "Then one voice, alone." / 1:13 "The last voice is a coda, labelled as composition." / 1:18 "Not a data point."
-- **Audio:** the app's coda.
+**Do not** spend more than 8 s here; the coda needs the last 12 s.
 
-Do not claim a free-play instrument if it isn't there.
+---
+
+## 1:08–1:20 · Act V — the coda (12 s)
+
+**Picture:** Act V on screen, with **CODA · COMPOSITION, NOT DATA** legible. Scroll to the bottom at 1:08 and hold.
+
+**Action:** after the 2026 scrub, scroll to the end and do not move the mouse. The app holds the four-voice 2026 chord for about 2 s, then leaves one voice alone to decay over 6 s. Do not cut the audio.
+
+**Captions:**
+- 1:09–1:12 — "Four notes, held."
+- 1:12–1:15 — "Then one voice continues alone."
+- 1:15–1:18 — "CODA — composition, not data."
+- 1:18–1:20 — "The last measured chord is four."
+
+**Audio:** the app's coda, live. Four voices hold, then one decays. If all four stop together, the take missed the coda. If you add a solo voice in the edit, you break the point of the label — the one-voice ending must be the app's own.
+
+**Why:** the coda is the only composed sound in the piece, and the screen says so. The data ends at four.
 
 ---
 
 ## 1:20–1:30 · Title and credits (10 s)
 
-**Picture:** black, or the app's own credits/Act V end card. A title card made in the edit is allowed here; it is clearly a title card, not app footage.
+**Picture:** black, or the app's own credits/Act V end card. A title card made in the edit is allowed here; it is clearly a title card, not app footage. If you use the Act V end card, hold it so **CODA · COMPOSITION, NOT DATA** is legible — that is the coda label the 90-second description refers to. The one-voice decay has already played at 1:12–1:18; do not add another solo voice in the edit.
 
 **Text:**
 - 1:21–1:24 — "Icecho — The Last Note"
-- 1:24–1:28 — "Data: NSIDC Sea Ice Index v4 (G02135), 1979–2026. Hero still: NASA SVS 5677."
+- 1:24–1:28 — "Data: NSIDC Sea Ice Index v4 (G02135), 1979–2026. NASA SVS 5677 credited."
 - 1:28–1:30 — "Built for the ear first."
 
 **Audio:** silence. No sting.
@@ -147,7 +161,7 @@ Splice at the act boundaries; keep the audio from each take. Do not crossfade th
 
 **Preferred:** one 90-second take if you can scroll smoothly to each act on cue, because the audio is continuous. Rehearse twice; if take 3 is clean, keep it.
 
-## 60-second fallback (if the build slips)
+## 60-second fallback
 
 Use this only if you cannot get 90 seconds.
 
@@ -156,14 +170,15 @@ Use this only if you cannot get 90 seconds.
 | 0:00–0:08 | Cold open | "In 1979, the Arctic was loud." |
 | 0:08–0:38 | Act I, 1979 → 2026 | "Each map becomes a chord. Less ice, fewer notes." / "1979 six. 2012 three. 2026 four." |
 | 0:38–0:50 | Act III or Act V | "You have never seen a satellite image." / "This is what forty-eight years of looking sounds like." |
-| 0:50–0:58 | Handover or coda | "Now play it yourself." / "The last voice is a coda, labelled as composition." |
+| 0:50–0:58 | Handover or coda | "Now play it yourself." / "The closing coda is labelled as composition." |
 | 0:58–1:00 | Title | "Icecho — The Last Note." |
 
 Still real audio, still captions burned in. Change `video/captions.srt` timings to match; do not leave the 90-second SRT on a 60-second video.
 
 ## After the take
 
-- Watch it once at 100%. Does the chord actually thin at 2012? If not, the audio isn't the app's — stop and fix it.
+- Watch it once at 100%. Does the chord drop to three at 2012 and return to four at 2026? If not, the audio isn't the app's — stop and fix it.
+- Confirm the **CODA · COMPOSITION, NOT DATA** label is legible in the final frames.
 - Check the year readout is legible at 1080p.
 - Check no cursor is parked over a caption.
 - Trim to exactly 90.0 s; no speed ramps.

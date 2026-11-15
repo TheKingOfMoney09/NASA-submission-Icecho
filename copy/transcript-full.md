@@ -143,7 +143,7 @@ Three chords sound in turn: 1995, 2012, 2026. The 2012 chord has three voices. T
 
 > What follows is a coda: one voice, left alone, fading. It is not data.
 
-> CODA · COMPOSITION, NOT DATA. Maps: NSIDC Sea Ice Index v4 (G02135). Still: NASA SVS 5677.
+> CODA · COMPOSITION, NOT DATA. Maps: NSIDC Sea Ice Index v4 (G02135). Visual reference: NASA SVS 5677.
 
 **Transcript — what the audio is doing**
 
@@ -155,7 +155,7 @@ Four voices hold, then stop. One voice continues alone and decays to silence. Th
 
 ## Listen-only narration
 
-The complete screenplay for `?mode=listen`, in playback order. Timestamps are `EJ.state.t`, 0 to 1, not seconds. The listen-only timeline runs 120 seconds.
+The complete screenplay for `?mode=listen`, in playback order. Timestamps are `EJ.state.t`, 0 to 1, not seconds. The listen-only timeline runs 120 seconds; at the end, the labelled coda plays for about 9 more seconds before the player stops.
 
 **22 lines · 218 words · about 87 seconds at a normal speaking pace.**
 
@@ -210,11 +210,11 @@ One sentence each. Written for a sighted reader who needs the image described, w
 
 ## What this copy deliberately does not say
 
-- It never claims the chord empties to one note, or that the ice is one-sixth of 1979.
+- It never claims the measured chord empties to one note, or that the ice is one-sixth of 1979. The one-voice ending is the labelled coda, a composition, not a measurement.
 - It never calls 2026 a record. 2012 is the record low.
 - It never invents a person, a quote, or a community testimonial. The only "you" is the listener.
 - It never calls the coda data. The label is on screen, in words: **CODA · COMPOSITION, NOT DATA.**
-- It never claims an Earth Information Center sea-ice visualisation. None exists; the maps are NSIDC G02135 v4 and the hero still is NASA SVS 5677.
+- It never claims an Earth Information Center sea-ice visualisation. None exists; the maps are NSIDC G02135 v4 and the credited visual reference is NASA SVS 5677.
 
 ---
 
@@ -222,7 +222,7 @@ One sentence each. Written for a sighted reader who needs the image described, w
 
 **Maps and numbers:** NSIDC Sea Ice Index v4 (G02135), Fetterer et al., National Snow and Ice Data Center, University of Colorado Boulder. September extent maps `N_{YEAR}09_extn_hires_v4.0.png`; daily minima `N_seaice_extent_daily_v4.0.csv`.
 
-**Act 0 hero still:** NASA SVS 5677, *Arctic Sea Ice Minimum 2026*, NASA's Scientific Visualization Studio (Trent L. Schindler).
+**Visual reference (not embedded):** NASA SVS 5677, *Arctic Sea Ice Minimum 2026*, NASA's Scientific Visualization Studio (Trent L. Schindler). The delivered file carries only the 48 NSIDC G02135 maps.
 
 **Sonification and app:** generated live in Web Audio by *The Last Note*, NASA Space Apps Challenge 2026, Boston (virtual), *The Earth Information Jukebox*.
 

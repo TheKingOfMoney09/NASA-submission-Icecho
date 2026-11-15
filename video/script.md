@@ -2,7 +2,7 @@
 
 **No voiceover in the current cut.** The app's audio is the soundtrack; adding a narrator would compete with the thing the video is meant to prove. These are the burned-in captions, in order. The caption script is longer than 110 words because it is read at reading speed on screen, not spoken.
 
-The voiceover cut at the bottom is provided only if someone insists on a narrated version. It is 93 words.
+The voiceover cut at the bottom is provided only if someone insists on a narrated version. It is 90 words.
 
 ## Caption script
 
@@ -19,23 +19,27 @@ The voiceover cut at the bottom is provided only if someone insists on a narrate
 | 0:46–0:50 | You have never seen a satellite image. | Act III |
 | 0:51–0:55 | You just heard forty-eight years of looking at the ice. | Act III |
 | 0:56–0:59 | The ice is still two-thirds of what it was in 1979. | Act III |
-| 1:02–1:05 | Now play it yourself. | Act IV |
-| 1:06–1:10 | 1995 — still six voices. | Act IV |
-| 1:11–1:15 | 2012 — three. | Act IV |
-| 1:16–1:19 | 2026 — four. | Act IV |
+| 1:00–1:02 | Now play it yourself. | Act IV |
+| 1:02–1:04 | 1995 — still six voices. | Act IV |
+| 1:04–1:06 | 2012 — three. | Act IV |
+| 1:06–1:08 | 2026 — four. | Act IV |
+| 1:09–1:12 | Four notes, held. | Act V, coda |
+| 1:12–1:15 | Then one voice continues alone. | Act V, coda |
+| 1:15–1:18 | CODA — composition, not data. | Act V, coda |
+| 1:18–1:20 | The last measured chord is four. | Act V, coda |
 | 1:21–1:24 | Icecho — The Last Note | Title |
-| 1:24–1:28 | Data: NSIDC Sea Ice Index v4 (G02135), 1979–2026. Hero still: NASA SVS 5677. | Title |
+| 1:24–1:28 | Data: NSIDC Sea Ice Index v4 (G02135), 1979–2026. NASA SVS 5677 credited. | Title |
 | 1:28–1:30 | Built for the ear first. | Title |
 
-Total captioned words: 128. At 90 seconds that is comfortable reading speed, with gaps for the audio to breathe.
+Total captioned words: 142. At 90 seconds that is comfortable reading speed, with gaps for the audio to breathe.
 
 ## If you add a voiceover (not in the current cut)
 
 Read this at a calm pace, duck the app audio under it, and **make the captions match the spoken words**. Do not add a line that is not in the caption file.
 
-> In 1979, the Arctic was a six-note chord. Every September since, the National Snow and Ice Data Center has mapped it. Each map becomes a chord; how much ice is left decides how many notes survive. By 2012, three. By 2026, four. Not a fade — a stagger. If you have never seen a satellite image, this is what forty-eight years of looking sounds like. The ice is still two-thirds of what it was in 1979. The last voice is a coda, labelled as composition, not data. Icecho. Built for the ear first.
+> In 1979, the Arctic was a six-note chord. Every September since, the National Snow and Ice Data Center has mapped it. Each map becomes a chord; how much ice is left decides how many notes survive. By 2012, three. By 2026, four. Not a fade - a stagger. If you have never seen a satellite image, this is what forty-eight years of looking sounds like. The ice is still two-thirds of what it was in 1979. The closing coda is labelled as composition, not data. Icecho. Built for the ear first.
 
-**93 words.**
+**90 words.**
 
 ## Words that must not appear
 

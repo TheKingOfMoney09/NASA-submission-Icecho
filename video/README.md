@@ -2,14 +2,14 @@
 
 **Status: NOT RECORDED.** `video/demo.mp4` does not exist yet.
 
-> **Do not record the final video before the app is frozen.** The app is still being assembled. Record against the freeze build (or the latest green build after 13:00 Sunday), not a half-built page. If the build changes after capture, re-record only the shots that show the change.
+> **Record against the freeze build.** The app is frozen at tag **`freeze-build`**, code commit **`d3fda63`**. `dist/TheLastNote.html` is **3,506,707 B (3.51 MB)**, SHA-256 `A2EEA0B19D481BB6869166469BCCD562D275F0718333D4213EE9CB90AFDCF1DD`. Record that file — not `app/index.html`, not a rebuilt dist. If the hash differs, stop and re-download the repo.
 
 **What is in this folder**
 
 | File | What it is |
 |---|---|
 | `shots.md` | the 90-second shot list, capture order, 60-second fallback |
-| `script.md` | the caption script, plus a 92-word voiceover cut if one is ever needed |
+| `script.md` | the caption script, plus a 90-word voiceover cut if one is ever needed |
 | `captions.srt` | draft caption timings — adjust to picture before burning in |
 | `README.md` | this file: capture, captions, compression, upload |
 
@@ -20,10 +20,13 @@
 ## 0. Before you record
 
 - [ ] Use the **freeze-build** `dist/TheLastNote.html`. Do not record `app/index.html` from source; the dist is the artifact.
-- [ ] **Artifact gate:** the dist draws the map and plays a chord. Check `Select-String -Path dist/TheLastNote.html -Pattern 'drawImage'` returns a match, and listen: four to six sustained notes, not one sine sweep. On 14 Nov the dist had zero `drawImage` and one `createOscillator` — a stub. A stub cannot be filmed. See `submission/fields.md` §3.
-- [ ] All 48 years load. No TODO, placeholder or fallback curve on screen.
+- [ ] **Hash check** — `(Get-FileHash dist/TheLastNote.html -Algorithm SHA256).Hash` must print `A2EEA0B19D481BB6869166469BCCD562D275F0718333D4213EE9CB90AFDCF1DD`.
+- [ ] **Artifact gate:** the dist draws the map and plays a chord. `[regex]::Matches((Get-Content dist/TheLastNote.html -Raw),'drawImage').Count` — and the same for `createOscillator` and `createBiquadFilter` — gives **3 / 6 / 4**, and there are **48** base64 WebP maps. The build is strict, so a missing module cannot produce this file. Details in `submission/fields.md` §3.
+- [ ] All 48 years load (1979–2026). No TODO, placeholder or fallback curve on screen.
 - [ ] Audio starts on **Begin** in Edge and Chrome.
-- [ ] 2012 shows three voices; 1979 six; 2026 four.
+- [ ] **Voice check before the take:** 1979 shows/hears **six** voices, 2012 **three**, 2026 **four**.
+- [ ] **Coda check:** at the end, the four-voice 2026 chord holds, then **one voice** alone decays to silence, and the closing screen shows **CODA · COMPOSITION, NOT DATA**. If the label is missing or all four voices stop together, stop — the shot list depends on it.
+- [ ] Human check no grep replaces: you can **see** the September map (white ice, magenta median line) and **hear** six, three and four sustained voices — not one tone sliding upward.
 - [ ] Network off. The video should prove the file runs offline.
 - [ ] F11 fullscreen, 100% zoom, bookmarks bar hidden (`Ctrl+Shift+B`).
 - [ ] Focus assist / Do Not Disturb on. Discord, Steam, Slack closed.
@@ -214,7 +217,7 @@ Watch it with sound:
 ffplay -hide_banner video/demo.mp4
 ```
 
-Does the chord thin at 2012? Does it come back at 2026? If not, the audio is from the wrong take.
+Does the chord drop to **three** voices at 2012, return to **four** at 2026, then leave **one voice** decaying in the labelled coda? Does **CODA · COMPOSITION, NOT DATA** appear? If not, the audio or the picture is from the wrong take.
 
 ---
 
@@ -240,7 +243,7 @@ Re-check duration and size. Rename `demo-small.mp4` to `demo.mp4` only after it 
 48 Septembers of Arctic sea ice, played as music. 1979: six voices. 2026: four. 2012: three.
 
 Code and app: https://github.com/TheKingOfMoney09/NASA-submission-Icecho
-Data: NSIDC Sea Ice Index v4 (G02135), 1979–2026. Hero still: NASA SVS 5677.
+Data: NSIDC Sea Ice Index v4 (G02135), 1979–2026. Visual reference: NASA SVS 5677 (credited; no SVS image is embedded).
 Captions are burned in. The audio is the app, recorded live.
 AI: concept, mapping and validation criteria by the entrant; code, extraction and documentation AI-assisted (OpenCode). No AI runs in the delivered app.
 ```

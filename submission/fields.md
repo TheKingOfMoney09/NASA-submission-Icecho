@@ -11,14 +11,18 @@ Project: **Icecho** · Piece: ***The Last Note*** · Challenge: **The Earth Info
 | 1 | Summary | **READY** | — |
 | 2 | Project Demonstration | **BLOCKED** | Video not recorded. Replace the TBD with the unlisted YouTube URL. |
 | 3 | Project | **READY** | Repo is public (checked logged out, 14 Nov 2026). |
-| 4 | Project Details | **READY — verify against freeze-build** | Act IV, listen-only and reduced-motion claims must match the shipped build. |
+| 4 | Project Details | **READY — verified against freeze-build** | Checked against code commit `d3fda63`, tag `freeze-build`. |
 | 5 | Use of Artificial Intelligence (AI) | **READY** | — |
 | 6 | NASA Data | **READY** | All links checked 14 Nov 2026. |
 | 7 | Space Agency Partner & Other Data | **READY** | "None beyond the NASA Data sources" is the answer. |
 
 All links in this file were checked on **14 November 2026** with `Invoke-WebRequest -Method Head`. Re-check in an incognito window before submitting.
 
-> **P0, 14 Nov 2026 — the dist is still a stub.** `dist/TheLastNote.html` renders a flat colour with the year on it and plays one sine sweep: `app/js/audio.js`, `engine.js`, `render.js` and `scroll.js` do not exist, and `build/build.py` skips them with a warning. Fields 1, 4 and 6 describe the intended build, not the current one. See §3 "Artifact gate". **Do not submit until it passes.**
+> **Artifact gate — PASSED, 15 Nov 2026.** Freeze artifact built from code commit **`d3fda63`**, tag **`freeze-build`**. `dist/TheLastNote.html` is **3,506,707 B** with all eight modules inlined, **6** `createOscillator`, **4** `createBiquadFilter`, **3** `drawImage`, 48 base64 WebP maps, SHA-256 `A2EEA0B19D481BB6869166469BCCD562D275F0718333D4213EE9CB90AFDCF1DD`. The build is strict: `build/build.py` refuses to emit `dist/` if a module is missing. Headless suite: **36 checks, 36 passed, 0 failed, 0 skipped** — including the coda (four data voices hold, thin to one sounding voice, decay to silence, and restore when the timeline is moved back). The earlier stub is gone.
+
+> **Coda — resolved 15 Nov 2026.** `audio.js` now implements the gesture the copy promises: at the end of the measured timeline the 2026 chord holds for 2.2 s, thins to one voice, and decays over 6 s. The data count stays at four; the sounding count drops to one. The screen labels it **CODA · COMPOSITION, NOT DATA**, and scrolling back cancels it and restores the measured chord. Verified in the app and in the built file by the smoke suite.
+>
+> **SVS credit — resolved 15 Nov 2026.** Footer, Act V and the canvas fallback now say **"Visual reference: NASA SVS 5677"**, not "Hero still". No SVS bitmap is embedded: the 48 images are NSIDC G02135 maps, and the Act 0 plate is the 1979 map.
 
 ---
 
@@ -26,7 +30,7 @@ All links in this file were checked on **14 November 2026** with `Invoke-WebRequ
 
 *Paste this paragraph exactly.*
 
-Icecho is an audio-first sonification of the Arctic sea ice record: 48 NSIDC September maps, 1979 to 2026, each played as a chord whose note count comes from how much ice is in the frame. It is built for blind and low-vision listeners first, then for classrooms, museums and anyone who cannot read a dashboard — the same 48-year record, through the ear. The chord does not fade to one note: 1979 is a six-voice chord, 2026 is four, and 2012 — the record low — is three; the single voice at the end is a coda, labelled on screen as composition, not data.
+Icecho is an audio-first sonification of the Arctic sea ice record: 48 NSIDC September maps, 1979 to 2026, each played as a chord whose note count comes from how much ice is in the frame. It is built for blind and low-vision listeners first, then for classrooms, museums and anyone who cannot read a dashboard — the same 48-year record, through the ear. The measured chord never fades to one note: 1979 is six voices, 2026 is four, and 2012 — the record low — is three. Then a closing coda, labelled on screen as composition, not data, leaves one voice alone to decay.
 
 ---
 
@@ -37,7 +41,7 @@ Icecho is an audio-first sonification of the Arctic sea ice record: 48 NSIDC Sep
 
 **URL:** `TBD`
 
-Ninety seconds, captions burned in. The audio is the app's own, captured live from the running page — no music bed, no dubbing. It shows 1979 → 2026, the chord thinning, the 2012 dip, the handover and the coda.
+Ninety seconds, captions burned in. The audio is the app's own, captured live from the running page — no music bed, no dubbing. It shows 1979 → 2026, the chord thinning, the 2012 dip, the handover, and the closing coda: one voice decaying under the label **CODA · COMPOSITION, NOT DATA**.
 
 ---
 
@@ -57,7 +61,7 @@ Open `dist/TheLastNote.html` in a browser. No install, no server, no network, no
 
 **What it is**
 
-Icecho is a scroll-driven story that plays the Arctic sea ice record as music. It uses 48 September maps from the NSIDC Sea Ice Index v4 (G02135), one per year, 1979–2026. Each map is reduced to six measured features — ice fraction, centroid, spread, edge raggedness, luminance and year-over-year loss — plus a seventh, deviation from the series mean; those drive a six-voice Web Audio instrument in real time. The ice fraction decides how many voices sound. Nothing is pre-rendered: every chord is synthesised in the browser from the frame data, so scrubbing to any year produces that year's chord. The piece is called *The Last Note*. It is not a dashboard with a sound toggle; the music is the primary format.
+Icecho is a scroll-driven story that plays the Arctic sea ice record as music. It uses 48 September maps from the NSIDC Sea Ice Index v4 (G02135), one per year, 1979–2026. Each map is reduced to six measured features — ice fraction, centroid, spread, edge raggedness, luminance and year-over-year loss — plus a seventh, deviation from the series mean. The measured NSIDC daily minimum carried on each frame (`extentMkm2`) decides how many voices sound; the map features drive pitch, width, detune, noise, brightness and mode. Nothing is pre-rendered: every chord is synthesised in the browser from the frame data, so scrubbing to any year produces that year's chord. The piece is called *The Last Note*. It is not a dashboard with a sound toggle; the music is the primary format.
 
 **Why a chord, not a beep**
 
@@ -66,11 +70,11 @@ A single number mapped to a single beep fails because the ear cannot hold a slid
 **The acts**
 
 - **0 — Cold open (~10 s).** Black. The 1979 chord, six voices, held. "In 1979, the Arctic was loud." Click to begin (unlocks audio).
-- **I — Why (~25 s).** Scroll drives 1979 → 2026. The chord loses voices; the ice pulls inside the 1981–2010 median line that never moves. No UI, no numbers.
+- **I — Why (~25 s).** Scroll drives 1979 → 2026. The chord loses voices; the ice pulls inside the 1981–2010 median line that never moves. No charts, no extent figures — just the year and the map.
 - **II — How (~25 s).** Rewind. One map → seven extracted values → six voices. The mapping is revealed as a mechanism, not a mood.
 - **III — Human (~30 s).** Second person: the listener who has never seen a satellite image.
-- **IV — Handover (~10 s).** "Now play it yourself." The story hands over to the instrument: scrub any year, or jump to 1995, 2012 and 2026.
-- **V — Last note (~8 s).** Four voices hold, then stop; one voice continues alone and decays — labelled on screen as composition, not data. Credits and sources.
+- **IV — Handover (~10 s).** "Now play it yourself." The story hands over to the instrument: scrub any year, or use the arrow keys; the copy suggests 1995, 2012 and 2026.
+- **V — Last note (~8 s + 8 s coda).** Four voices hold at 2026; a labelled coda then leaves one voice to decay. Credits and sources.
 
 Scroll sets the pace in guided mode; listen-only plays the whole piece in about two minutes.
 
@@ -78,7 +82,7 @@ Scroll sets the pace in guided mode; listen-only plays the whole piece in about 
 
 | Data feature | Becomes | Why it reads |
 |---|---|---|
-| `iceFrac` — fraction of the map that is ice | how many voices sound (6 in 1979 → 4 in 2026, 3 in 2012) | Direct: less ice, fewer notes |
+| `extentMkm2` — measured NSIDC daily minimum carried on the frame (annual minimum, Aug–Oct; the map's ice fraction tracks it) | how many voices sound (6 in 1979 → 4 in 2026, 3 in 2012) | Direct: less ice, fewer notes |
 | `centroidY` — where the ice sits vertically | root pitch — north maps higher | Intuitive spatial metaphor |
 | `spread` — vertical spread of the ice | octave spread of the chord | Wider ice = wider chord |
 | `dLoss` — ice lost since the previous year | detune on the top voice, 0 → −70 cents | Instability you can hear |
@@ -86,9 +90,11 @@ Scroll sets the pace in guided mode; listen-only plays the whole piece in about 
 | `lum` — mean brightness of the crop | lowpass cutoff, 400 Hz → 6 kHz | Bright ice vs dark water |
 | `sigma` — deviation from the series mean | mode flip major ↔ minor + a 55 Hz pulse | "Something is wrong" |
 
+The extracted `iceFrac` is the validation variable: it correlates with `extentMkm2` at r = 0.9934 and supplies the year-over-year loss and the deviation-from-mean terms. The voice count uses the measured extent directly.
+
 If the form strips the table, use these lines:
 
-- `iceFrac` (fraction of the map that is ice) → how many voices sound (6 in 1979 → 4 in 2026, 3 in 2012)
+- `extentMkm2` (measured NSIDC daily minimum carried on the frame) → how many voices sound (6 in 1979 → 4 in 2026, 3 in 2012)
 - `centroidY` (where the ice sits vertically) → root pitch, north maps higher
 - `spread` (vertical spread of the ice) → octave spread of the chord
 - `dLoss` (ice lost since the previous year) → detune on the top voice, 0 → −70 cents
@@ -96,18 +102,18 @@ If the form strips the table, use these lines:
 - `lum` (mean brightness of the crop) → lowpass cutoff, 400 Hz → 6 kHz
 - `sigma` (deviation from the series mean) → mode flip major ↔ minor + a 55 Hz pulse
 
-The chord does not fade to one note. 2026 has four. The single voice at the end is a coda, and the screen says so. The voice count is computed from the frame, not typed in per year: 1979 six, 1999 five, 2007 four, 2012 three, 2026 four. It is a stagger, not a fade.
+The measured chord does not fade to one note. 2026 has four. The coda that follows is a labelled composition: one voice, decaying to silence. The voice count is computed from the frame, not typed in per year: `min(6, ceil(6 × extentMkm2 / 6.90))`. The anchor years are 1979 six, 1999 five, 2007 four, 2012 three, 2026 four. It is a stagger, not a fade.
 
 **The honest part**
 
-2026 is about 66% of 1979 — two-thirds, not one-sixth. The chord loses a voice, gets one back, loses two. The early chord is pinned at the six-voice ceiling: nine years between 1979 and 1998 actually held more ice than 1979, so the opening is full, not declining. The single voice at the end is a compositional coda, labelled on screen; the data stays true.
+2026 is about 66% of 1979 — two-thirds, not one-sixth. The measured chord loses a voice, gets one back, loses two. The early chord is pinned at the six-voice ceiling: nine years between 1979 and 1998 actually held more ice than 1979, so the opening is full, not declining. The closing coda, one voice decaying, is labelled as composition, not data; the data stays true.
 
 **Accessibility, built in**
 
 Accessibility is structural, not a mode added at the end.
 
 - Native scroll only. No scroll-jacking, no wheel capture. The page scrolls the way the browser scrolls; Page Down, Page Up and the scrollbar work.
-- `prefers-reduced-motion: reduce` collapses the story to a linear document: no parallax, no pinned sections, no auto-advance; each act gets a play button.
+- `prefers-reduced-motion: reduce` collapses the story to a linear document: no parallax, no pinned sections, no auto-advance; each act gets a play button, and Act V plays the labelled coda.
 - `?mode=listen` plays the whole story as audio with on-screen narration; the story advances on a timer, so no scrolling is needed. One tap starts it.
 - Keyboard: Space play/pause, ←/→ one year, Home/End first/last; visible focus; a skip link to the story.
 - Screen readers: a real heading per act, a written transcript of what the audio is doing, an `aria-live="polite"` readout of the current year and ice value, and alt text on the canvas.
@@ -116,7 +122,11 @@ Accessibility is structural, not a mode added at the end.
 
 **One file, offline**
 
-`dist/TheLastNote.html` is the submission. CSS, JavaScript, `frames.json` and all 48 map crops are inlined; no libraries, no web fonts, no network calls at runtime. Open it from disk — no server, no install, no build step. `dist/TheLastNote-lite.html` is the same story without the inlined maps (about 45 KB) as a fallback.
+`dist/TheLastNote.html` is the submission: **3.51 MB** (3,506,707 B), with CSS, JavaScript, `frames.json` and all 48 map crops inlined. There are no libraries, no web fonts and no external requests. Opened from disk — the intended use — the file makes no network request at all. `dist/TheLastNote-lite.html` is the same story without the inlined maps (**118 KB**) as a fallback.
+
+It boots on `DOMContentLoaded`; the copy is injected before the scroll controller attaches, so the timeline measures the finished document. The audio context is created only from a user gesture — **Begin**, or a Play button in reduced mode — which is what browser autoplay rules require.
+
+The build is strict: `build/build.py` refuses to write `dist/` if any module in `JS_ORDER` is missing. This is code commit `d3fda63`, tag `freeze-build`; two rebuilds are byte-identical (SHA-256 `A2EEA0B19D481BB6869166469BCCD562D275F0718333D4213EE9CB90AFDCF1DD`).
 
 **How to run**
 
@@ -140,7 +150,7 @@ Extracted ice fraction vs NSIDC daily minima: Pearson **r = 0.9935**, **n = 48**
 
 *Paste the paragraph and the table.*
 
-This project was developed with AI-assisted tooling (OpenCode) for code scaffolding, debugging, research and the drafting of documentation. The concept, the sonification mapping and the act structure were authored and decided by the entrant; the data source and validation criteria were chosen by the entrant, and the extraction and correlation were run with AI-assisted tooling and checked against the published NSIDC files. No AI model runs inside the delivered application: all audio is synthesised procedurally in the browser with the Web Audio API from NASA-derived feature data, and the delivered file makes no network calls. The submission text was drafted with AI assistance and reviewed by the entrant before submission. AI assistance is disclosed here in full.
+This project was developed with AI-assisted tooling (OpenCode) for code scaffolding, debugging, research and the drafting of documentation. The concept, the sonification mapping and the act structure were authored and decided by the entrant; the data source and validation criteria were chosen by the entrant, and the extraction and correlation were run with AI-assisted tooling and checked against the published NSIDC files. No AI model runs inside the delivered application: all audio is synthesised procedurally in the browser with the Web Audio API from NASA-derived feature data, and the delivered file makes no external network calls. The submission text was drafted with AI assistance and reviewed by the entrant before submission. AI assistance is disclosed here in full.
 
 | Work | Who |
 |---|---|
@@ -172,7 +182,7 @@ This project was developed with AI-assisted tooling (OpenCode) for code scaffold
 
 Citation: Fetterer, F., Knowles, K., Meier, W. N., Savoie, M., Windnagel, A. K. & Stafford, T. (2025). *Sea Ice Index*. (G02135, Version 4). [Data Set]. Boulder, Colorado USA. National Snow and Ice Data Center. https://doi.org/10.7265/a98x-0f50. [September 1979–2026 extent maps; daily extent 1978–2026]. Accessed 13 November 2026.
 
-**Hero still — NASA SVS 5677, "Arctic Sea Ice Minimum 2026"** (Trent L. Schindler, NASA's Scientific Visualization Studio), 3840×2160. Act 0 only, one image.
+**Visual reference — NASA SVS 5677, "Arctic Sea Ice Minimum 2026"** (Trent L. Schindler, NASA's Scientific Visualization Studio), 3840×2160. The app's closing credits name this visualisation. No SVS bitmap is embedded in the delivered file: all 48 images it carries are NSIDC G02135 September maps, and the Act 0 plate is the 1979 map.
 
 - https://svs.gsfc.nasa.gov/5677/
 - https://svs.gsfc.nasa.gov/vis/a000000/a005600/a005677/arctic_sea_ice_min_2026.still.png
@@ -185,7 +195,7 @@ Citation: Fetterer, F., Knowles, K., Meier, W. N., Savoie, M., Windnagel, A. K. 
 
 **Two files, two kinds of number.** The maps are September monthly composites; the figures on screen are the annual daily minimum from the daily file. Both come from the same NSIDC v4 product, and validation compares them rather than assuming they are identical.
 
-**No EIC visualisation is used or claimed.** NASA's Earth Information Center (EIC) publishes visualisations across nine themes — Agriculture, Air Quality, Biodiversity, Disasters, Energy, Greenhouse Gases, Sea Level Change, Water Resources, Wildfires — and none is sea ice or cryosphere. The frames in this project are NSIDC G02135 v4 maps; the Act 0 hero still is NASA SVS 5677. Nothing here is an earth.gov or EIC product.
+**No EIC visualisation is used or claimed.** NASA's Earth Information Center (EIC) publishes visualisations across nine themes — Agriculture, Air Quality, Biodiversity, Disasters, Energy, Greenhouse Gases, Sea Level Change, Water Resources, Wildfires — and none is sea ice or cryosphere. The frames in this project are NSIDC G02135 v4 maps; the app also credits NASA SVS 5677 as a visual reference, and no SVS image is embedded. Nothing here is an earth.gov or EIC product.
 
 ---
 
@@ -193,7 +203,7 @@ Citation: Fetterer, F., Knowles, K., Meier, W. N., Savoie, M., Windnagel, A. K. 
 
 *Paste this paragraph.*
 
-**None beyond the sources in the NASA Data field.** No separate space agency partner data; no other third-party data. The application has no runtime dependencies and makes no network requests.
+**None beyond the sources in the NASA Data field.** No separate space agency partner data; no other third-party data. The application has no runtime dependencies and, opened from disk, makes no network requests.
 
 ---
 
@@ -255,32 +265,38 @@ foreach ($u in $urls) {
 
 ## 3. The app — clean-machine test
 
-> **Artifact gate — do this before anything else.** The build skips missing JS modules silently (`build/build.py` warns and continues), so a stub can ship and still pass the smoke test.
+> **Artifact gate — PASSED, 15 Nov 2026.** Code commit **`d3fda63`**, tag **`freeze-build`**. `dist/TheLastNote.html` is **3,506,707 B** with all eight modules inlined, **3** `drawImage`, **6** `createOscillator`, **4** `createBiquadFilter` and **48** base64 WebP maps; SHA-256 `A2EEA0B19D481BB6869166469BCCD562D275F0718333D4213EE9CB90AFDCF1DD`.
 >
 > ```powershell
-> Select-String -Path dist/TheLastNote.html -Pattern 'drawImage' | Select-Object -First 1
-> Select-String -Path dist/TheLastNote.html -Pattern 'createOscillator' -AllMatches | ForEach-Object { $_.Matches.Count }
+> $h = Get-Content dist/TheLastNote.html -Raw
+> [regex]::Matches($h,'drawImage').Count
+> [regex]::Matches($h,'createOscillator').Count
+> [regex]::Matches($h,'createBiquadFilter').Count
 > ```
 >
-> As checked on **14 Nov 2026**, `dist/TheLastNote.html` has **zero** `drawImage`, **zero** `createBiquadFilter`, and **one** `createOscillator`: the four fallback modules in `loader.js` are the whole app, so the page paints a flat colour with the year on it and plays a single sweeping sine — not the 48 maps and not a chord. If that is still true at freeze, **stop**: none of the audio claims in this file are true yet, and 06 must land `audio.js`, `engine.js`, `render.js` and `scroll.js` first.
+> Expected: **3 / 6 / 4**. The build is strict now: `build/build.py` exits instead of shipping a stub, so a missing module cannot reach `dist/`. `node app/tests/smoke.mjs` runs **36** headless checks: **36 passed, 0 failed, 0 skipped** — including 6/3/4 voices at 1979/2012/2026, the coda thinning to one sounding voice and decaying to silence, and the measured chord restoring when the timeline moves back. The old `--allow-missing` stub is gone; do not rebuild over the freeze file with it.
 >
-> Human check, which no grep replaces: you must **see** the September map (white ice, magenta median line) and **hear** four to six sustained notes, not one tone sliding upward.
+> Human check, which no grep replaces: you must **see** the September map (white ice, magenta median line) and **hear** six, three and four sustained voices at 1979, 2012 and 2026 — not one tone sliding upward.
 
 - [ ] Download the repo as a **ZIP** (not a folder you already have).
 - [ ] Extract it to an empty folder.
+- [ ] Confirm the freeze build: `freeze-build` / `d3fda63`; `dist/TheLastNote.html` is **3,506,707 B** and its SHA-256 starts `A2EEA0B1`.
 - [ ] Turn off Wi-Fi.
 - [ ] Open `dist/TheLastNote.html` in Edge. Click **Begin**. Audio starts.
 - [ ] Open it in Chrome. Same result.
-- [ ] Scroll 1979 → 2026: the chord thins, 2012 is three voices, 2026 is four.
-- [ ] Every year 1979–2026 is present; no placeholder text; no fallback curve.
+- [ ] The map plate shows the September map (white ice, magenta median line), not a flat colour.
+- [ ] 1979 is **six** voices; 2012 is **three**; 2026 is **four**.
+- [ ] At the end, the four-voice chord holds, then **one voice** decays to silence; the label **CODA · COMPOSITION, NOT DATA** is visible. Scrolling back brings the chord back.
+- [ ] Scroll 1979 → 2026: the chord steps down, partly returns, then steps down again. 48 years, no placeholder text, no fallback curve.
+- [ ] The coda is labelled on screen: **CODA · COMPOSITION, NOT DATA**.
 - [ ] The page shows no console errors (F12 → Console).
 - [ ] DevTools → Network: no external requests. The page is the file.
 - [ ] Keyboard-only pass: Tab to **Begin**, Enter, Space play/pause, ←/→ one year, Home/End first/last.
 - [ ] `?mode=listen`: one tap starts it, it runs hands-free, narration is visible.
 - [ ] Reduced motion: enable the OS "reduce motion" setting (or `?mode=reduced`); the story becomes a linear document with a play button per act.
 - [ ] Screen reader spot-check: headings per act, a transcript for each act, the live region announces year and ice value.
-- [ ] `dist/TheLastNote-lite.html` also opens and plays.
-- [ ] `dist/TheLastNote.html` is under 6 MB.
+- [ ] `dist/TheLastNote-lite.html` also opens and plays; it is **120,944 B (118 KB)**.
+- [ ] `dist/TheLastNote.html` is **3.51 MB** — well under 6 MB.
 
 ## 4. Claims and numbers — the honesty pass
 
@@ -290,8 +306,8 @@ foreach ($u in $urls) {
 - [ ] `r = 0.9935` is described as a **correlation**, never as "99.35% accurate".
 - [ ] The 0.9934 in `validation.md` is covered by the parenthetical, not hidden or edited out.
 - [ ] `n = 48`, `RMSE = 0.13 M km²`, max residual `0.36 M km²` — unchanged.
-- [ ] The chord is described as thinning to **four**, with a 2012 dip to **three**. No "one note" data claim.
-- [ ] The single voice at the end is labelled **a coda / composition**, not data.
+- [ ] The measured chord is described as thinning to **four**, with a 2012 dip to **three**. No "one note" data claim.
+- [ ] The closing coda is labelled **composition, not data**; the data chord stays at four, and the one-voice decay is described only as the labelled coda.
 - [ ] No EIC / earth.gov visualisation claim anywhere.
 - [ ] No invented person, quote, community testimonial or user study.
 - [ ] No claim that blind participants tested the app.
@@ -302,6 +318,8 @@ foreach ($u in $urls) {
 - [ ] Duration ≤ **90.0 s** (`ffprobe`).
 - [ ] File ≤ **40 MB**.
 - [ ] 1920×1080, H.264, AAC.
+- [ ] Recorded from the freeze build (`freeze-build` / `d3fda63`), not from a stale dist.
+- [ ] On screen: **six** voices at 1979, **three** at 2012, **four** at 2026, then one voice decaying in the labelled coda; the **CODA · COMPOSITION, NOT DATA** label is legible.
 - [ ] Audio is the **real app**, captured live; no music bed, no whooshes, no dubbing.
 - [ ] Captions are burned in; play it muted and read every line.
 - [ ] Visibility is **Unlisted**, not Private.
@@ -322,7 +340,7 @@ foreach ($u in $urls) {
 | Do not write | Write instead | Why |
 |---|---|---|
 | "2026 was a record low" | "2012 was the record low; 2026 is 4.57 M km²" | False |
-| "The chord fades to one note" | "The chord thins to four; the final single voice is a labelled coda" | False |
+| "The chord fades to one note" | "The measured chord ends at four; the labelled coda then leaves one voice to decay" | Data vs composition |
 | "EIC sea-ice visualisation" / "earth.gov sea ice" | "NSIDC G02135 v4 maps; no EIC sea-ice visualisation exists" | No such product |
 | "99.35% accurate" | "correlates r = 0.9935 with the NSIDC daily minima" | Correlation is not accuracy |
 | "Blind users tested it" | "Built audio-first for blind and low-vision listeners; keyboard and screen-reader structure verified" | No study was run |
