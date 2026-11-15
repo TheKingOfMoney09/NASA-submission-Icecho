@@ -64,7 +64,7 @@ A single number mapped to a single beep fails because the ear cannot hold a slid
 
 | Act | What happens | ~Time |
 |---|---|---|
-| **0 — Cold open** | Black. The 1979 chord, six voices, held. *"In 1979, the Arctic was loud."* Click to begin (unlocks audio). | 10 s |
+| **0 — Cold open** | Black. The 1979 chord, six voices, swells in over 1.4 s. *"In 1979, the Arctic was loud."* Click to begin (unlocks audio). | 10 s |
 | **I — Why** | Scroll drives 1979 → 2026. The chord loses voices; the ice pulls inside the 1981–2010 median line that never moves. No charts, no extent figures — just the year and the map. | 25 s |
 | **II — How** | Rewind. One map → seven extracted values → six voices. The mapping is revealed as a mechanism, not a mood. | 25 s |
 | **III — Human** | Second person: the listener who has never seen a satellite image. | 30 s |
@@ -112,19 +112,19 @@ Accessibility is structural, not a mode added at the end.
 - **Keyboard.** Space play/pause, ←/→ one year, Home/End first/last year. Visible focus, and a skip link to the story.
 - **Screen readers.** A real heading per act, a written transcript of what the audio is doing, an `aria-live="polite"` readout of the current year and ice value, and alt text on the canvas.
 - **Contrast.** Text sits on scrims, never directly on busy imagery.
-- **The begin gate is a real button.** Enter and Space work natively, and the first gesture unlocks audio.
+- **The begin gate is a real button.** Enter and Space work natively, and the first gesture unlocks audio. The chord swells from silence over **1.4 s** on a smoothstep curve, so there is no click or step on the downbeat.
 
 ### One file, offline
 
-`dist/TheLastNote.html` is the submission: **3.51 MB**, CSS, JavaScript, `frames.json` and all 48 map crops inlined. There are no libraries, no web fonts and no external requests. Opened from disk — the intended use — the file makes no network request at all. Open it with no server and no install. `dist/TheLastNote-lite.html` is the same story without the inlined maps (**118 KB**) as a fallback. The source lives in `app/`; rebuild with `python build/build.py`.
+`dist/TheLastNote.html` is the submission: **3.51 MB**, CSS, JavaScript, `frames.json` and all 48 map crops inlined. There are no libraries, no web fonts and no external requests. Opened from disk — the intended use — the file makes no network request at all. Open it with no server and no install. `dist/TheLastNote-lite.html` is the same story without the inlined maps (**120 KB**) as a fallback. The source lives in `app/`; rebuild with `python build/build.py`.
 
 It boots on `DOMContentLoaded`; the copy is injected before the scroll controller attaches, so the timeline measures the finished document. The audio context is created only from a user gesture — **Begin**, or a Play button in reduced mode — which is what browser autoplay rules require.
 
 ### Build and provenance
 
-- The freeze artifact is built from code commit **`d3fda63`**; tag **`freeze-build`** marks the final repository commit.
+- The freeze artifact is built from code commit **`8f70525`**; tag **`freeze-build`** marks the final repository commit.
 - `build/build.py` is strict: it refuses to write `dist/` if any module in `JS_ORDER` is missing. `--allow-missing` exists for development only and is not used for the deliverable.
-- Two rebuilds produce identical bytes: `dist/TheLastNote.html` SHA-256 `A2EEA0B19D481BB6869166469BCCD562D275F0718333D4213EE9CB90AFDCF1DD`.
+- Two rebuilds produce identical bytes: `dist/TheLastNote.html` SHA-256 `BF7F33B35E873D8ED6E403B14C4E5C9612DC489D65FD500F615E3C81276A8B07`.
 - `node app/tests/smoke.mjs` runs 36 headless checks against the source page and the built file: a running `AudioContext` after a gesture, 6/3/4 voices at 1979/2012/2026, the labelled coda thinning to one voice and decaying to silence (then restoring on scroll-back), a non-blank map plate, listen and reduced modes, keyboard, duplicate ids, and zero console errors.
 
 ### How to run
@@ -218,13 +218,13 @@ Citation:
 | Path | What it is |
 |---|---|
 | `dist/TheLastNote.html` | the submission: one offline file, 3.51 MB, 48 inlined maps |
-| `dist/TheLastNote-lite.html` | same story, no inlined maps, 118 KB |
+| `dist/TheLastNote-lite.html` | same story, no inlined maps, 120 KB |
 | `app/index.html` | source shell: DOM contract, canvas, live region |
 | `app/js/core.js` | 5,028 B — `EJ` namespace, state, event bus, contract check |
 | `app/js/loader.js` | 11,491 B — boot, data load, begin gate, module fallbacks |
 | `app/js/content.js` | 8,484 B — every audience-facing string |
-| `app/js/audio.js` | 13,927 B — the audio contract, the seven-feature mapping and the coda |
-| `app/js/engine.js` | 13,753 B — the Web Audio graph |
+| `app/js/audio.js` | 14,277 B — the audio contract, the seven-feature mapping and the coda |
+| `app/js/engine.js` | 14,897 B — the Web Audio graph |
 | `app/js/render.js` | 17,586 B — the canvas plate renderer |
 | `app/js/scroll.js` | 7,666 B — native scroll to timeline, act detection |
 | `app/js/main.js` | 11,264 B — mode router, copy injection, HUD, keyboard |

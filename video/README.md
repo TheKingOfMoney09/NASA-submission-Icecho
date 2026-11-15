@@ -2,7 +2,7 @@
 
 **Status: NOT RECORDED.** `video/demo.mp4` does not exist yet.
 
-> **Record against the freeze build.** The app is frozen at tag **`freeze-build`**, code commit **`d3fda63`**. `dist/TheLastNote.html` is **3,506,707 B (3.51 MB)**, SHA-256 `A2EEA0B19D481BB6869166469BCCD562D275F0718333D4213EE9CB90AFDCF1DD`. Record that file — not `app/index.html`, not a rebuilt dist. If the hash differs, stop and re-download the repo.
+> **Record against the freeze build.** The app is frozen at tag **`freeze-build`**, code commit **`8f70525`**. `dist/TheLastNote.html` is **3,508,201 B (3.51 MB)**, SHA-256 `BF7F33B35E873D8ED6E403B14C4E5C9612DC489D65FD500F615E3C81276A8B07`. Record that file — not `app/index.html`, not a rebuilt dist. If the hash differs, stop and re-download the repo.
 
 **What is in this folder**
 
@@ -20,7 +20,7 @@
 ## 0. Before you record
 
 - [ ] Use the **freeze-build** `dist/TheLastNote.html`. Do not record `app/index.html` from source; the dist is the artifact.
-- [ ] **Hash check** — `(Get-FileHash dist/TheLastNote.html -Algorithm SHA256).Hash` must print `A2EEA0B19D481BB6869166469BCCD562D275F0718333D4213EE9CB90AFDCF1DD`.
+- [ ] **Hash check** — `(Get-FileHash dist/TheLastNote.html -Algorithm SHA256).Hash` must print `BF7F33B35E873D8ED6E403B14C4E5C9612DC489D65FD500F615E3C81276A8B07`.
 - [ ] **Artifact gate:** the dist draws the map and plays a chord. `[regex]::Matches((Get-Content dist/TheLastNote.html -Raw),'drawImage').Count` — and the same for `createOscillator` and `createBiquadFilter` — gives **3 / 6 / 4**, and there are **48** base64 WebP maps. The build is strict, so a missing module cannot produce this file. Details in `submission/fields.md` §3.
 - [ ] All 48 years load (1979–2026). No TODO, placeholder or fallback curve on screen.
 - [ ] Audio starts on **Begin** in Edge and Chrome.
