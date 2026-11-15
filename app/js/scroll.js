@@ -23,6 +23,11 @@
   var SEND_EPS = 0.0004;    // don't spam the audio engine for nothing
   var ACTS = 6;
 
+  // Act boundaries on t, from the act durations in main.js (10/25/25/30/10/8
+  // of 108 s). A section's height is a pacing choice; these boundaries are
+  // not, so timeAt() maps each section onto its own slice of the timeline.
+  var BOUNDS = [0, 0.09259259, 0.32407407, 0.55555556, 0.83333333, 0.92592593, 1];
+
   var attached = false;
   var running = false;
   var raf = 0;
@@ -35,6 +40,7 @@
   var reduced = false;
   var armed = false;        // reduced mode: arm audio on the first gesture
   var scroller = null;
+  var tops = [];            // document y of each act's top, then its end
 
   function clamp01(v) {
     v = Number(v);
@@ -46,18 +52,54 @@
     return document.scrollingElement || document.documentElement;
   }
 
-  function progress() {
+  // The act boxes are fixed fractions of the viewport, so their offsets are
+  // stable until a resize; measure them once there and reuse them on scroll.
+  function layout() {
+    tops = [];
+    for (var i = 0; i < ACTS; i++) {
+      var node = document.getElementById('act-' + i);
+      if (!node) { tops = []; return; }
+      var r = node.getBoundingClientRect();
+      tops.push(r.top + (window.pageYOffset || 0));
+    }
+    var last = document.getElementById('act-' + (ACTS - 1));
+    tops.push(tops[ACTS - 1] + (last && last.offsetHeight ? last.offsetHeight : 1));
+  }
+
+  // Scroll position -> t. Inside act i the scroll runs from that act's top to
+  // the next act's top, and t runs from BOUNDS[i] to BOUNDS[i+1]: every act
+  // still starts exactly on its boundary, whatever height the CSS gives it.
+  function timeAt(y) {
+    if (tops.length < ACTS + 1) return 0;
+    var i = 0;
+    while (i < ACTS - 1 && y >= tops[i + 1]) i++;
+    var a = tops[i];
+    var b = tops[i + 1];
+    var f = b > a ? (y - a) / (b - a) : 0;
+    if (f < 0) f = 0; else if (f > 1) f = 1;
+    return clamp01(BOUNDS[i] + f * (BOUNDS[i + 1] - BOUNDS[i]));
+  }
+
+  // t -> scroll position: the inverse, used by the scrub rail and the arrows.
+  function yFor(t) {
+    t = clamp01(t);
     var s = el();
     var max = s.scrollHeight - s.clientHeight;
-    if (!(max > 0)) return 0;
-    return clamp01(s.scrollTop / max);
+    if (tops.length < ACTS + 1) return max > 0 ? t * max : 0;
+    var i = 0;
+    while (i < ACTS - 1 && t >= BOUNDS[i + 1]) i++;
+    var a = BOUNDS[i];
+    var b = BOUNDS[i + 1];
+    var f = b > a ? (t - a) / (b - a) : 0;
+    return tops[i] + f * (tops[i + 1] - tops[i]);
   }
 
   function measure() {
     scroller = el();
-    var s = scroller;
-    var max = s.scrollHeight - s.clientHeight;
-    target = max > 0 ? clamp01(s.scrollTop / max) : 0;
+    var max = scroller.scrollHeight - scroller.clientHeight;
+    if (!(max > 0)) { target = 0; return; }
+    if (tops.length < ACTS + 1) layout();
+    target = clamp01(timeAt(scroller.scrollTop || window.pageYOffset || 0));
   }
 
   function visibleSections() {
@@ -195,6 +237,7 @@
   }
 
   function onResize() {
+    layout();
     measure();
   }
 
@@ -267,11 +310,11 @@
     attached = true;
     scroller = el();
 
-    // The cover wordmark is decorative CSS content, so give the full-screen
-    // button an explicit name instead of letting it absorb generated text.
+    // The cover is painted with spans inside the button; give it an explicit
+    // verb if a future markup change drops the aria-label attribute.
     var gate = document.getElementById('begin-gate');
     if (gate && !gate.getAttribute('aria-label')) {
-      gate.setAttribute('aria-label', 'Begin');
+      gate.setAttribute('aria-label', 'Play the last note');
     }
 
     // The loader calls attach() before it stamps the body class, so the
@@ -305,7 +348,7 @@
     }
   }
 
-  EJ.scroll = { attach: attach };
+  EJ.scroll = { attach: attach, timeAt: timeAt, yFor: yFor };
 
   // Loader attaches in guided mode. This only covers a real race: if the
   // module loads after boot (http fetch path), the ready hook attaches once.

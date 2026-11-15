@@ -8,7 +8,37 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<button id="begin-gate" type="button">Begin</button>
+<h1 class="sr-only">The Last Note</h1>
+
+<button id="begin-gate" type="button" aria-label="Play the last note">
+  <span class="cover">
+    <span class="cover-glow" aria-hidden="true"></span>
+
+    <span class="cover-corner cover-corner-tl" aria-hidden="true">47 Septembers</span>
+    <span class="cover-corner cover-corner-tr" aria-hidden="true">1979&#8211;2026</span>
+    <span class="cover-corner cover-corner-bl" aria-hidden="true">Scroll</span>
+    <span class="cover-corner cover-corner-br" aria-hidden="true">NASA Space Apps 2026</span>
+
+    <span class="cover-mid" aria-hidden="true">
+      <span class="cover-title" id="cover-title">The Last Note</span>
+      <span class="cover-sub">Every song ends somewhere. Listen to where this one goes.</span>
+      <span class="cover-cta"><span class="cover-cta-label">Play the last note</span></span>
+    </span>
+
+    <svg class="cover-wave" viewBox="0 0 1200 80" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="cover-fade" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#7fd4f2" stop-opacity="0"></stop>
+          <stop offset="0.5" stop-color="#7fd4f2" stop-opacity="1"></stop>
+          <stop offset="1" stop-color="#7fd4f2" stop-opacity="0"></stop>
+        </linearGradient>
+      </defs>
+      <line class="cover-median" x1="0" y1="40" x2="1200" y2="40"></line>
+      <path class="cover-trace" vector-effect="non-scaling-stroke"
+            d="M0,40 C50,40 70,24 120,27 S190,52 240,47 S310,22 360,28 S430,54 480,49 S550,24 600,30 S670,52 720,46 S790,26 840,31 S910,50 960,44 S1030,28 1080,34 S1150,50 1200,40"></path>
+    </svg>
+  </span>
+</button>
 
 <a class="skip" href="#act-1">Skip to the story</a>
 

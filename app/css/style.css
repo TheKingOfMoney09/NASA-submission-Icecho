@@ -114,15 +114,29 @@ a { color: var(--accent); }
 }
 
 /* ------------------------------------------------------------------ */
-/* Begin gate — a real full-screen button, the only way sound starts.  */
+/* Cover — the title page. One full-screen button, the only way sound  */
+/* starts. Everything painted inside it is decoration: the accessible  */
+/* name is the call to action, and the page's h1 carries the title.    */
 /* ------------------------------------------------------------------ */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 
 #begin-gate {
   position: fixed;
   inset: 0;
   z-index: 50;
-  display: grid;
-  place-items: center;
+  display: block;
   width: 100%;
   height: 100%;
   margin: 0;
@@ -131,68 +145,228 @@ a { color: var(--accent); }
   border-radius: 0;
   background: var(--ink);
   color: var(--ice);
-  font-family: var(--mono);
-  font-size: 0.76rem;
-  font-weight: 500;
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: opacity 1000ms var(--ease), color 160ms var(--ease);
-}
-
-/* The one pink line on the cover: the same fixed 1981–2010 median edge that
-   every map carries. The gate circle is that line, drawn once. */
-#begin-gate::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 158px;
-  height: 158px;
-  margin: -79px 0 0 -79px;
-  border: 1px solid rgba(255, 111, 174, 0.34);
-  border-radius: 50%;
-  transition: border-color 200ms var(--ease), transform 1200ms var(--ease);
-}
-
-/* Cover wordmark. The markup is a single button, so the title is decorative
-   generated content; scroll.js pins aria-label="Begin" to keep the button's
-   accessible name to its verb. */
-#begin-gate::after {
-  content: "The Last Note";
-  position: absolute;
-  left: 50%;
-  top: clamp(3.6rem, 15vh, 9rem);
-  width: min(94vw, 72rem);
-  transform: translateX(-50%);
-  font-family: var(--display);
-  font-size: clamp(2.6rem, 10vw, 9rem);
-  font-weight: 900;
-  font-synthesis-weight: none;
-  line-height: 0.92;
-  letter-spacing: -0.028em;
+  font-family: var(--serif);
+  font-size: 1rem;
   text-align: center;
-  text-transform: none;
-  color: var(--ice);
-  pointer-events: none;
-}
-
-#begin-gate:hover,
-#begin-gate:focus-visible { color: var(--accent); }
-
-#begin-gate:hover::before,
-#begin-gate:focus-visible::before {
-  border-color: rgba(255, 111, 174, 0.62);
-  transform: scale(1.05);
+  cursor: pointer;
+  overflow: hidden;
+  transition: opacity 1000ms var(--ease);
 }
 
 #begin-gate[hidden] {
-  display: grid;
+  display: block;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
   transition: opacity 900ms var(--ease), visibility 0s 900ms;
 }
+
+.cover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(4rem, 10vh, 7rem) var(--gutter) clamp(7rem, 18vh, 11rem);
+}
+
+/* Ambient light behind the title: blue in the field, a pink core. */
+.cover-glow {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: min(92vmin, 58rem);
+  height: min(92vmin, 58rem);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 111, 174, 0.09) 0%, rgba(255, 111, 174, 0) 40%),
+    radial-gradient(circle at 50% 50%, rgba(127, 212, 242, 0.12) 0%, rgba(127, 212, 242, 0) 66%);
+  filter: blur(28px);
+  animation: cover-breathe 9s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes cover-breathe {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.97); }
+  50%      { opacity: 0.85; transform: translate(-50%, -50%) scale(1.03); }
+}
+
+/* The four corners carry the record's own metadata, not chapter filler. */
+.cover-corner {
+  position: absolute;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(232, 241, 245, 0.4);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.cover-corner-tl { top: clamp(1.3rem, 4vh, 2.2rem); left: var(--gutter); }
+.cover-corner-tr { top: clamp(1.3rem, 4vh, 2.2rem); right: var(--gutter); }
+.cover-corner-bl { bottom: clamp(1.3rem, 4vh, 2.2rem); left: var(--gutter); }
+.cover-corner-br { bottom: clamp(1.3rem, 4vh, 2.2rem); right: var(--gutter); }
+
+.cover-mid {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cover-title {
+  display: block;
+  font-family: var(--display);
+  /* One continuous curve from phone to wall: the title is never allowed to
+     wrap, so it has to shrink inside the gutters on the narrowest screens. */
+  font-size: clamp(2.2rem, 10vw, 8.2rem);
+  font-weight: 900;
+  font-synthesis-weight: none;
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+  color: var(--ice);
+}
+
+.cover-word { display: inline-block; white-space: nowrap; }
+
+.cover-letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.42em);
+  animation: cover-rise 950ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  transition: color 260ms var(--ease);
+}
+
+@keyframes cover-rise {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* The whole cover is the button, so hovering it colours the last word:
+   light blue is the interaction colour, and the last word is the note. */
+#begin-gate:hover .cover-word:last-child .cover-letter,
+#begin-gate:focus-visible .cover-word:last-child .cover-letter { color: var(--accent); }
+
+.cover-sub {
+  display: block;
+  margin-top: clamp(1.2rem, 2.8vh, 1.9rem);
+  max-width: 34ch;
+  font-family: var(--serif);
+  font-size: clamp(0.98rem, 1.1vw, 1.12rem);
+  line-height: 1.6;
+  text-wrap: balance;
+  color: rgba(232, 241, 245, 0.56);
+  opacity: 0;
+  animation: cover-fade 1500ms ease 950ms forwards;
+}
+
+.cover-cta {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: clamp(7rem, 17vh, 10.2rem);
+  height: clamp(7rem, 17vh, 10.2rem);
+  margin-top: clamp(2.2rem, 5.2vh, 3.4rem);
+  padding: 1.1rem;
+  border: 1px solid rgba(127, 212, 242, 0.55);
+  border-radius: 50%;
+  font-family: var(--mono);
+  font-size: clamp(0.54rem, 0.66vw, 0.6rem);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  line-height: 1.7;
+  text-indent: 0.2em;
+  text-transform: uppercase;
+  color: rgba(232, 241, 245, 0.85);
+  opacity: 0;
+  animation: cover-fade 1300ms ease 1500ms forwards;
+  transition: border-color 320ms var(--ease), background-color 320ms var(--ease),
+              color 320ms var(--ease), transform 320ms var(--ease);
+}
+
+.cover-cta-label { display: block; text-wrap: balance; }
+
+/* The fixed pink circle is the 1981-2010 median edge: it never moves. */
+.cover-cta::before {
+  content: "";
+  position: absolute;
+  inset: -12px;
+  border: 1px solid rgba(255, 111, 174, 0.42);
+  border-radius: 50%;
+  transition: border-color 320ms var(--ease), transform 700ms var(--ease);
+}
+
+/* The blue ripple is the record itself, crossing that fixed edge. */
+.cover-cta::after {
+  content: "";
+  position: absolute;
+  inset: -12px;
+  border: 1px solid rgba(127, 212, 242, 0.3);
+  border-radius: 50%;
+  animation: cover-ripple 3.6s ease-out infinite;
+}
+
+@keyframes cover-ripple {
+  0%   { transform: scale(1.01); opacity: 0.6; }
+  70%  { opacity: 0; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+
+#begin-gate:hover .cover-cta,
+#begin-gate:focus-visible .cover-cta {
+  border-color: rgba(127, 212, 242, 0.9);
+  background: rgba(127, 212, 242, 0.07);
+  color: var(--ice);
+  transform: scale(1.02);
+}
+
+#begin-gate:hover .cover-cta::before,
+#begin-gate:focus-visible .cover-cta::before {
+  border-color: rgba(255, 111, 174, 0.7);
+  transform: scale(1.04);
+}
+
+#begin-gate:focus-visible { outline: none; }
+#begin-gate:focus-visible .cover-cta { box-shadow: 0 0 0 2px rgba(127, 212, 242, 0.55); }
+
+/* A quiet sonogram under the title: the blue trace is the sound, the pink
+   hairline is the median it moves around. */
+.cover-wave {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(3.6rem, 11vh, 7rem);
+  width: 100%;
+  height: 80px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.cover-median {
+  stroke: rgba(255, 111, 174, 0.26);
+  stroke-width: 1;
+  stroke-dasharray: 1 9;
+  vector-effect: non-scaling-stroke;
+}
+
+.cover-trace {
+  fill: none;
+  stroke: url(#cover-fade);
+  stroke-width: 1.2;
+  animation: cover-drift 24s ease-in-out infinite alternate;
+}
+
+@keyframes cover-drift {
+  from { transform: translateX(-16px); }
+  to   { transform: translateX(16px); }
+}
+
+@keyframes cover-fade { to { opacity: 1; } }
 
 /* ------------------------------------------------------------------ */
 /* Header: one status block — the year and the measurement behind it.  */
@@ -320,14 +494,14 @@ main > section {
 
 main > section.is-active { opacity: 1; }
 
-/* Heights are act durations from main.js (10/25/25/30/10/8 of 108 s)
-   scaled to 700vh of scroll. Section top / 700vh == act boundary t. */
+/* Heights are pacing, not the timeline: scroll.js maps each section onto its
+   act's own t range, so a short act can still hold the screen while it plays. */
 #act-0 { height: 64.82vh; }
 #act-1 { height: 162.05vh; }
 #act-2 { height: 162.05vh; }
 #act-3 { height: 194.39vh; }
-#act-4 { height: 64.82vh; }
-#act-5 { height: 51.87vh; }
+#act-4 { height: 140vh; }
+#act-5 { height: 160vh; }
 
 main > section > *,
 main > section > .act-body > * { max-width: var(--col); }
@@ -336,19 +510,23 @@ main > section > .act-body > * { max-width: var(--col); }
    exactly as before); tall acts make it a sticky block on desktop. */
 .act-body { display: contents; }
 
-/* The three long acts hold their copy under the header while the year runs,
-   so a mid-act screen is never left with one orphan line in a black field.
+/* Every act holds its copy under the header while its years run, so a
+   mid-act screen is never left with one orphan line in a black field.
    Their copy starts at the top of the section, not its middle, so it is on
-   screen from the moment the act arrives. Acts 0, IV and V fit one screen,
-   so they keep the plain centred layout. */
+   screen from the moment the act arrives. The cover (act 0) is behind the
+   gate and keeps the plain centred layout. */
 @media (min-width: 900px) {
   body:not(.reduced) #act-1,
   body:not(.reduced) #act-2,
-  body:not(.reduced) #act-3 { justify-content: flex-start; }
+  body:not(.reduced) #act-3,
+  body:not(.reduced) #act-4,
+  body:not(.reduced) #act-5 { justify-content: flex-start; }
 
   body:not(.reduced) #act-1 > .act-body,
   body:not(.reduced) #act-2 > .act-body,
-  body:not(.reduced) #act-3 > .act-body {
+  body:not(.reduced) #act-3 > .act-body,
+  body:not(.reduced) #act-4 > .act-body,
+  body:not(.reduced) #act-5 > .act-body {
     display: block;
     position: sticky;
     top: max(6vh, 10.5rem);
@@ -359,11 +537,15 @@ main > section > .act-body > * { max-width: var(--col); }
      keeps the plain centred flow instead of pinning and hiding its end. */
   body.copy-tall #act-1,
   body.copy-tall #act-2,
-  body.copy-tall #act-3 { justify-content: center; }
+  body.copy-tall #act-3,
+  body.copy-tall #act-4,
+  body.copy-tall #act-5 { justify-content: center; }
 
   body.copy-tall #act-1 > .act-body,
   body.copy-tall #act-2 > .act-body,
-  body.copy-tall #act-3 > .act-body { display: contents; }
+  body.copy-tall #act-3 > .act-body,
+  body.copy-tall #act-4 > .act-body,
+  body.copy-tall #act-5 > .act-body { display: contents; }
 
   /* Copy that slides out under the status block dissolves into ink instead
      of being cut off at the viewport edge. The plate is untouched. */
@@ -963,6 +1145,11 @@ body.reduced #credits { max-width: min(38rem, 100%); }
     padding-top: calc(140px + 33vh + 10vh);
   }
 
+  /* Pacing is a wide-screen device; on a phone the last two acts keep their
+     old one-screen lengths instead of becoming empty scroll. */
+  #act-4 { height: 64.82vh; }
+  #act-5 { height: 51.87vh; }
+
   main > section > *,
   main > section > .act-body > * { max-width: 100%; }
 
@@ -1100,6 +1287,12 @@ body.reduced #credits { max-width: min(38rem, 100%); }
   footer { padding-bottom: 18vh; }
 }
 
+@media (max-width: 620px) {
+  /* Four corners still fit; tighten the tracking rather than drop the record's
+     own dates on the smallest screens. */
+  .cover-corner { font-size: 0.52rem; letter-spacing: 0.14em; }
+}
+
 @media (max-width: 520px) {
   main > section > .act-body > p { font-size: 0.97rem; }
   #credits { font-size: 0.66rem; letter-spacing: 0.04em; }
@@ -1111,7 +1304,9 @@ body.reduced #credits { max-width: min(38rem, 100%); }
 
   body:not(.reduced) #act-1 > .act-body,
   body:not(.reduced) #act-2 > .act-body,
-  body:not(.reduced) #act-3 > .act-body { top: max(4vh, 9.5rem); }
+  body:not(.reduced) #act-3 > .act-body,
+  body:not(.reduced) #act-4 > .act-body,
+  body:not(.reduced) #act-5 > .act-body { top: max(4vh, 9.5rem); }
 
   main > section h2 { margin-bottom: 1.1rem; font-size: clamp(1.5rem, 2.6vw, 2.1rem); }
 
@@ -1142,6 +1337,13 @@ body.reduced #credits { max-width: min(38rem, 100%); }
     transition-duration: 1ms !important;
     animation-duration: 1ms !important;
     animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
   }
+
+  /* The cover becomes a still title page: no breathing, no drift, no
+     ripple, and the type is simply there. */
+  .cover-glow, .cover-trace, .cover-cta::after { animation: none !important; }
+  .cover-cta::after { opacity: 0; }
+  .cover-letter, .cover-sub, .cover-cta { opacity: 1; transform: none; }
 }

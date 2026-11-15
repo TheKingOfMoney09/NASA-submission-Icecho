@@ -78,6 +78,38 @@
     });
   }
 
+  // The cover title rises letter by letter (motion is a nicety, not a gate).
+  // The words are already in the markup, so a JS failure still prints them.
+  function splitCoverTitle() {
+    var title = document.getElementById('cover-title');
+    if (!title || title.getAttribute('data-split') === '1') return;
+    var text = title.textContent || '';
+    title.setAttribute('data-split', '1');
+    title.textContent = '';
+
+    var words = text.split(/\s+/);
+    var n = 0;
+
+    for (var w = 0; w < words.length; w++) {
+      if (!words[w]) continue;
+
+      var word = document.createElement('span');
+      word.className = 'cover-word';
+
+      for (var c = 0; c < words[w].length; c++) {
+        var letter = document.createElement('span');
+        letter.className = 'cover-letter';
+        letter.textContent = words[w].charAt(c);
+        letter.style.animationDelay = Math.round(n * 55) + 'ms';
+        word.appendChild(letter);
+        n++;
+      }
+
+      title.appendChild(word);
+      if (w < words.length - 1) title.appendChild(document.createTextNode(' '));
+    }
+  }
+
   function addReducedPlayButtons() {
     if (mode !== 'reduced') return;
     for (var i = 0; i < 6; i++) {
@@ -200,8 +232,16 @@
     safeAudioTimeline(t);
     if (mode === 'guided') {
       var el = document.scrollingElement || document.documentElement;
-      var max = el.scrollHeight - el.clientHeight;
-      if (max > 0) el.scrollTop = Math.round(t * max);
+      // The scroll -> t map is per-act (scroll.js), because section heights
+      // are pacing. Ask it for the matching scroll position; fall back to the
+      // plain ratio if the module is absent.
+      var y = -1;
+      try { if (EJ.scroll && EJ.scroll.yFor) y = EJ.scroll.yFor(t); } catch (e) {}
+      if (!(y >= 0)) {
+        var max = el.scrollHeight - el.clientHeight;
+        y = max > 0 ? t * max : 0;
+      }
+      el.scrollTop = Math.round(y);
     }
   }
 
@@ -464,7 +504,7 @@
     document.body.classList.remove('copy-tall');
     if (mode === 'reduced' || window.innerWidth < 900) return;
 
-    var ids = [1, 2, 3];
+    var ids = [1, 2, 3, 4, 5];
     for (var i = 0; i < ids.length; i++) {
       var wrap = document.querySelector('#act-' + ids[i] + ' > .act-body');
       if (!wrap) continue;
@@ -501,6 +541,7 @@
     // Inject before the loader attaches scroll/render: the scroll controller
     // must see the full document height, not the empty shell.
     injectActs();
+    splitCoverTitle();
     addReducedPlayButtons();
 
     wireTransport();
