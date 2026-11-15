@@ -2,7 +2,7 @@
 
 **48 Septembers of Arctic sea ice, played as music.** One map per year, 1979–2026. Each map becomes a chord; how much ice is left decides how many notes survive. 1979 is six voices. 2026 is four. 2012 was three.
 
-**Open it:** download `dist/TheLastNote.html` and double-click it. No install, no build step to run it, no server, no network. Click **Begin**.
+**Open it:** download `dist/TheLastNote.html` and double-click it. No install, no build step to run it, no server, no network. Click **Play the last note**.
 
 **90-second demo:** **TBD** — the unlisted video link is added here before submission.
 
@@ -37,7 +37,7 @@ Run it in three steps:
 
 1. Download the repo as a ZIP, or clone it.
 2. Open `dist/TheLastNote.html`.
-3. Click **Begin**.
+3. Click **Play the last note**.
 
 ```bash
 git clone https://github.com/TheKingOfMoney09/NASA-submission-Icecho.git
@@ -64,7 +64,7 @@ A single number mapped to a single beep fails because the ear cannot hold a slid
 
 | Act | What happens | ~Time |
 |---|---|---|
-| **0 — Cold open** | Black. The 1979 chord, six voices, swells in over 1.4 s. *"In 1979, the Arctic was loud."* Click to begin (unlocks audio). | 10 s |
+| **0 — Cold open** | The cover: title, dates in the corners, one CTA ring. Click **Play the last note** (unlocks audio); the 1979 chord, six voices, swells in over 1.4 s. *"In 1979, the Arctic was loud."* | 10 s |
 | **I — Why** | Scroll drives 1979 → 2026. The chord loses voices; the ice pulls inside the 1981–2010 median line that never moves. No charts, no extent figures — just the year and the map. | 25 s |
 | **II — How** | Rewind. One map → seven extracted values → six voices. The mapping is revealed as a mechanism, not a mood. | 25 s |
 | **III — Human** | Second person: the listener who has never seen a satellite image. | 30 s |
@@ -104,9 +104,11 @@ The ice did not fall to one-sixth. 2026 is about 66% of 1979 — two-thirds. The
 
 ### The visual language
 
-The plate stays grey: near-black ink, ice-white type, and the maps printed in white on navy with grey land. Two colours carry meaning, and only two. **Light blue** (`#7fd4f2`) is interaction — links, focus, the play button, the progress line on the rail. **Pink** (`#ff6fae`) is the 1981–2010 median edge that never moves on any map, the years that fall below it (2012 turns the year and its rule pink), the text selection, and the anomaly tick on the scrub rail. Titles are set in **Arial Black** at display sizes — the cover wordmark up to 9 rem, each act title up to 3.2 rem — with no webfont download; the stack falls back to Arial and Helvetica where Arial Black is absent.
+The plate stays grey: near-black ink, ice-white type, and the maps printed in white on navy with grey land. Two colours carry meaning, and only two. **Light blue** (`#7fd4f2`) is interaction — links, focus, the play button, the progress line on the rail, the last word of the cover title when the pointer is on it. **Pink** (`#ff6fae`) is the 1981–2010 median edge that never moves on any map, the years that fall below it (2012 turns the year and its rule pink), the text selection, and the anomaly tick on the scrub rail. Titles are set in **Arial Black** at display sizes — the cover wordmark up to 8.2 rem, each act title up to 3.2 rem — with no webfont download; the stack falls back to Arial and Helvetica where Arial Black is absent.
 
-On a wide display the page is a centred editorial spread: past 1728 px the two margins grow together, and the measure and type scale with the screen instead of drifting to the corners. In the three long acts (I–III) the copy pins under the status block while the year runs, so the screen never empties mid-act; on shorter windows, where the block would not fit, it falls back to the plain centred flow.
+The cover is one full-screen title page, and the whole page is the button: the wordmark rises letter by letter over a breathing field of blue with a pink core, the CTA is a blue ring around a fixed pink circle — the median the record crosses — and a quiet sonogram runs along the bottom, its blue trace drifting over a dashed pink hairline.
+
+On a wide display the page is a centred editorial spread: past 1728 px the two margins grow together, and the measure and type scale with the screen instead of drifting to the corners. In every act from I to V the copy pins under the status block while its years run, so the screen never empties mid-act; on shorter windows, where the block would not fit, it falls back to the plain centred flow. Section heights are pacing, not a share of the timeline: `scroll.js` maps each section onto its own act's slice of `t`, so the short handover and closing acts hold the screen as long as the long ones do.
 
 ### Accessibility, built in
 
@@ -122,20 +124,20 @@ Accessibility is structural, not a mode added at the end.
 
 ### One file, offline
 
-`dist/TheLastNote.html` is the submission: **3.51 MB**, CSS, JavaScript, `frames.json` and all 48 map crops inlined. There are no libraries, no web fonts and no external requests. Opened from disk — the intended use — the file makes no network request at all. Open it with no server and no install. `dist/TheLastNote-lite.html` is the same story without the inlined maps (**124 KB**) as a fallback. The source lives in `app/`; rebuild with `python build/build.py`.
+`dist/TheLastNote.html` is the submission: **3.51 MB**, CSS, JavaScript, `frames.json` and all 48 map crops inlined. There are no libraries, no web fonts and no external requests. Opened from disk — the intended use — the file makes no network request at all. Open it with no server and no install. `dist/TheLastNote-lite.html` is the same story without the inlined maps (**133 KB**) as a fallback. The source lives in `app/`; rebuild with `python build/build.py`.
 
-It boots on `DOMContentLoaded`; the copy is injected before the scroll controller attaches, so the timeline measures the finished document. The audio context is created only from a user gesture — **Begin**, or a Play button in reduced mode — which is what browser autoplay rules require.
+It boots on `DOMContentLoaded`; the copy is injected before the scroll controller attaches, so the timeline measures the finished document. The audio context is created only from a user gesture — **Play the last note**, or a Play button in reduced mode — which is what browser autoplay rules require.
 
 ### Build and provenance
 
-- The freeze artifact is built from code commit **`62c6f72`**; tag **`freeze-build`** marks the final repository commit.
+- The freeze artifact is built from code commit **`3634d8d`**; tag **`freeze-build`** marks the final repository commit.
 - `build/build.py` is strict: it refuses to write `dist/` if any module in `JS_ORDER` is missing. `--allow-missing` exists for development only and is not used for the deliverable.
-- Two rebuilds produce identical bytes: `dist/TheLastNote.html` SHA-256 `F98DBA252372048BC648E8F32A57D280FFCA7F17DDB558AD461721DD1A402CB2`.
+- Two rebuilds produce identical bytes: `dist/TheLastNote.html` SHA-256 `1B7136D9D34D952C6467F9262AFBEF6DEBA0B49E18CAC2A194ECF10B99396EC9`.
 - `node app/tests/smoke.mjs` runs 37 headless checks against the source page and the built file: a running `AudioContext` after a gesture, 6/3/4 voices at 1979/2012/2026, the labelled coda thinning to one voice and decaying to silence (then restoring on scroll-back), a non-blank map plate, a reload that starts at 1979 instead of resuming the browser's scroll position, listen and reduced modes, keyboard, duplicate ids, and zero console errors.
 
 ### How to run
 
-Download the repo, open `dist/TheLastNote.html`, click **Begin**. That is the whole procedure. For hands-free, add `?mode=listen` to the address.
+Download the repo, open `dist/TheLastNote.html`, click **Play the last note**. That is the whole procedure. For hands-free, add `?mode=listen` to the address.
 
 ### What is next
 
@@ -224,7 +226,7 @@ Citation:
 | Path | What it is |
 |---|---|
 | `dist/TheLastNote.html` | the submission: one offline file, 3.51 MB, 48 inlined maps |
-| `dist/TheLastNote-lite.html` | same story, no inlined maps, 124 KB |
+| `dist/TheLastNote-lite.html` | same story, no inlined maps, 133 KB |
 | `app/index.html` | source shell: DOM contract, canvas, live region |
 | `app/js/core.js` | 5,028 B — `EJ` namespace, state, event bus, contract check |
 | `app/js/loader.js` | 11,491 B — boot, data load, begin gate, module fallbacks |
@@ -232,8 +234,8 @@ Citation:
 | `app/js/audio.js` | 14,277 B — the audio contract, the seven-feature mapping and the coda |
 | `app/js/engine.js` | 14,897 B — the Web Audio graph |
 | `app/js/render.js` | 17,994 B — the canvas plate renderer |
-| `app/js/scroll.js` | 7,865 B — native scroll to timeline, act detection |
-| `app/js/main.js` | 12,926 B — mode router, copy injection, HUD, keyboard |
+| `app/js/scroll.js` | 9,153 B — native scroll to timeline, per-act pacing, act detection |
+| `app/js/main.js` | 14,026 B — mode router, copy injection, HUD, keyboard |
 | `app/css/style.css` | all styling |
 | `app/data/frames.json` | 48 feature vectors, 1979–2026 |
 | `app/data/frames/*.webp` | 48 map crops, inlined into the build |
@@ -260,4 +262,4 @@ python build/build.py         # strict build: refuses to run if a module is miss
 
 `prep.py` needs Python 3 with `requests`, `numpy` and `Pillow`; `build.py` uses the standard library only. The build is deterministic: same inputs, same bytes. The raw 11 MB of PNGs are not committed; the 48 WebP crops are.
 
-The acceptance test is the one a judge will run: download the repo as a ZIP, extract it to an empty folder, turn off Wi-Fi, open `dist/TheLastNote.html`, click **Begin**. If it plays, it works.
+The acceptance test is the one a judge will run: download the repo as a ZIP, extract it to an empty folder, turn off Wi-Fi, open `dist/TheLastNote.html`, click **Play the last note**. If it plays, it works.

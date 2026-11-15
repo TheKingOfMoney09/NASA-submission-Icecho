@@ -2,7 +2,7 @@
 
 **Status: NOT RECORDED.** `video/demo.mp4` does not exist yet.
 
-> **Record against the freeze build.** The app is frozen at tag **`freeze-build`**, code commit **`62c6f72`**. `dist/TheLastNote.html` is **3,512,760 B (3.51 MB)**, SHA-256 `F98DBA252372048BC648E8F32A57D280FFCA7F17DDB558AD461721DD1A402CB2`. Record that file — not `app/index.html`, not a rebuilt dist. If the hash differs, stop and re-download the repo.
+> **Record against the freeze build.** The app is frozen at tag **`freeze-build`**, code commit **`3634d8d`**. `dist/TheLastNote.html` is **3,521,755 B (3.51 MB)**, SHA-256 `1B7136D9D34D952C6467F9262AFBEF6DEBA0B49E18CAC2A194ECF10B99396EC9`. Record that file — not `app/index.html`, not a rebuilt dist. If the hash differs, stop and re-download the repo.
 
 **What is in this folder**
 
@@ -20,10 +20,10 @@
 ## 0. Before you record
 
 - [ ] Use the **freeze-build** `dist/TheLastNote.html`. Do not record `app/index.html` from source; the dist is the artifact.
-- [ ] **Hash check** — `(Get-FileHash dist/TheLastNote.html -Algorithm SHA256).Hash` must print `F98DBA252372048BC648E8F32A57D280FFCA7F17DDB558AD461721DD1A402CB2`.
+- [ ] **Hash check** — `(Get-FileHash dist/TheLastNote.html -Algorithm SHA256).Hash` must print `1B7136D9D34D952C6467F9262AFBEF6DEBA0B49E18CAC2A194ECF10B99396EC9`.
 - [ ] **Artifact gate:** the dist draws the map and plays a chord. `[regex]::Matches((Get-Content dist/TheLastNote.html -Raw),'drawImage').Count` — and the same for `createOscillator` and `createBiquadFilter` — gives **3 / 6 / 4**, and there are **48** base64 WebP maps. The build is strict, so a missing module cannot produce this file. Details in `submission/fields.md` §3.
 - [ ] All 48 years load (1979–2026). No TODO, placeholder or fallback curve on screen.
-- [ ] Audio starts on **Begin** in Edge and Chrome.
+- [ ] Audio starts on **Play the last note** in Edge and Chrome.
 - [ ] **Voice check before the take:** 1979 shows/hears **six** voices, 2012 **three**, 2026 **four**.
 - [ ] **Coda check:** at the end, the four-voice 2026 chord holds, then **one voice** alone decays to silence, and the closing screen shows **CODA · COMPOSITION, NOT DATA**. If the label is missing or all four voices stop together, stop — the shot list depends on it.
 - [ ] Human check no grep replaces: you can **see** the September map (white ice, magenta median line) and **hear** six, three and four sustained voices — not one tone sliding upward.

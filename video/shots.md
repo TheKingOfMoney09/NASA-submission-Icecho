@@ -2,7 +2,7 @@
 
 **Status: SHOT LIST READY — NOT RECORDED.** `video/demo.mp4` does not exist yet.
 
-> **Record the freeze build.** Tag **`freeze-build`**, code commit **`62c6f72`**. `dist/TheLastNote.html` is **3,512,760 B (3.51 MB)**, SHA-256 `F98DBA252372048BC648E8F32A57D280FFCA7F17DDB558AD461721DD1A402CB2`. If the hash differs, stop and re-download the repo; do not film a rebuilt dist.
+> **Record the freeze build.** Tag **`freeze-build`**, code commit **`3634d8d`**. `dist/TheLastNote.html` is **3,521,755 B (3.51 MB)**, SHA-256 `1B7136D9D34D952C6467F9262AFBEF6DEBA0B49E18CAC2A194ECF10B99396EC9`. If the hash differs, stop and re-download the repo; do not film a rebuilt dist.
 
 **Spec:** 90.0 s hard cap · 1920×1080 · 30 fps · H.264 + AAC · ≤ 40 MB · captions burned in · unlisted YouTube.
 
@@ -25,9 +25,9 @@
 
 ## Before the camera rolls
 
-- [ ] `dist/TheLastNote.html` is the freeze build (`freeze-build` / `62c6f72`), SHA-256 starts `F98DBA25`. No TODO or placeholder text.
+- [ ] `dist/TheLastNote.html` is the freeze build (`freeze-build` / `3634d8d`), SHA-256 starts `1B7136D9`. No TODO or placeholder text.
 - [ ] All 48 years load; the year readout moves from 1979 to 2026.
-- [ ] Audio starts on **Begin** in Edge and Chrome.
+- [ ] Audio starts on **Play the last note** in Edge and Chrome.
 - [ ] 1979 is six voices, 2012 three, 2026 four.
 - [ ] At the end, the 2026 chord holds, then **one voice** alone decays; the label **CODA · COMPOSITION, NOT DATA** is visible. Rehearse the coda so the take catches it.
 - [ ] Display set to 1920×1080 if possible; 100% zoom; F11 fullscreen; bookmarks bar hidden.
@@ -42,9 +42,9 @@
 
 ## 0:00–0:10 · Cold open
 
-**Picture:** black, then Act 0 as built. If the app opens on the Begin gate, show the gate for about 2 s; the click happens at 0:02; the gate disappears and the 1979 chord starts. The gate is part of the real app — show it, don't hide it.
+**Picture:** the cover of the app itself, held for about 2 s — the title, the four corners, the CTA ring, the sonogram. The click happens at 0:02; the cover dissolves and the 1979 chord starts under Act 0. The cover is part of the real app — show it, don't hide it.
 
-**Action:** start capture. Click **Begin** at 0:02. Do not move the mouse after the click.
+**Action:** start capture. Click **Play the last note** at 0:02. Do not move the mouse after the click.
 
 **Captions:**
 - 0:02–0:07 — "In 1979, the Arctic was loud."
@@ -152,7 +152,7 @@
 
 ## Capture order (to save time)
 
-1. **One continuous take for 0:00–0:45:** Begin → Act I → hold 2026. This is the hardest; do it first, twice if needed.
+1. **One continuous take for 0:00–0:45:** cover → Act I → hold 2026. This is the hardest; do it first, twice if needed.
 2. **A second take for 0:45–1:00:** scroll to Act III, hold.
 3. **A third take for 1:00–1:20:** Act IV scrub.
 4. **Title card** in the edit.
