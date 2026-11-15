@@ -7,21 +7,11 @@
 !LICENSE
 !app/
 !app/**
-!copy/
-!copy/**
 !build/
 !build/**
 !dist/
 !dist/**
-!submission/
-!submission/**
-!video/
-!video/**
 
 # Never track build artefacts or caches anywhere in the tree.
 __pycache__/
 *.py[cod]
-
-# Raw capture stays local; the demo ships as an unlisted video link.
-video/raw/
-video/demo.mp4
