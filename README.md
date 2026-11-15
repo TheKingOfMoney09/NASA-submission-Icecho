@@ -106,6 +106,8 @@ The ice did not fall to one-sixth. 2026 is about 66% of 1979 — two-thirds. The
 
 The plate stays grey: near-black ink, ice-white type, and the maps printed in white on navy with grey land. Two colours carry meaning, and only two. **Light blue** (`#7fd4f2`) is interaction — links, focus, the play button, the progress line on the rail. **Pink** (`#ff6fae`) is the 1981–2010 median edge that never moves on any map, the years that fall below it (2012 turns the year and its rule pink), the text selection, and the anomaly tick on the scrub rail. Titles are set in **Arial Black** at display sizes — the cover wordmark up to 9 rem, each act title up to 3.2 rem — with no webfont download; the stack falls back to Arial and Helvetica where Arial Black is absent.
 
+On a wide display the page is a centred editorial spread: past 1728 px the two margins grow together, and the measure and type scale with the screen instead of drifting to the corners. In the three long acts (I–III) the copy pins under the status block while the year runs, so the screen never empties mid-act; on shorter windows, where the block would not fit, it falls back to the plain centred flow.
+
 ### Accessibility, built in
 
 Accessibility is structural, not a mode added at the end.
@@ -120,15 +122,15 @@ Accessibility is structural, not a mode added at the end.
 
 ### One file, offline
 
-`dist/TheLastNote.html` is the submission: **3.51 MB**, CSS, JavaScript, `frames.json` and all 48 map crops inlined. There are no libraries, no web fonts and no external requests. Opened from disk — the intended use — the file makes no network request at all. Open it with no server and no install. `dist/TheLastNote-lite.html` is the same story without the inlined maps (**121 KB**) as a fallback. The source lives in `app/`; rebuild with `python build/build.py`.
+`dist/TheLastNote.html` is the submission: **3.51 MB**, CSS, JavaScript, `frames.json` and all 48 map crops inlined. There are no libraries, no web fonts and no external requests. Opened from disk — the intended use — the file makes no network request at all. Open it with no server and no install. `dist/TheLastNote-lite.html` is the same story without the inlined maps (**124 KB**) as a fallback. The source lives in `app/`; rebuild with `python build/build.py`.
 
 It boots on `DOMContentLoaded`; the copy is injected before the scroll controller attaches, so the timeline measures the finished document. The audio context is created only from a user gesture — **Begin**, or a Play button in reduced mode — which is what browser autoplay rules require.
 
 ### Build and provenance
 
-- The freeze artifact is built from code commit **`358d4a5`**; tag **`freeze-build`** marks the final repository commit.
+- The freeze artifact is built from code commit **`62c6f72`**; tag **`freeze-build`** marks the final repository commit.
 - `build/build.py` is strict: it refuses to write `dist/` if any module in `JS_ORDER` is missing. `--allow-missing` exists for development only and is not used for the deliverable.
-- Two rebuilds produce identical bytes: `dist/TheLastNote.html` SHA-256 `926376ED596AD6EB8C1B7D748D111A5DC0468557B773C6249FF2FFC10516F1B3`.
+- Two rebuilds produce identical bytes: `dist/TheLastNote.html` SHA-256 `F98DBA252372048BC648E8F32A57D280FFCA7F17DDB558AD461721DD1A402CB2`.
 - `node app/tests/smoke.mjs` runs 37 headless checks against the source page and the built file: a running `AudioContext` after a gesture, 6/3/4 voices at 1979/2012/2026, the labelled coda thinning to one voice and decaying to silence (then restoring on scroll-back), a non-blank map plate, a reload that starts at 1979 instead of resuming the browser's scroll position, listen and reduced modes, keyboard, duplicate ids, and zero console errors.
 
 ### How to run
@@ -222,16 +224,16 @@ Citation:
 | Path | What it is |
 |---|---|
 | `dist/TheLastNote.html` | the submission: one offline file, 3.51 MB, 48 inlined maps |
-| `dist/TheLastNote-lite.html` | same story, no inlined maps, 121 KB |
+| `dist/TheLastNote-lite.html` | same story, no inlined maps, 124 KB |
 | `app/index.html` | source shell: DOM contract, canvas, live region |
 | `app/js/core.js` | 5,028 B — `EJ` namespace, state, event bus, contract check |
 | `app/js/loader.js` | 11,491 B — boot, data load, begin gate, module fallbacks |
 | `app/js/content.js` | 8,484 B — every audience-facing string |
 | `app/js/audio.js` | 14,277 B — the audio contract, the seven-feature mapping and the coda |
 | `app/js/engine.js` | 14,897 B — the Web Audio graph |
-| `app/js/render.js` | 17,788 B — the canvas plate renderer |
+| `app/js/render.js` | 17,994 B — the canvas plate renderer |
 | `app/js/scroll.js` | 7,865 B — native scroll to timeline, act detection |
-| `app/js/main.js` | 12,052 B — mode router, copy injection, HUD, keyboard |
+| `app/js/main.js` | 12,926 B — mode router, copy injection, HUD, keyboard |
 | `app/css/style.css` | all styling |
 | `app/data/frames.json` | 48 feature vectors, 1979–2026 |
 | `app/data/frames/*.webp` | 48 map crops, inlined into the build |
