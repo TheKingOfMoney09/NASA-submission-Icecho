@@ -1,5 +1,7 @@
 # Video — recording and delivery
 
+> **Working build pending refreeze:** The current `dist/TheLastNote.html` has the chord-responsive background and SHA-256 `B75859E2DC70A8444FAA84065CC98413D2F9034BB5BECDE9B069A053FC131CB4`. The tag and recording instructions below still refer to the earlier frozen artifact. Resolve which build to record before filming.
+
 **Status: NOT RECORDED.** `video/demo.mp4` does not exist yet.
 
 > **Record against the freeze build.** The app is frozen at tag **`freeze-build`**, code commit **`ea4ff85`**. `dist/TheLastNote.html` is **3,521,742 B (3.51 MB)**, SHA-256 `248F2CF30114E584B7AB813333B8AF9A96317EC2166684551EFBD103A980C969`. Record that file — not `app/index.html`, not a rebuilt dist. If the hash differs, stop and re-download the repo.

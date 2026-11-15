@@ -1,5 +1,7 @@
 # The Last Note — 90-second demo shot list
 
+> **Working build pending refreeze:** The current `dist/TheLastNote.html` has SHA-256 `B75859E2DC70A8444FAA84065CC98413D2F9034BB5BECDE9B069A053FC131CB4`. The tag and hash below refer to the earlier frozen artifact; resolve the recording build before filming.
+
 **Status: SHOT LIST READY — NOT RECORDED.** `video/demo.mp4` does not exist yet.
 
 > **Record the freeze build.** Tag **`freeze-build`**, code commit **`ea4ff85`**. `dist/TheLastNote.html` is **3,521,742 B (3.51 MB)**, SHA-256 `248F2CF30114E584B7AB813333B8AF9A96317EC2166684551EFBD103A980C969`. If the hash differs, stop and re-download the repo; do not film a rebuilt dist.

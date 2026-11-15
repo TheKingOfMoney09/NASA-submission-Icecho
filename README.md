@@ -1,5 +1,7 @@
 # Icecho — *The Last Note*
 
+> **Working build:** The chord-responsive background is in the current working tree and rebuilt `dist/TheLastNote.html` (3,523,341 B, SHA-256 `B75859E2DC70A8444FAA84065CC98413D2F9034BB5BECDE9B069A053FC131CB4`). The existing `freeze-build` tag still refers to the earlier artifact described below; it has not been moved. The working lite build is 137,578 B (134 KiB). The current smoke suite passes 39 checks.
+
 **48 Septembers of Arctic sea ice, played as music.** One map per year, 1979–2026. Each map becomes a chord; how much ice is left decides how many notes survive. 1979 is six voices. 2026 is four. 2012 was three.
 
 **Open it:** download `dist/TheLastNote.html` and double-click it. No install, no build step to run it, no server, no network. Click **Play the last note**.

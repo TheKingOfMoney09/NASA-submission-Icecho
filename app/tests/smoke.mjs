@@ -439,6 +439,23 @@ async function main() {
     `t=${endT} year=${endYear}`
   );
 
+  /* ---- the ambient field follows the measured chord ---- */
+  const lightLevels = [];
+  for (const year of [1979, 2012, 2026]) {
+    const t = (year - 1979) / 47;
+    await evalJS(guided.cdp, `window.scrollTo(0, EJ.scroll.yFor(${t}))`);
+    await waitExpr(guided.cdp, `Math.abs(EJ.state.t - ${t}) < 0.001`, 4000);
+    await sleep(1800);
+    lightLevels.push(await evalJS(guided.cdp, `({
+      year: EJ.state.year,
+      opacity: Number(getComputedStyle(document.getElementById('glow')).opacity)
+    })`));
+  }
+  check('glow brightness follows 6 / 3 / 4 measured voices',
+    lightLevels.every((x, i) => x && x.year === [1979, 2012, 2026][i]) &&
+      lightLevels[0].opacity > lightLevels[2].opacity && lightLevels[2].opacity > lightLevels[1].opacity,
+    JSON.stringify(lightLevels));
+
   /* ---- a reload starts the piece; it must not resume the scroll ---- */
   await guided.cdp.send('Page.reload');
   const reloadReady = await waitExpr(guided.cdp, '!!(window.EJ && EJ.ready === true)', 5000);
@@ -483,6 +500,8 @@ async function main() {
     reducedReady >= 0 && reducedState && reducedState.mode === 'reduced' && reducedState.cls,
     JSON.stringify(reducedState)
   );
+  check('reduced motion hides the ambient glow',
+    await evalJS(reduced.cdp, 'getComputedStyle(document.getElementById("glow")).display === "none"'));
   const headings = await evalJS(
     reduced.cdp,
     'Array.prototype.filter.call(document.querySelectorAll("main h2"), function (h) { return h.getClientRects().length > 0; }).length'

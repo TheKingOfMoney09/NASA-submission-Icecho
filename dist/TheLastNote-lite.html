@@ -386,19 +386,16 @@ header {
   pointer-events: none;
 }
 
+
 header::before {
   content: "";
   position: absolute;
   left: 0;
   top: 0;
-  width: min(46vw, 38rem);
-  height: calc(100% + 1rem);
-  background: linear-gradient(
-    to bottom,
-    var(--ink) 0,
-    var(--ink) calc(100% - 1rem),
-    rgba(8, 9, 11, 0) 100%
-  );
+  width: min(65vw, 50rem);
+  height: calc(100% + 5rem);
+  background: radial-gradient(ellipse 100% 100% at 0% 0%,
+    var(--ink) 0%, rgba(8, 9, 11, 0.94) 35%, rgba(8, 9, 11, 0) 100%);
   z-index: -1;
 }
 
@@ -451,6 +448,34 @@ header::before {
 
 
 
+
+
+#glow {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.62;
+  background:
+    radial-gradient(ellipse 44vmax 40vmax at 50% 50%,
+      rgba(255, 111, 174, 0.28) 0%,
+      rgba(255, 111, 174, 0.12) 36%,
+      rgba(255, 111, 174, 0) 70%),
+    radial-gradient(ellipse 78vmax 72vmax at 50% 47%,
+      rgba(127, 212, 242, 0.20) 0%,
+      rgba(127, 212, 242, 0.08) 52%,
+      rgba(127, 212, 242, 0) 86%),
+    linear-gradient(180deg,
+      rgba(127, 212, 242, 0.05),
+      rgba(127, 212, 242, 0.015) 55%,
+      rgba(127, 212, 242, 0.03));
+  will-change: opacity;
+}
+
+
+
+
+
 #stage {
   position: fixed;
   inset: 0;
@@ -477,6 +502,23 @@ main {
   margin: 0;
   padding: 0;
 }
+
+
+body.story-fade:not(.reduced):not(.listen) main {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent 7.5rem,
+    #000 10.5rem, #000 calc(100% - 8rem), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, transparent 7.5rem,
+    #000 10.5rem, #000 calc(100% - 8rem), transparent 100%);
+  -webkit-mask-size: 100% 100vh;
+  mask-size: 100% 100vh;
+  -webkit-mask-position: 0 var(--story-fade-y, 0px);
+  mask-position: 0 var(--story-fade-y, 0px);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+body.story-fade:not(.reduced):not(.listen) header::before,
+body.story-fade:not(.reduced):not(.listen) #transport::before { display: none; }
 
 main > section {
   position: relative;
@@ -725,8 +767,9 @@ body[data-anomaly] #transport { border-color: rgba(255, 111, 174, 0.34); }
   width: var(--col);
   margin: 0;
   padding: 0.45rem;
-  background: rgba(8, 9, 11, 0.9);
+  background: transparent;
   border: 1px solid var(--line-soft);
+  border-radius: 1rem;
   transition: border-color 600ms var(--ease);
 }
 
@@ -736,10 +779,14 @@ body[data-anomaly] #transport { border-color: rgba(255, 111, 174, 0.34); }
   position: fixed;
   left: 0;
   bottom: 0;
-  width: calc(var(--gutter) + var(--col) + 2.5rem);
-  height: 9rem;
+  width: calc(var(--gutter) + var(--col) + 12rem);
+  height: 13rem;
   pointer-events: none;
-  background: linear-gradient(to top, var(--ink) 0, var(--ink) 55%, rgba(8, 9, 11, 0) 100%);
+  background: radial-gradient(ellipse 82% 100% at 0% 100%,
+    var(--ink) 0%,
+    rgba(8, 9, 11, 0.88) 42%,
+    rgba(8, 9, 11, 0.4) 70%,
+    rgba(8, 9, 11, 0) 100%);
   z-index: -1;
 }
 
@@ -749,7 +796,7 @@ body[data-anomaly] #transport { border-color: rgba(255, 111, 174, 0.34); }
   min-height: 44px;
   padding: 0 0.9rem;
   border: 1px solid rgba(232, 241, 245, 0.22);
-  border-radius: 0;
+  border-radius: 0.7rem;
   background: transparent;
   color: var(--ice);
   font-family: var(--mono);
@@ -963,7 +1010,7 @@ body.listen #transport {
   bottom: 8vh;
   transform: translateX(-50%);
   width: min(32rem, 82vw);
-  background: rgba(8, 9, 11, 0.94);
+  background: transparent;
 }
 
 body.listen #transport::before { display: none; }
@@ -974,6 +1021,7 @@ body.listen #transport::before { display: none; }
 
 body.reduced { overflow-x: hidden; }
 
+body.reduced #glow,
 body.reduced #stage,
 body.reduced #begin-gate,
 body.reduced #transport,
@@ -1164,15 +1212,14 @@ body.reduced #credits { max-width: min(38rem, 100%); }
   }
 
   #transport {
-    left: 0;
-    right: 0;
-    bottom: 0;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: max(0.55rem, env(safe-area-inset-bottom));
     width: auto;
     gap: 0.6rem;
-    padding: 0.55rem var(--gutter) calc(0.55rem + env(safe-area-inset-bottom));
-    background: rgba(8, 9, 11, 0.94);
-    border: 0;
-    border-top: 1px solid var(--line-soft);
+    padding: 0.45rem;
+    background: transparent;
+    border: 1px solid var(--line-soft);
   }
 
   #playpause { min-width: 4.9rem; }
@@ -1180,6 +1227,7 @@ body.reduced #credits { max-width: min(38rem, 100%); }
   #transport::before {
     width: 100vw;
     height: 10rem;
+    background: linear-gradient(to top, var(--ink), rgba(8, 9, 11, 0));
   }
 
   footer {
@@ -1192,6 +1240,17 @@ body.reduced #credits { max-width: min(38rem, 100%); }
 
 
 @media (max-width: 899px) and (min-height: 521px) {
+  body.story-fade:not(.reduced):not(.listen) main {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0,
+      transparent calc(140px + 35vh), #000 calc(140px + 41vh),
+      #000 calc(100% - 7rem), transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0,
+      transparent calc(140px + 35vh), #000 calc(140px + 41vh),
+      #000 calc(100% - 7rem), transparent 100%);
+  }
+
+  body.story-fade:not(.reduced):not(.listen)::before { display: none; }
+
   body::before {
     content: "";
     position: fixed;
@@ -1210,6 +1269,13 @@ body.reduced #credits { max-width: min(38rem, 100%); }
 
 
 @media (max-width: 899px) and (max-height: 520px) {
+  body.story-fade:not(.reduced):not(.listen) main {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent 3.5rem,
+      #000 5.5rem, #000 calc(100% - 5rem), transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, transparent 3.5rem,
+      #000 5.5rem, #000 calc(100% - 5rem), transparent 100%);
+  }
+
   header {
     flex-direction: row;
     align-items: flex-start;
@@ -1375,6 +1441,8 @@ body.reduced #credits { max-width: min(38rem, 100%); }
   <p id="year" aria-hidden="true">1979</p>
   <p id="readout"></p>
 </header>
+
+<div id="glow" aria-hidden="true"></div>
 
 <div id="stage">
   <canvas id="canvas" role="img" aria-label="Arctic sea ice rendered as it is sonified. Every act carries a written transcript."></canvas>
@@ -4602,6 +4670,45 @@ window.EJ.content = {
 
 
 
+  var glowEl = null;
+  var glowEnergy = -1;
+  var glowShown = -1;
+  var storyEl = null;
+  var storyFadeY = -1;
+
+  function updateStoryFade() {
+    if (mode !== 'guided' || !storyEl) return;
+    var y = Math.round(window.pageYOffset || document.documentElement.scrollTop || 0);
+    if (y === storyFadeY) return;
+    storyFadeY = y;
+    storyEl.style.setProperty('--story-fade-y', y + 'px');
+  }
+
+  function updateGlow(frame, dt) {
+    if (mode === 'reduced') return;
+    if (!glowEl) {
+      glowEl = document.getElementById('glow');
+      if (!glowEl) return;
+    }
+
+    var e = extentOf(frame);
+    var voices = e == null ? 1 : Math.max(1, Math.min(6, Math.ceil(6 * e / 6.90 - 1e-7)));
+    var target = (voices - 1) / 5;
+
+    if (glowEnergy < 0) glowEnergy = target;
+    glowEnergy += (target - glowEnergy) * (1 - Math.exp(-3.7 * dt));
+    if (Math.abs(target - glowEnergy) < 0.0015) glowEnergy = target;
+
+    var opacity = Math.round((0.30 + 0.70 * glowEnergy) * 1000) / 1000;
+    if (opacity === glowShown) return;
+    glowShown = opacity;
+    glowEl.style.opacity = String(opacity);
+  }
+
+
+
+
+
   function loop(now) {
     requestAnimationFrame(loop);
 
@@ -4645,6 +4752,8 @@ window.EJ.content = {
     EJ.state.act = act;
 
     safeDraw(frame, t, act);
+    updateGlow(frame, dt);
+    updateStoryFade();
     updateHud(frame, act);
     syncScrub(t);
   }
@@ -4711,6 +4820,13 @@ window.EJ.content = {
     document.body.classList.add('mode-' + mode);
     if (mode === 'reduced') document.body.classList.add('reduced');
     if (mode === 'listen') document.body.classList.add('listen');
+
+    if (mode === 'guided' && window.CSS && CSS.supports &&
+        (CSS.supports('mask-image', 'linear-gradient(black, transparent)') ||
+         CSS.supports('-webkit-mask-image', 'linear-gradient(black, transparent)'))) {
+      storyEl = document.querySelector('main');
+      if (storyEl) document.body.classList.add('story-fade');
+    }
 
     fitActCopy();
     window.addEventListener('resize', queueFit);

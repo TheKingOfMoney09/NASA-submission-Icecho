@@ -1,5 +1,7 @@
 # Submission — the seven fields
 
+> **Working build pending refreeze:** The current `dist/TheLastNote.html` includes the chord-responsive background and is 3,523,341 B, SHA-256 `B75859E2DC70A8444FAA84065CC98413D2F9034BB5BECDE9B069A053FC131CB4`; its smoke suite passes 39 checks. The `freeze-build` references and artifact details below describe the earlier tagged build, not this working version. Update the freeze references before submission.
+
 Working file for the NASA Space Apps 2026 submission form. **Compose here, paste into the browser. Never compose in the form.**
 
 Project: **Icecho** · Piece: ***The Last Note*** · Challenge: **The Earth Information Jukebox**

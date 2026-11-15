@@ -409,6 +409,47 @@
   }
 
   /* ------------------------------------------------------------------ */
+  /* Ambient light — the field brightens with the chord                 */
+  /* ------------------------------------------------------------------ */
+
+  var glowEl = null;
+  var glowEnergy = -1;
+  var glowShown = -1;
+  var storyEl = null;
+  var storyFadeY = -1;
+
+  function updateStoryFade() {
+    if (mode !== 'guided' || !storyEl) return;
+    var y = Math.round(window.pageYOffset || document.documentElement.scrollTop || 0);
+    if (y === storyFadeY) return;
+    storyFadeY = y;
+    storyEl.style.setProperty('--story-fade-y', y + 'px');
+  }
+
+  // Follow the measured chord, not the separately composed coda. Use elapsed
+  // time so the fade has the same speed on different refresh rates.
+  function updateGlow(frame, dt) {
+    if (mode === 'reduced') return;
+    if (!glowEl) {
+      glowEl = document.getElementById('glow');
+      if (!glowEl) return;
+    }
+
+    var e = extentOf(frame);
+    var voices = e == null ? 1 : Math.max(1, Math.min(6, Math.ceil(6 * e / 6.90 - 1e-7)));
+    var target = (voices - 1) / 5;
+
+    if (glowEnergy < 0) glowEnergy = target;
+    glowEnergy += (target - glowEnergy) * (1 - Math.exp(-3.7 * dt));
+    if (Math.abs(target - glowEnergy) < 0.0015) glowEnergy = target;
+
+    var opacity = Math.round((0.30 + 0.70 * glowEnergy) * 1000) / 1000;
+    if (opacity === glowShown) return;
+    glowShown = opacity;
+    glowEl.style.opacity = String(opacity);
+  }
+
+  /* ------------------------------------------------------------------ */
   /* The one rAF loop                                                   */
   /* ------------------------------------------------------------------ */
 
@@ -459,6 +500,8 @@
     EJ.state.act = act;
 
     safeDraw(frame, t, act);
+    updateGlow(frame, dt);
+    updateStoryFade();
     updateHud(frame, act);
     syncScrub(t);
   }
@@ -527,6 +570,13 @@
     document.body.classList.add('mode-' + mode);
     if (mode === 'reduced') document.body.classList.add('reduced');
     if (mode === 'listen') document.body.classList.add('listen');
+
+    if (mode === 'guided' && window.CSS && CSS.supports &&
+        (CSS.supports('mask-image', 'linear-gradient(black, transparent)') ||
+         CSS.supports('-webkit-mask-image', 'linear-gradient(black, transparent)'))) {
+      storyEl = document.querySelector('main');
+      if (storyEl) document.body.classList.add('story-fade');
+    }
 
     fitActCopy();
     window.addEventListener('resize', queueFit);
