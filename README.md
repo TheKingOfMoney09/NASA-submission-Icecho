@@ -122,10 +122,10 @@ It boots on `DOMContentLoaded`; the copy is injected before the scroll controlle
 
 ### Build and provenance
 
-- The freeze artifact is built from code commit **`b71fd8d`**; tag **`freeze-build`** marks the final repository commit.
+- The freeze artifact is built from code commit **`90037a5`**; tag **`freeze-build`** marks the final repository commit.
 - `build/build.py` is strict: it refuses to write `dist/` if any module in `JS_ORDER` is missing. `--allow-missing` exists for development only and is not used for the deliverable.
-- Two rebuilds produce identical bytes: `dist/TheLastNote.html` SHA-256 `839E58714108ECB5DA6926DA9CD5C1E2F1F9BBAA92A7DE86E17178D06470B60D`.
-- `node app/tests/smoke.mjs` runs 36 headless checks against the source page and the built file: a running `AudioContext` after a gesture, 6/3/4 voices at 1979/2012/2026, the labelled coda thinning to one voice and decaying to silence (then restoring on scroll-back), a non-blank map plate, listen and reduced modes, keyboard, duplicate ids, and zero console errors.
+- Two rebuilds produce identical bytes: `dist/TheLastNote.html` SHA-256 `77281634A140FB07306F7F9FA262C0CC758D641C30772E775984122829B3338B`.
+- `node app/tests/smoke.mjs` runs 37 headless checks against the source page and the built file: a running `AudioContext` after a gesture, 6/3/4 voices at 1979/2012/2026, the labelled coda thinning to one voice and decaying to silence (then restoring on scroll-back), a non-blank map plate, a reload that starts at 1979 instead of resuming the browser's scroll position, listen and reduced modes, keyboard, duplicate ids, and zero console errors.
 
 ### How to run
 
@@ -226,7 +226,7 @@ Citation:
 | `app/js/audio.js` | 14,277 B — the audio contract, the seven-feature mapping and the coda |
 | `app/js/engine.js` | 14,897 B — the Web Audio graph |
 | `app/js/render.js` | 17,586 B — the canvas plate renderer |
-| `app/js/scroll.js` | 7,666 B — native scroll to timeline, act detection |
+| `app/js/scroll.js` | 7,865 B — native scroll to timeline, act detection |
 | `app/js/main.js` | 11,264 B — mode router, copy injection, HUD, keyboard |
 | `app/css/style.css` | all styling |
 | `app/data/frames.json` | 48 feature vectors, 1979–2026 |
