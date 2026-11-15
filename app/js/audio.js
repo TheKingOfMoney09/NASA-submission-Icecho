@@ -103,7 +103,8 @@
   var PULSE_HOLD = 4.0;                  // seconds after sigma leaves < -2
 
   var MASTER_LEVEL = 1.4;                // post-limiter trim; ≈ -14 LUFS with this voicing
-  var FADE_IN = 0.15;
+  var FADE_IN = 0.15;                    // resume after a pause: stay quick
+  var FADE_IN_COLD = 1.4;                // first Begin only: long enough to swell
   var FADE_OUT = 0.12;
   var TIMELINE_TAU = 0.14;               // internal setTimeline smoothing
   var TICK_MS = 35;                      // control rate, 28 Hz
@@ -132,6 +133,7 @@
   var initPromise = null;
   var disposed = false;
   var playing = false;
+  var coldStart = true;                  // cleared by the first live play()
   var mode = 'guided';
 
   var lastFeatures = null;
@@ -514,7 +516,13 @@
         var p = ctx.resume();
         if (p && typeof p.catch === 'function') p.catch(function () {});
       }
-      engine.setMaster(MASTER_LEVEL, FADE_IN);
+      if (coldStart) {
+        // Only reached with a live engine: the guard above returns first.
+        engine.setMasterSmooth(MASTER_LEVEL, FADE_IN_COLD);
+        coldStart = false;
+      } else {
+        engine.setMaster(MASTER_LEVEL, FADE_IN);
+      }
     } catch (err) {
       fail(err);
     }

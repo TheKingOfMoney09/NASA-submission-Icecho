@@ -37,6 +37,7 @@
   var PULSE_RATE = 0.25;         // 8th notes at 120 BPM
   var PULSE_LEVEL = 0.15;
   var CRACK_LEVEL = 0.22;
+  var SMOOTH_POINTS = 65;        // resolution of the master swell curve
 
   /* ---------------------------------------------------------------- */
   /* Small helpers                                                     */
@@ -403,6 +404,43 @@
       holdThenRamp(master.gain, Math.max(0.0001, value), ctx.currentTime, seconds);
     }
 
+    // Slow swell for the first press of Begin. A 150 ms linear ramp reads as a
+    // step; a smoothstep curve leaves and arrives with zero slope. Engines
+    // without cancelAndHoldAtTime cannot stop a running curve (Firefox), so
+    // they keep the interruptible ramp instead.
+    function setMasterSmooth(value, seconds) {
+      if (!master) return;
+      var g = master.gain;
+      var target = Math.max(0.0001, value);
+      var now = ctx ? ctx.currentTime : 0;
+      var dur = Math.max(0.02, seconds);
+      var from = g.value;
+      var curve, i, x, s;
+
+      if (!isFinite(from) || from < 0.0001) from = 0.0001;
+      last.master = value;
+
+      if (typeof g.cancelAndHoldAtTime !== 'function') {
+        holdThenRamp(g, target, now, dur);
+        return;
+      }
+
+      try {
+        g.cancelAndHoldAtTime(now);
+        curve = new Float32Array(SMOOTH_POINTS);
+        for (i = 0; i < SMOOTH_POINTS; i++) {
+          x = i / (SMOOTH_POINTS - 1);
+          s = x * x * (3 - 2 * x);   // smoothstep: zero slope at both ends
+          curve[i] = from + (target - from) * s;
+        }
+        // Starts 20 ms after the hold so the two events never overlap.
+        g.setValueCurveAtTime(curve, now + 0.02, dur);
+        g.setValueAtTime(target, now + 0.02 + dur + 0.001);   // end exactly on target
+      } catch (e) {
+        holdThenRamp(g, target, now, dur);
+      }
+    }
+
     function crack(level) {
       var now = ctx.currentTime + 0.005;
       var g = crackGain.gain;
@@ -509,6 +547,7 @@
       setSubRoot: setSubRoot,
       setPulse: setPulse,
       setMaster: setMaster,
+      setMasterSmooth: setMasterSmooth,
       crack: crack,
       tick: tick,
       diagnostics: diagnostics,

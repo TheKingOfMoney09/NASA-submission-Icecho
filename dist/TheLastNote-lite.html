@@ -1857,7 +1857,8 @@ window.EJ.content = {
   var PULSE_HOLD = 4.0;                  // seconds after sigma leaves < -2
 
   var MASTER_LEVEL = 1.4;                // post-limiter trim; ≈ -14 LUFS with this voicing
-  var FADE_IN = 0.15;
+  var FADE_IN = 0.15;                    // resume after a pause: stay quick
+  var FADE_IN_COLD = 1.4;                // first Begin only: long enough to swell
   var FADE_OUT = 0.12;
   var TIMELINE_TAU = 0.14;               // internal setTimeline smoothing
   var TICK_MS = 35;                      // control rate, 28 Hz
@@ -1881,6 +1882,7 @@ window.EJ.content = {
   var initPromise = null;
   var disposed = false;
   var playing = false;
+  var coldStart = true;                  // cleared by the first live play()
   var mode = 'guided';
 
   var lastFeatures = null;
@@ -2249,7 +2251,12 @@ window.EJ.content = {
         var p = ctx.resume();
         if (p && typeof p.catch === 'function') p.catch(function () {});
       }
-      engine.setMaster(MASTER_LEVEL, FADE_IN);
+      if (coldStart) {
+        engine.setMasterSmooth(MASTER_LEVEL, FADE_IN_COLD);
+        coldStart = false;
+      } else {
+        engine.setMaster(MASTER_LEVEL, FADE_IN);
+      }
     } catch (err) {
       fail(err);
     }
@@ -2374,6 +2381,7 @@ window.EJ.content = {
   var PULSE_RATE = 0.25;         // 8th notes at 120 BPM
   var PULSE_LEVEL = 0.15;
   var CRACK_LEVEL = 0.22;
+  var SMOOTH_POINTS = 65;        // resolution of the master swell curve
 
 
 
@@ -2729,6 +2737,38 @@ window.EJ.content = {
       holdThenRamp(master.gain, Math.max(0.0001, value), ctx.currentTime, seconds);
     }
 
+    function setMasterSmooth(value, seconds) {
+      if (!master) return;
+      var g = master.gain;
+      var target = Math.max(0.0001, value);
+      var now = ctx ? ctx.currentTime : 0;
+      var dur = Math.max(0.02, seconds);
+      var from = g.value;
+      var curve, i, x, s;
+
+      if (!isFinite(from) || from < 0.0001) from = 0.0001;
+      last.master = value;
+
+      if (typeof g.cancelAndHoldAtTime !== 'function') {
+        holdThenRamp(g, target, now, dur);
+        return;
+      }
+
+      try {
+        g.cancelAndHoldAtTime(now);
+        curve = new Float32Array(SMOOTH_POINTS);
+        for (i = 0; i < SMOOTH_POINTS; i++) {
+          x = i / (SMOOTH_POINTS - 1);
+          s = x * x * (3 - 2 * x);   // smoothstep: zero slope at both ends
+          curve[i] = from + (target - from) * s;
+        }
+        g.setValueCurveAtTime(curve, now + 0.02, dur);
+        g.setValueAtTime(target, now + 0.02 + dur + 0.001);   // end exactly on target
+      } catch (e) {
+        holdThenRamp(g, target, now, dur);
+      }
+    }
+
     function crack(level) {
       var now = ctx.currentTime + 0.005;
       var g = crackGain.gain;
@@ -2833,6 +2873,7 @@ window.EJ.content = {
       setSubRoot: setSubRoot,
       setPulse: setPulse,
       setMaster: setMaster,
+      setMasterSmooth: setMasterSmooth,
       crack: crack,
       tick: tick,
       diagnostics: diagnostics,
